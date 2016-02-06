@@ -58,12 +58,10 @@ def setup_admin(app):
 
 
 def setup_api(app):
-    # api_instance = Api(api.api_blueprint)
     api_instance = Api(app, prefix='/api/v1')
-    # api.add_resource(LoginResource, '/login')
     api_instance.add_resource(api.ParameterResource, '/parameters')
-    api_instance.add_resource(api.KidResource, '/kids')
-    # app.register_blueprint(api.api_blueprint, url_prefix='/api/v1')
+    api_instance.add_resource(api.KidsList, '/kids')
+    api_instance.add_resource(api.KidResource, '/kids/<string:kid_id>')
     return api
 
 

@@ -59,7 +59,7 @@ class KidFactory(EmbeddedDocumentFactory):
     class Meta:
         model = models.Kid
 
-    first_name = factory.Sequence(lambda n: 'Kid%d' % n)
+    name = factory.Sequence(lambda n: 'Kid%d' % n)
     birthday = factory.fuzzy.FuzzyDateTime(
         start_dt=datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days=30),
         end_dt=datetime.utcnow().replace(tzinfo=pytz.UTC))

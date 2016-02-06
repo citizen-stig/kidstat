@@ -47,13 +47,14 @@ class Observations(db.EmbeddedDocument):
 
 class Kid(db.EmbeddedDocument):
     id = db.ObjectIdField(primary_key=True, default=lambda: ObjectId())
-    first_name = db.StringField(required=True)
+    name = db.StringField(required=True)
     birthday = db.DateTimeField(required=True)
     gender = db.StringField(choices=[(x, x) for x in (MALE, FEMALE)])
-    observations = db.ListField(db.EmbeddedDocumentField(Observations))
+    observations = db.EmbeddedDocumentListField(Observations)
+    # observations = db.ListField(db.EmbeddedDocumentField(Observations))
 
     def __str__(self):
-        return self.first_name
+        return self.name
 
 
 class Role(db.Document, RoleMixin):
@@ -72,8 +73,9 @@ class User(UserMixin, db.Document):
     roles = db.ListField(db.ReferenceField(Role), default=[])
     first_name = db.StringField(max_length=50)
     last_name = db.StringField(max_length=50)
+    kids = db.EmbeddedDocumentListField(Kid)
 
-    kids = db.ListField(db.EmbeddedDocumentField(Kid))
+    # kids = db.ListField(db.EmbeddedDocumentField(Kid))
 
     def __str__(self):
         return '{0} {1}'.format(self.first_name, self.last_name)
@@ -83,6 +85,10 @@ class User(UserMixin, db.Document):
 
     def check_password(self, password):
         return utils.verify_password(password, self.password)
+
+    def get_kid_by_id(self, kid_id):
+        # We suppose that there's always one result because of kid_id unique constraint
+        return self.kids.filter(id=kid_id).first()
 
 
 user_datastore = MongoEngineUserDatastore(db, User, Role)

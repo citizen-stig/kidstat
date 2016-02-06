@@ -1,15 +1,15 @@
 # -*- encoding: utf-8 -*-
 from flask import url_for
 import requests
-from tests.integration.test_api.base import BaseAPIIntegrationTestCase
-from tests import model_factories
+from .base import BaseAPIIntegrationTestCase
+from tests.helpers import model_factories
 
 
 class KidsCRUD(BaseAPIIntegrationTestCase):
 
     def setUp(self):
         super().setUp()
-        self.url = self.get_server_url() + url_for('api.kidresource')
+        self.url = self.get_server_url() + url_for('kidresource')
 
     def test_non_auth(self):
         response = requests.get(self.url)
@@ -17,10 +17,12 @@ class KidsCRUD(BaseAPIIntegrationTestCase):
 
     def test_read(self):
         user = model_factories.UserFactory()
+        user.set_password(user.email)
+        user.save()
 
-        session = self.login(user.email, user.email)
+        access_token = self.login(user.email, user.email)
 
-        response = session.get(self.url)
+        response = requests.get(self.url, headers={'Authorization': 'JWT ' + access_token})
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
         self.assertEqual(len(user.kids), len(response_data))

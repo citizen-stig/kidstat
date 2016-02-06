@@ -5,11 +5,12 @@ import importlib
 from flask import Flask, request, url_for, redirect
 from flask_admin import Admin
 from flask_restful import Api
-
+from flask_jwt import JWT, _default_jwt_payload_handler
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_security import Security, MongoEngineUserDatastore
-from kidstat.models import db, User, Role, Parameter, Standard
-from kidstat.api import api_blueprint, ParameterResource, KidResource
+from kidstat.models import db, User, Role, Parameter, Standard, user_datastore
+from kidstat import auth
+from kidstat import api
 
 
 from kidstat import admin
@@ -33,9 +34,11 @@ def create_app():
 
 def setup_security(app):
     """Setup Flask-Security"""
-    user_datastore = MongoEngineUserDatastore(db, User, Role)
+    jwt = JWT(app, auth.authenticate, auth.get_user_from_payload)
+    jwt.jwt_payload_handler(auth.payload_handler)
+
     security = Security(app, user_datastore)
-    return security, user_datastore
+    return security, jwt
 
 
 def setup_admin(app):
@@ -55,10 +58,12 @@ def setup_admin(app):
 
 
 def setup_api(app):
-    api = Api(api_blueprint)
-    api.add_resource(ParameterResource, '/parameters')
-    api.add_resource(KidResource, '/kids')
-    app.register_blueprint(api_blueprint, url_prefix='/api/v1')
+    # api_instance = Api(api.api_blueprint)
+    api_instance = Api(app, prefix='/api/v1')
+    # api.add_resource(LoginResource, '/login')
+    api_instance.add_resource(api.ParameterResource, '/parameters')
+    api_instance.add_resource(api.KidResource, '/kids')
+    # app.register_blueprint(api.api_blueprint, url_prefix='/api/v1')
     return api
 
 

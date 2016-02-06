@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 import unittest
-from tests.base import BaseTestCase
+from tests.testcases import BaseTestCase
 from tests import model_factories
 from kidstat import models
 

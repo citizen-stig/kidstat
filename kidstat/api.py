@@ -1,18 +1,14 @@
 # -*- encoding: utf-8 -*-
-from flask import Blueprint
-from flask_restful import Resource, fields, marshal_with, abort
-from flask_security import current_user
+from flask_restful import Resource, fields, marshal_with, abort, reqparse
+from flask_jwt import jwt_required, current_identity
+# from webargs.flaskparser import use_args, parser
 
 from kidstat import models
 
 
-api_blueprint = Blueprint('api', __name__)
-
-
-@api_blueprint.before_request
-def authenticated():
-    if not current_user.is_active() or not current_user.is_authenticated():
-        abort(401)
+login_parser = reqparse.RequestParser()
+login_parser.add_argument('email')
+login_parser.add_argument('password')
 
 
 class ParameterResource(Resource):
@@ -42,12 +38,13 @@ class KidResource(Resource):
     kid_fields = {
         'first_name': fields.String,
         'gender': fields.String,
-        'birthday': fields.DateTime(dt_format='rfc822'),
+        'birthday': fields.DateTime(dt_format='iso8601'),
     }
 
     @marshal_with(kid_fields)
+    @jwt_required()
     def get(self):
-        return list(current_user.kids)
+        return list(current_identity.kids)
 
 
 class Observation(Resource):

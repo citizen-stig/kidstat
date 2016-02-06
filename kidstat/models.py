@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*-
 from bson import ObjectId
 from flask_mongoengine import MongoEngine
-from flask_security import UserMixin, RoleMixin, utils
+from flask_security import UserMixin, RoleMixin, utils, MongoEngineUserDatastore
+from werkzeug.security import check_password_hash
 
 db = MongoEngine()
 
@@ -79,3 +80,9 @@ class User(UserMixin, db.Document):
 
     def set_password(self, password):
         self.password = utils.encrypt_password(password)
+
+    def check_password(self, password):
+        return utils.verify_password(password, self.password)
+
+
+user_datastore = MongoEngineUserDatastore(db, User, Role)

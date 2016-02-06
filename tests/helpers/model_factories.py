@@ -1,10 +1,12 @@
 # -*- encoding: utf-8 -*-
 from datetime import datetime, timedelta
 import pytz
+from flask import current_app
 import factory
 import factory.fuzzy
 from factory.mongoengine import MongoEngineFactory
 from kidstat import models
+from kidstat.app import setup_security
 
 
 class EmbeddedDocumentFactory(factory.Factory):
@@ -80,12 +82,12 @@ class BaseUserFactory(MongoEngineFactory):
         model = models.User
 
     email = factory.Sequence(lambda n: 'user%d@example.com' % n)
-    password = factory.LazyAttribute(lambda o: models.utils.encrypt_password(o.email))
+    # password = factory.LazyAttribute(lambda o: )
 
 
 class UserFactory(BaseUserFactory):
 
     first_name = factory.Sequence(lambda n: 'User%d' % n)
     last_name = factory.Sequence(lambda n: 'Last%d' % n)
-    roles = factory.LazyAttribute(lambda o: [RoleFactory(name='user')])
+    roles = factory.LazyAttribute(lambda o: [models.user_datastore.find_or_create_role('user')])
     kids = factory.LazyAttribute(lambda o: [KidFactory()])

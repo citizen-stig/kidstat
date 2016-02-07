@@ -12,7 +12,7 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
     def setUp(self):
         super().setUp()
-        self.url = self.get_server_url() + url_for('kidslist')
+        self.url = self.get_server_url() + url_for('kids_list')
 
     def test_non_auth(self):
         response = requests.get(self.url)
@@ -68,7 +68,7 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         user.save()
         user = models.User.objects.get(id=user.id)
         kid = user.kids[1]
-        url = self.url + '/' + str(kid.id)
+        url = self.get_server_url() + url_for('kids_object', kid_id=str(kid.id))
 
         access_token = self.login(user.email, user.email)
 
@@ -85,14 +85,13 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         self.assertEqual(response_data['birthday'],
                          kid.birthday.strftime('%Y-%m-%dT%H:%M:%S.%f+00:00'))
 
-
     def test_update(self):
         user = model_factories.UserFactory(kids=[model_factories.KidFactory() for _ in range(3)])
         user.set_password(user.email)
         user.save()
         user = models.User.objects.get(id=user.id)
         kid = user.kids[1]
-        url = self.url + '/' + str(kid.id)
+        url = self.get_server_url() + url_for('kids_object', kid_id=str(kid.id))
 
         access_token = self.login(user.email, user.email)
 
@@ -124,7 +123,7 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         user.save()
         user = models.User.objects.get(id=user.id)
         removed_kid = user.kids[1]
-        url = self.url + '/' + str(removed_kid.id)
+        url = self.get_server_url() + url_for('kids_object', kid_id=str(removed_kid.id))
 
         access_token = self.login(user.email, user.email)
 

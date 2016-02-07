@@ -60,8 +60,10 @@ def setup_admin(app):
 def setup_api(app):
     api_instance = Api(app, prefix='/api/v1')
     api_instance.add_resource(api.ParameterResource, '/parameters')
-    api_instance.add_resource(api.KidsList, '/kids')
-    api_instance.add_resource(api.KidResource, '/kids/<string:kid_id>')
+    api_instance.add_resource(api.KidsListResource, '/kids', endpoint='kids_list')
+    api_instance.add_resource(api.KidResource, '/kids/<string:kid_id>', endpoint='kids_object')
+    api_instance.add_resource(api.ObservationsListResource, '/kids/<string:kid_id>/observations',
+                              endpoint='observations_list')
     return api
 
 

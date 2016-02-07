@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 import unittest
-from tests.testcases import BaseTestCase
-from tests import model_factories
+from tests.helpers.testcases import BaseTestCase
+from tests.helpers import model_factories
 from kidstat import models
 
 

@@ -48,7 +48,7 @@ kid_fields = {
     }
 
 
-class KidsList(Resource):
+class KidsListResource(Resource):
 
     @marshal_with(kid_fields)
     @jwt_required()
@@ -95,15 +95,16 @@ class KidResource(Resource):
         return {'success': True}
 
 
-class Observation(Resource):
+class ObservationsListResource(Resource):
 
     observation_fields = {
-        'timestamp': fields.DateTime(dt_format='rfc822'),
+        'timestamp': fields.DateTime(dt_format='iso8601'),
         'parameter': fields.String,
         'value': fields.Float
     }
 
-
-# def a(user_id, kid_id):
-#     models.User.objects.filter(id=user_id)
-#     models.User.objects.filter(id=user_id, kids__match={'id': kid_id}).only('kids')
+    @marshal_with(observation_fields)
+    @jwt_required()
+    def get(self, kid_id):
+        kid = current_identity.get_kid_by_id(kid_id)
+        return list(kid.observations)

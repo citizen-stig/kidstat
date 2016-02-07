@@ -2,7 +2,6 @@
 from bson import ObjectId
 from flask_mongoengine import MongoEngine
 from flask_security import UserMixin, RoleMixin, utils, MongoEngineUserDatastore
-from werkzeug.security import check_password_hash
 
 db = MongoEngine()
 
@@ -51,7 +50,6 @@ class Kid(db.EmbeddedDocument):
     birthday = db.DateTimeField(required=True)
     gender = db.StringField(choices=[(x, x) for x in (MALE, FEMALE)])
     observations = db.EmbeddedDocumentListField(Observations)
-    # observations = db.ListField(db.EmbeddedDocumentField(Observations))
 
     def __str__(self):
         return self.name
@@ -74,8 +72,6 @@ class User(UserMixin, db.Document):
     first_name = db.StringField(max_length=50)
     last_name = db.StringField(max_length=50)
     kids = db.EmbeddedDocumentListField(Kid)
-
-    # kids = db.ListField(db.EmbeddedDocumentField(Kid))
 
     def __str__(self):
         return '{0} {1}'.format(self.first_name, self.last_name)

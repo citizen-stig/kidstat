@@ -22,3 +22,4 @@ class Config(object):
     # SECURITY_RESET_PASSWORD_TEMPLATE = 'auth/reset_password.html'
     # SECURITY_LOGIN_USER_TEMPLATE = 'auth/login.html'
 
+

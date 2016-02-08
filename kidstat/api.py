@@ -1,51 +1,57 @@
 # -*- encoding: utf-8 -*-
 from datetime import datetime
-from flask_restful import Resource, fields, marshal_with, abort, reqparse
+from flask_restful import Resource, fields, marshal_with, reqparse
 from flask_jwt import jwt_required, current_identity
-# from webargs.flaskparser import use_args, parser
-
 from kidstat import models
 
 
-class ParameterResource(Resource):
+# PARAMETER
+parameter_fields = {
+    'name': fields.String,
+    'unit': fields.String,
+    'description': fields.String,
+}
 
-    standard_fields = {
-        'age': fields.Integer,
-        'gender': fields.String,
-        'value': fields.Float,
-        'percentile': fields.Integer
-    }
 
-    parameter_fields = {
-        'id': fields.String,
-        'name': fields.String,
-        'description': fields.String,
-        'unit': fields.String,
-        'standards': fields.List(fields.Nested(standard_fields))
-    }
+class ParametersListResource(Resource):
 
     @marshal_with(parameter_fields)
     def get(self):
         return list(models.Parameter.objects.all())
 
 
+class ParameterResource(Resource):
+
+    @marshal_with(parameter_fields)
+    def get(self, parameter_name):
+        return models.Parameter.objects.filter(name=parameter_name).first()
+
+
+# Standard
+class StandardsListResource(Resource):
+
+    @marshal_with(parameter_fields)
+    def get(self, parameter_name):
+        parameter = models.Parameter.objects.filter(name=parameter_name).first()
+        return list(parameter.standards)
+
+
+# Kid
 def birthday_validator(timestamp):
     try:
         return datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ')
     except ValueError:
         pass
-
-
 kid_parser = reqparse.RequestParser()
 kid_parser.add_argument('name', required=True)
 kid_parser.add_argument('gender', choices=[models.MALE, models.FEMALE])
 kid_parser.add_argument('birthday', type=birthday_validator)
 
 kid_fields = {
-        'name': fields.String,
-        'gender': fields.String,
-        'birthday': fields.DateTime(dt_format='iso8601'),
-    }
+    'name': fields.String,
+    'gender': fields.String,
+    'birthday': fields.DateTime(dt_format='iso8601'),
+}
 
 
 class KidsListResource(Resource):

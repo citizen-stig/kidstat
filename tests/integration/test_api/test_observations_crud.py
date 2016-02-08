@@ -1,12 +1,8 @@
 # -*- encoding: utf-8 -*-
-# -*- encoding: utf-8 -*-
-from datetime import datetime, timedelta
-import pytz
 from flask import url_for
 import requests
 from .base import BaseAPIIntegrationTestCase
 from tests.helpers import model_factories
-from kidstat import models
 
 
 class SimpleCRUD(BaseAPIIntegrationTestCase):

@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-from bson.objectid import ObjectId
 from flask import request, redirect, url_for
 from flask_admin import AdminIndexView, expose
 from flask_admin.contrib.mongoengine import ModelView
@@ -35,15 +34,6 @@ class UserModelView(AdminProtectedModelView):
     column_searchable_list = ('first_name', 'email')
     column_exclude_list = ('password',)
     form_overrides = dict(password=PasswordField)
-
-
-    def create_model(self, form):
-        print('++++++++')
-        print(form)
-        # for kid_data in form.kids.data:
-        #     kid_data['id'] = ObjectId()
-        print('++++++++')
-        return super().create_model(form)
 
     def on_model_change(self, form, user, is_created=False):
         user.set_password(form.password.data)

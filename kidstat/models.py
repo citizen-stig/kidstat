@@ -12,7 +12,7 @@ ADMIN_ROLE = 'admin'
 
 
 class Standard(db.EmbeddedDocument):
-    id = db.ObjectIdField(primary_key=True, default=lambda: ObjectId())
+    id = db.ObjectIdField(primary_key=True, default=ObjectId)
     age = db.IntField(required=True)
     gender = db.StringField(required=True,
                             choices=[(x, x) for x in (MALE, FEMALE)])
@@ -24,7 +24,7 @@ class Standard(db.EmbeddedDocument):
 
 
 class Parameter(db.Document):
-    name = db.StringField(required=True)
+    name = db.StringField(required=True, unique=True)
     description = db.StringField(max_length=255)
     unit = db.StringField(max_length=10)
     standards = db.ListField(db.EmbeddedDocumentField(Standard))
@@ -35,7 +35,7 @@ class Parameter(db.Document):
 
 class Observations(db.EmbeddedDocument):
     # TODO: observation duplicate checking
-    id = db.ObjectIdField(primary_key=True, default=lambda: ObjectId())
+    id = db.ObjectIdField(primary_key=True, default=ObjectId)
     timestamp = db.DateTimeField(required=True)
     parameter = db.ReferenceField(Parameter, required=True)
     value = db.FloatField(required=True)
@@ -45,7 +45,7 @@ class Observations(db.EmbeddedDocument):
 
 
 class Kid(db.EmbeddedDocument):
-    id = db.ObjectIdField(primary_key=True, default=lambda: ObjectId())
+    id = db.ObjectIdField(primary_key=True, default=ObjectId)
     name = db.StringField(required=True)
     birthday = db.DateTimeField(required=True)
     gender = db.StringField(choices=[(x, x) for x in (MALE, FEMALE)])

@@ -137,9 +137,11 @@ class ObservationsListResource(MarshMallowListResource):
     @jwt_required()
     @use_args(ObservationSchema(strict=True))
     def post(self, args, kid_id):
-        parameter = models.Parameter.objects.filter(name=args['parameter']).first()
+        parameter = models.Parameter.objects\
+            .filter(name=args['parameter']).first()
         if parameter is None:
-            return jsonify({"error": "Bad parameter name {0}".format(args['parameter'])}), 422
+            error_msg = "Bad parameter name {0}".format(args['parameter'])
+            return jsonify({"error": error_msg}), 422
         kid = current_identity.get_kid_by_id(kid_id)
         observation = models.Observation(
             timestamp=args['timestamp'],

@@ -3,6 +3,7 @@ from flask import url_for, current_app
 import requests
 from .base import BaseAPIIntegrationTestCase
 from tests.helpers import model_factories
+from kidstat import models
 
 
 class Login(BaseAPIIntegrationTestCase):
@@ -82,3 +83,56 @@ class ProtectedAPI(BaseAPIIntegrationTestCase):
         self.check_url(url)
         self.check_url(url, method='put')
         self.check_url(url, method='delete')
+
+
+class Registration(BaseAPIIntegrationTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.url = self.get_server_url() + url_for('register')
+
+    def test_regular(self):
+        users = models.User.objects.all()
+        self.assertEqual(users.count(), 0)
+        data = {'email': 'test@example.com',
+                'first_name': 'John',
+                'last_name': 'Dow',
+                'password': 'qwerty'}
+
+        response = requests.post(self.url, json=data)
+
+        self.assertEqual(response.status_code, 200)
+        response_data = response.json()
+        self.assertIn('success', response_data)
+        self.assertTrue(response_data['success'])
+        # Check database
+        users = models.User.objects.all()
+        self.assertEqual(users.count(), 1)
+
+        user = users[0]
+        self.assertEqual(user.email, data['email'])
+        self.assertEqual(user.first_name, data['first_name'])
+        self.assertEqual(user.last_name, data['last_name'])
+
+        # Check that user can login
+        access_token = self.login(data['email'], data['password'])
+        self.assertIsNotNone(access_token)
+
+    def test_duplicate_email(self):
+        user = model_factories.UserFactory(kids=[])
+        password1 = 'password1'
+        user.set_password(password1)
+        user.save()
+        data = {
+            'email': user.email,
+            'first_name': 'John',
+            'last_name': 'Dow',
+            'password': 'qwerty'
+        }
+
+        response = requests.post(self.url, json=data)
+
+        self.assertEqual(response.status_code, 422)
+
+        users = models.User.objects.all()
+        self.assertEqual(users.count(), 1)

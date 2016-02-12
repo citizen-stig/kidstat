@@ -2,10 +2,11 @@
 from flask import jsonify
 from flask_jwt import jwt_required, current_identity
 from flask_restful import Resource, abort
+from flask_security.registerable import register_user
 from marshmallow import fields, validate, Schema
 from webargs.flaskparser import parser, use_args
 from kidstat import models
-
+import mongoengine.errors
 
 @parser.error_handler
 def handle_request_parsing_error(error):
@@ -192,3 +193,23 @@ class ObservationResource(MarshMallowSingleResource):
         kid.update(pull__observations=observation)
         current_identity.save()
         return {'success': True}
+
+
+# Registration
+class RegistrationSchema(Schema):
+    email = fields.Email(required=True)
+    password = fields.String(required=True)
+    first_name = fields.String(required=True)
+    last_name = fields.String(required=True)
+
+
+class RegistrationResource(Resource):
+
+    @use_args(RegistrationSchema(strict=True))
+    def post(self, args):
+        try:
+            register_user(**args)
+            return {'success': True}
+        except (mongoengine.errors.OperationError,
+                mongoengine.errors.ValidationError) as exc:
+            abort(422, errors=str(exc))

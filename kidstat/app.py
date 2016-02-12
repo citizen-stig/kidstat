@@ -3,10 +3,12 @@ import os
 import importlib
 from flask import Flask
 from flask_admin import Admin
+from flask_mail import Mail
 from flask_restful import Api
 from flask_jwt import JWT
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_security import Security
+
 from kidstat.models import db, User, Role, Parameter, Standard, user_datastore
 from kidstat import auth
 from kidstat import api
@@ -27,7 +29,7 @@ def create_app():
 
     app.config.from_object(config_obj)
     db.init_app(app)
-
+    Mail(app)
     return app
 
 
@@ -83,6 +85,10 @@ def setup_api(app):
         api.ObservationResource,
         '/kids/<string:kid_id>/observations/<string:observation_id>',
         endpoint='observation_object')
+    api_instance.add_resource(
+        api.RegistrationResource,
+        '/registrer',
+        endpoint='register')
     return api
 
 

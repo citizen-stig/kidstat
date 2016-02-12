@@ -20,7 +20,7 @@ class AdminProtectedIndexView(AdminIndexView):
 class AdminProtectedModelView(ModelView):
 
     def is_accessible(self):
-        if not current_user.is_active() or not current_user.is_authenticated():
+        if not current_user.is_active or not current_user.is_authenticated:
             return False
         if current_user.has_role(ADMIN_ROLE):
             return True

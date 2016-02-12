@@ -159,7 +159,7 @@ class ObservationResource(MarshMallowSingleResource):
             if observation:
                 return observation
         error_msg = "Observation with {0} not found for kid {1}".format(observation_id, kid_id)
-        return abort(404, errors={"error": error_msg})
+        abort(404, errors={"error": error_msg})
 
     @jwt_required()
     def get(self, kid_id, observation_id):

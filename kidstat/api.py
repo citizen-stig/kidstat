@@ -18,13 +18,6 @@ def handle_request_parsing_error(error):
     return abort(422, errors=error.messages)
 
 
-# PARAMETER
-class ParameterSchema(Schema):
-    name = fields.String(attribute='name', dump_to='name', required=True)
-    unit = fields.String(required=True)
-    description = fields.String(required=True)
-
-
 class MarshMallowResource(Resource):
     schema = None
 
@@ -47,6 +40,13 @@ class MarshMallowSingleResource(MarshMallowResource):
         return jsonify(result.data)
 
 
+# PARAMETER
+class ParameterSchema(Schema):
+    name = fields.String(attribute='name', dump_to='name', required=True)
+    unit = fields.String(required=True)
+    description = fields.String(required=True)
+
+
 class ParametersListResource(MarshMallowListResource):
     schema = ParameterSchema(many=True)
 
@@ -59,15 +59,6 @@ class ParameterResource(MarshMallowSingleResource):
 
     def get(self, parameter_name):
         return self.response(models.Parameter.objects.filter(name=parameter_name).first())
-
-
-# Standard
-# class StandardsListResource(Resource):
-#
-#     @marshal_with(parameter_fields)
-#     def get(self, parameter_name):
-#         parameter = models.Parameter.objects.filter(name=parameter_name).first()
-#         return list(parameter.standards)
 
 
 # Kid
@@ -123,6 +114,7 @@ class KidResource(MarshMallowSingleResource):
         return {'success': True}
 
 
+# OBSERVATION
 class ObservationSchema(Schema):
 
     timestamp = fields.DateTime(required=True, format='iso8601')

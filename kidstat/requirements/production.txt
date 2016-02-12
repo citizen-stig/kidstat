@@ -6,4 +6,5 @@ Flask-RESTful==0.3.5
 flask-mongoengine==0.7.1
 Flask-JWT==0.3.2
 webargs==1.1.1
+marshmallow==2.6.0
 requests==2.9.1

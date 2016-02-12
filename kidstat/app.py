@@ -73,6 +73,9 @@ def setup_api(app):
     api_instance.add_resource(api.ObservationsListResource,
                               '/kids/<string:kid_id>/observations',
                               endpoint='observations_list')
+    api_instance.add_resource(api.ObservationResource,
+                              '/kids/<string:kid_id>/observations/<string:observation_id>',
+                              endpoint='observation_object')
     return api
 
 

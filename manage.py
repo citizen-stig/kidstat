@@ -20,10 +20,9 @@ class PopulateStandardsValues(Command):
         # (18, 99.9),
     )
 
-    def get_standards_data(self, gender, data_url):
+    def get_standards_data(self, gender, data_url, parameter):
         response = requests.get(data_url)
         assert response.status_code == 200
-        standards = []
         reader = csv.reader(response.text.split('\r\n'), delimiter='\t')
 
         header = next(reader)
@@ -47,30 +46,25 @@ class PopulateStandardsValues(Command):
                 standard = models.Standard(age=age,
                                            gender=gender,
                                            percentile=percentile,
+                                           parameter=parameter,
                                            value=row[column])
-                standards.append(standard)
-        return standards
+                standard.save()
 
     def run(self):
+        # Standards are overwritten
+        models.Standard.objects.delete()
         # Height
         height = models.Parameter.objects.filter(name='height').first()
         if height is None:
             height = models.Parameter(name='height',
                                       description='Body length for age',
                                       unit='cm')
-        # Standards are overwritten
-        height.standards = []
         height.save()
-
         url_height_boys = 'http://www.who.int/childgrowth/standards/lhfa_boys_p_exp.txt'
-        height_boys_standards = self.get_standards_data(models.MALE, url_height_boys)
-        height.standards += height_boys_standards
+        self.get_standards_data(models.MALE, url_height_boys, height)
 
         url_height_girls = 'http://www.who.int/childgrowth/standards/lhfa_girls_p_exp.txt'
-        height_girls_standards = self.get_standards_data(models.FEMALE, url_height_girls)
-        height.standards += height_girls_standards
-
-        height.save()
+        self.get_standards_data(models.FEMALE, url_height_girls, height)
 
         # Weight
         weight = models.Parameter.objects.filter(name='weight').first()
@@ -78,17 +72,12 @@ class PopulateStandardsValues(Command):
             weight = models.Parameter(name='weight',
                                       description='Body weight',
                                       unit='kg')
-        weight.standards = []
         weight.save()
         url_weight_boys = 'http://www.who.int/childgrowth/standards/wfa_boys_p_exp.txt'
-        weight_boys_standards = self.get_standards_data(models.MALE, url_weight_boys)
-        weight.standards += weight_boys_standards
+        self.get_standards_data(models.MALE, url_weight_boys, weight)
 
         url_weight_girls = 'http://www.who.int/childgrowth/standards/wfa_girls_p_exp.txt'
-        weight_girls_standards = self.get_standards_data(models.MALE, url_weight_girls)
-        weight.standards += weight_girls_standards
-
-        weight.save()
+        self.get_standards_data(models.MALE, url_weight_girls, weight)
 
 
 class CreateAdminUser(Command):
@@ -99,11 +88,10 @@ class CreateAdminUser(Command):
     )
 
     def run(self, email, password):
-        user_datastore = MongoEngineUserDatastore(models.db, models.User, models.Role)
         admin_role = models.user_datastore.find_or_create_role(models.ADMIN_ROLE)
         admin_user = models.User(email=email)
         admin_user.set_password(password)
-        user_datastore.add_role_to_user(admin_user, admin_role)
+        models.user_datastore.add_role_to_user(admin_user, admin_role)
         admin_user.save()
 
 

@@ -1,97 +1,119 @@
 # -*- encoding: utf-8 -*-
-from datetime import datetime
-from flask_restful import Resource, fields, marshal_with, reqparse
+from flask import jsonify
+from flask_restful import Resource, abort
 from flask_jwt import jwt_required, current_identity
 from kidstat import models
+from marshmallow import fields, validate, Schema
+from webargs.flaskparser import parser, use_args
+
+
+@parser.error_handler
+def handle_request_parsing_error(error):
+    """
+    webargs error handler that uses Flask-RESTful's abort function to return
+    a JSON error response to the client.
+    :param error:
+    :return:
+    """
+    return abort(422, errors=error.messages)
 
 
 # PARAMETER
-parameter_fields = {
-    'name': fields.String,
-    'unit': fields.String,
-    'description': fields.String,
-}
+class ParameterSchema(Schema):
+    name = fields.String(attribute='name', dump_to='name', required=True)
+    unit = fields.String(required=True)
+    description = fields.String(required=True)
 
 
-class ParametersListResource(Resource):
+class MarshMallowResource(Resource):
+    schema = None
 
-    @marshal_with(parameter_fields)
+    def get_result(self, data):
+        result = self.schema.dump(data)
+        return result
+
+
+class MarshMallowListResource(MarshMallowResource):
+
+    def response(self, data):
+        result = self.get_result(data)
+        return jsonify({'data': result.data})
+
+
+class MarshMallowSingleResource(MarshMallowResource):
+
+    def response(self, data):
+        result = self.get_result(data)
+        return jsonify(result.data)
+
+
+class ParametersListResource(MarshMallowListResource):
+    schema = ParameterSchema(many=True)
+
     def get(self):
-        return list(models.Parameter.objects.all())
+        return self.response(models.Parameter.objects.all())
 
 
-class ParameterResource(Resource):
+class ParameterResource(MarshMallowSingleResource):
+    schema = ParameterSchema()
 
-    @marshal_with(parameter_fields)
     def get(self, parameter_name):
-        return models.Parameter.objects.filter(name=parameter_name).first()
+        return self.response(models.Parameter.objects.filter(name=parameter_name).first())
 
 
 # Standard
-class StandardsListResource(Resource):
-
-    @marshal_with(parameter_fields)
-    def get(self, parameter_name):
-        parameter = models.Parameter.objects.filter(name=parameter_name).first()
-        return list(parameter.standards)
+# class StandardsListResource(Resource):
+#
+#     @marshal_with(parameter_fields)
+#     def get(self, parameter_name):
+#         parameter = models.Parameter.objects.filter(name=parameter_name).first()
+#         return list(parameter.standards)
 
 
 # Kid
-def birthday_validator(timestamp):
-    try:
-        return datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ')
-    except ValueError:
-        pass
-kid_parser = reqparse.RequestParser()
-kid_parser.add_argument('name', required=True)
-kid_parser.add_argument('gender', choices=[models.MALE, models.FEMALE])
-kid_parser.add_argument('birthday', type=birthday_validator)
-
-kid_fields = {
-    'name': fields.String,
-    'gender': fields.String,
-    'birthday': fields.DateTime(dt_format='iso8601'),
-}
+class KidSchema(Schema):
+    # FIXME: overriding a name could be bad
+    name = fields.String(attribute='name', dump_to='name', required=True)
+    gender = fields.String(required=True,
+                           validate=validate.OneOf(choices=(models.MALE, models.FEMALE)))
+    birthday = fields.DateTime(required=True, format='iso8601')
 
 
-class KidsListResource(Resource):
+class KidsListResource(MarshMallowListResource):
+    schema = KidSchema(many=True)
 
-    @marshal_with(kid_fields)
     @jwt_required()
     def get(self):
-        return list(current_identity.kids)
+        return self.response(current_identity.kids)
 
-    @marshal_with(kid_fields)
     @jwt_required()
-    def post(self):
-        args = kid_parser.parse_args()
+    @use_args(KidSchema(strict=True))
+    def post(self, args):
         kid = models.Kid(
             name=args['name'],
             birthday=args['birthday'],
             gender=args['gender'])
         current_identity.kids.append(kid)
         current_identity.save()
-        # FIXME: read data from DB
-        return kid
+        return self.response([kid])
 
 
-class KidResource(Resource):
+class KidResource(MarshMallowSingleResource):
+    schema = KidSchema()
 
-    @marshal_with(kid_fields)
     @jwt_required()
     def get(self, kid_id):
-        return current_identity.get_kid_by_id(kid_id)
+        return self.response(current_identity.get_kid_by_id(kid_id))
 
-    @marshal_with(kid_fields)
     @jwt_required()
-    def put(self, kid_id):
+    @use_args(KidSchema(strict=True))
+    def put(self, args, kid_id):
         kid = current_identity.get_kid_by_id(kid_id)
-        args = kid_parser.parse_args()
         kid.name = args['name']
         kid.gender = args['gender']
         kid.birthday = args['birthday']
         current_identity.save()
-        return current_identity.get_kid_by_id(kid_id)
+        return self.response(current_identity.get_kid_by_id(kid_id))
 
     @jwt_required()
     def delete(self, kid_id):
@@ -101,16 +123,73 @@ class KidResource(Resource):
         return {'success': True}
 
 
-class ObservationsListResource(Resource):
+class ObservationSchema(Schema):
 
-    observation_fields = {
-        'timestamp': fields.DateTime(dt_format='iso8601'),
-        'parameter': fields.String,
-        'value': fields.Float
-    }
+    timestamp = fields.DateTime(required=True, format='iso8601')
+    parameter = fields.String(required=True)
+    value = fields.Float(required=True)
 
-    @marshal_with(observation_fields)
+
+class ObservationsListResource(MarshMallowListResource):
+    schema = ObservationSchema(many=True)
+
     @jwt_required()
     def get(self, kid_id):
         kid = current_identity.get_kid_by_id(kid_id)
-        return list(kid.observations)
+        if kid:
+            return self.response(kid.observations)
+        abort(404, errors={"error": "Kid with id {0} not found".format(kid_id)})
+
+    @jwt_required()
+    @use_args(ObservationSchema(strict=True))
+    def post(self, args, kid_id):
+        parameter = models.Parameter.objects.filter(name=args['parameter']).first()
+        if parameter is None:
+            return jsonify({"error": "Bad parameter name {0}".format(args['parameter'])}), 422
+        kid = current_identity.get_kid_by_id(kid_id)
+        observation = models.Observation(
+            timestamp=args['timestamp'],
+            parameter=parameter,
+            value=args['value'])
+        kid.observations.append(observation)
+        current_identity.save()
+        return self.response([observation])
+
+
+class ObservationResource(MarshMallowSingleResource):
+    schema = ObservationSchema()
+
+    @staticmethod
+    def get_observation_or_404(kid_id, observation_id):
+        kid = current_identity.get_kid_by_id(kid_id)
+        if kid:
+            observation = kid.get_observation_by_id(observation_id)
+            if observation:
+                return observation
+        error_msg = "Observation with {0} not found for kid {1}".format(observation_id, kid_id)
+        return abort(404, errors={"error": error_msg})
+
+    @jwt_required()
+    def get(self, kid_id, observation_id):
+        return self.response(self.get_observation_or_404(kid_id, observation_id))
+
+    @jwt_required()
+    @use_args(ObservationSchema(strict=True))
+    def put(self, args, kid_id, observation_id):
+        observation = self.get_observation_or_404(kid_id, observation_id)
+        parameter = models.Parameter.objects.filter(name=args['parameter']).first()
+        if parameter is None:
+            abort(422, errors={"error": "Cannot find parameter".format(args['parameter'])})
+        observation.timestamp = args['timestamp']
+        observation.value = args['value']
+        observation.parameter = parameter
+        current_identity.save()
+        return self.response(observation)
+
+    @jwt_required()
+    def delete(self, kid_id, observation_id):
+        observation = self.get_observation_or_404(kid_id, observation_id)
+        kid = current_identity.get_kid_by_id(kid_id)
+        kid.update(pull__observations=observation)
+        current_identity.save()
+        return {'success': True}

@@ -45,7 +45,7 @@ class ParameterFactory(MongoEngineFactory):
 class ObservationFactory(EmbeddedDocumentFactory):
 
     class Meta:
-        model = models.Observations
+        model = models.Observation
 
     timestamp = factory.fuzzy.FuzzyDateTime(
         start_dt=datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days=29),

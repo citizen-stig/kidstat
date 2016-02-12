@@ -3,7 +3,10 @@ import os
 from flask import url_for, current_app
 import requests
 from tests.helpers.testcases import LiveServerTestCase
+from tests.helpers import model_factories
 from kidstat.app import create_app, setup_api, setup_security
+
+TIMESTAMP_FORMAT = '%Y-%m-%dT%H:%M:%S.%f+00:00'
 
 
 class BaseAPIIntegrationTestCase(LiveServerTestCase):
@@ -21,3 +24,14 @@ class BaseAPIIntegrationTestCase(LiveServerTestCase):
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
         return response_data['access_token']
+
+
+class AuthorizedAPIIntegrationTestCase(BaseAPIIntegrationTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.user = model_factories.UserFactory(kids=[])
+        self.user.set_password(self.user.email)
+        self.user.save()
+        self.access_token = self.login(self.user.email, self.user.email)
+        self.headers = {'Authorization': 'JWT ' + self.access_token}

@@ -51,3 +51,34 @@ class Login(BaseAPIIntegrationTestCase):
         self.assertIn('error', response_data)
         self.assertEqual(response_data['description'], 'Invalid credentials')
         self.assertEqual(response_data['error'], 'Bad Request')
+
+
+class ProtectedAPI(BaseAPIIntegrationTestCase):
+
+    def check_url(self, url, method='get'):
+        full_url = self.get_server_url() + url
+        response = requests.request(method, full_url)
+        self.assertEqual(response.status_code, 401)
+
+    def test_kids_list(self):
+        url = url_for('kids_list')
+        self.check_url(url)
+        self.check_url(url, method='post')
+
+    def test_kid_single(self):
+        url = url_for('kids_object', kid_id='deafbabe')
+        self.check_url(url)
+        self.check_url(url, method='put')
+        self.check_url(url, method='delete')
+
+    def test_observations_list(self):
+        url = url_for('observations_list', kid_id='deafbabe')
+        self.check_url(url)
+        self.check_url(url, method='post')
+
+    def test_observation_object(self):
+        url = url_for('observation_object',
+                      kid_id='deafbabe', observation_id='abcde')
+        self.check_url(url)
+        self.check_url(url, method='put')
+        self.check_url(url, method='delete')

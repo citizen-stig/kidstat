@@ -7,33 +7,32 @@ db = MongoEngine()
 
 MALE = 'male'
 FEMALE = 'female'
-
 ADMIN_ROLE = 'admin'
-
-
-class Standard(db.EmbeddedDocument):
-    id = db.ObjectIdField(primary_key=True, default=ObjectId)
-    age = db.IntField(required=True)
-    gender = db.StringField(required=True,
-                            choices=[(x, x) for x in (MALE, FEMALE)])
-    value = db.FloatField(required=True)
-    percentile = db.IntField(required=True)
-
-    def __str__(self):
-        return '{0} {1} {2}'.format(self.gender, self.age, self.percentile)
 
 
 class Parameter(db.Document):
     name = db.StringField(required=True, unique=True)
     description = db.StringField(max_length=255)
     unit = db.StringField(max_length=10)
-    standards = db.ListField(db.EmbeddedDocumentField(Standard))
 
     def __str__(self):
         return '{0}, {1}'.format(self.name, self.unit)
 
 
-class Observations(db.EmbeddedDocument):
+class Standard(db.Document):
+    id = db.ObjectIdField(primary_key=True, default=ObjectId)
+    age = db.IntField(required=True)
+    gender = db.StringField(required=True,
+                            choices=[(x, x) for x in (MALE, FEMALE)])
+    value = db.FloatField(required=True)
+    percentile = db.IntField(required=True)
+    parameter = db.ReferenceField(Parameter, required=True)
+
+    def __str__(self):
+        return '{0} {1} {2}'.format(self.gender, self.age, self.percentile)
+
+
+class Observation(db.EmbeddedDocument):
     # TODO: observation duplicate checking
     id = db.ObjectIdField(primary_key=True, default=ObjectId)
     timestamp = db.DateTimeField(required=True)
@@ -49,10 +48,13 @@ class Kid(db.EmbeddedDocument):
     name = db.StringField(required=True)
     birthday = db.DateTimeField(required=True)
     gender = db.StringField(choices=[(x, x) for x in (MALE, FEMALE)])
-    observations = db.EmbeddedDocumentListField(Observations)
+    observations = db.EmbeddedDocumentListField(Observation)
 
     def __str__(self):
         return self.name
+
+    def get_observation_by_id(self, observation_id):
+        return self.observations.filter(id=observation_id).first()
 
 
 class Role(db.Document, RoleMixin):

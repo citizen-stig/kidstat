@@ -17,7 +17,9 @@ class Read(BaseAPIIntegrationTestCase):
         response = requests.get(url)
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
-        self.assertEqual(len(response_data), self.count)
+        self.assertIn('data', response_data)
+        parameters_data = response_data['data']
+        self.assertEqual(len(parameters_data), self.count)
 
     def test_read_single(self):
         parameter = self.parameters[1]

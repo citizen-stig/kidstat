@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+import unittest
 from datetime import datetime, timedelta
 import pytz
 from flask import url_for
@@ -14,21 +15,18 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         super().setUp()
         self.url = self.get_server_url() + url_for('kids_list')
 
-    def test_non_auth(self):
-        response = requests.get(self.url)
-        self.assertEqual(response.status_code, 401)
-
     def test_get_list(self):
-        user = model_factories.UserFactory()
+        count = 3
+        user = model_factories.UserFactory(kids=[model_factories.KidFactory() for _ in range(count)])
         user.set_password(user.email)
         user.save()
-
         access_token = self.login(user.email, user.email)
-
         response = requests.get(self.url, headers={'Authorization': 'JWT ' + access_token})
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
-        self.assertEqual(len(user.kids), len(response_data))
+        self.assertIn('data', response_data)
+        kids_list = response_data['data']
+        self.assertEqual(len(user.kids), len(kids_list))
 
     def test_add_new(self):
         user = model_factories.UserFactory(kids=[])
@@ -47,8 +45,11 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
                                  headers={'Authorization': 'JWT ' + access_token})
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
-        self.assertEqual(response_data['name'], name)
-        self.assertEqual(response_data['gender'], models.MALE)
+        self.assertIn('data', response_data)
+        self.assertEqual(len(response_data['data']), 1)
+        kid_data = response_data['data'][0]
+        self.assertEqual(kid_data['name'], name)
+        self.assertEqual(kid_data['gender'], models.MALE)
         # TODO: Fix this
         # self.assertEqual(response_data['birthday'],
         #                  birthday.strftime('%Y-%m-%dT%H:%M:%S+00:00'))
@@ -76,7 +77,6 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
-
         for field in ('name', 'birthday', 'gender'):
             self.assertIn(field, response_data)
 
@@ -84,6 +84,10 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         self.assertEqual(response_data['gender'], kid.gender)
         self.assertEqual(response_data['birthday'],
                          kid.birthday.strftime('%Y-%m-%dT%H:%M:%S.%f+00:00'))
+
+    @unittest.skip('Not implemented')
+    def test_get_non_existed(self):
+        pass
 
     def test_update(self):
         user = model_factories.UserFactory(kids=[model_factories.KidFactory() for _ in range(3)])
@@ -116,6 +120,10 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         # self.assertEqual(response_data['birthday'],
         #                  birthday.strftime('%Y-%m-%dT%H:%M:%S.%f+00:00'))
 
+    @unittest.skip('Not implemented')
+    def test_update_non_existed(self):
+        pass
+
     def test_delete(self):
         count = 3
         user = model_factories.UserFactory(kids=[model_factories.KidFactory() for _ in range(count)])
@@ -139,3 +147,7 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
         for existed_kid in user.kids:
             self.assertNotEqual(removed_kid.id, existed_kid.id)
+
+    @unittest.skip('Not implemented')
+    def test_delete_non_existed(self):
+        pass

@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 from flask import jsonify
-from flask_restful import Resource, abort
 from flask_jwt import jwt_required, current_identity
-from kidstat import models
+from flask_restful import Resource, abort
 from marshmallow import fields, validate, Schema
 from webargs.flaskparser import parser, use_args
+from kidstat import models
 
 
 @parser.error_handler
@@ -58,7 +58,8 @@ class ParameterResource(MarshMallowSingleResource):
     schema = ParameterSchema()
 
     def get(self, parameter_name):
-        return self.response(models.Parameter.objects.filter(name=parameter_name).first())
+        return self.response(models.Parameter.objects
+                             .filter(name=parameter_name).first())
 
 
 # Kid
@@ -66,7 +67,8 @@ class KidSchema(Schema):
     # FIXME: overriding a name could be bad
     name = fields.String(attribute='name', dump_to='name', required=True)
     gender = fields.String(required=True,
-                           validate=validate.OneOf(choices=(models.MALE, models.FEMALE)))
+                           validate=validate.OneOf(
+                               choices=(models.MALE, models.FEMALE)))
     birthday = fields.DateTime(required=True, format='iso8601')
 
 
@@ -158,20 +160,23 @@ class ObservationResource(MarshMallowSingleResource):
             observation = kid.get_observation_by_id(observation_id)
             if observation:
                 return observation
-        error_msg = "Observation with {0} not found for kid {1}".format(observation_id, kid_id)
+        error_msg = "Observation id={0} not found".format(observation_id)
         abort(404, errors={"error": error_msg})
 
     @jwt_required()
     def get(self, kid_id, observation_id):
-        return self.response(self.get_observation_or_404(kid_id, observation_id))
+        return self.response(self.get_observation_or_404(kid_id,
+                                                         observation_id))
 
     @jwt_required()
     @use_args(ObservationSchema(strict=True))
     def put(self, args, kid_id, observation_id):
         observation = self.get_observation_or_404(kid_id, observation_id)
-        parameter = models.Parameter.objects.filter(name=args['parameter']).first()
+        parameter = models.Parameter.objects\
+            .filter(name=args['parameter']).first()
         if parameter is None:
-            abort(422, errors={"error": "Cannot find parameter".format(args['parameter'])})
+            error_msg = "Cannot find parameter {0}".format(args['parameter'])
+            abort(422, errors={"error": error_msg})
         observation.timestamp = args['timestamp']
         observation.value = args['value']
         observation.parameter = parameter

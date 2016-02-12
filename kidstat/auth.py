@@ -21,6 +21,6 @@ def get_user_from_payload(payload):
 
 
 def payload_handler(identity):
-        payload = _default_jwt_payload_handler(identity)
-        payload['identity'] = str(payload['identity'])
-        return payload
+    payload = _default_jwt_payload_handler(identity)
+    payload['identity'] = str(payload['identity'])
+    return payload

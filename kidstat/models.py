@@ -91,7 +91,8 @@ class User(UserMixin, db.Document):
         return utils.verify_password(password, self.password)
 
     def get_kid_by_id(self, kid_id):
-        # We suppose that there's always one result because of kid_id unique constraint
+        # We suppose that there's always one result
+        # because of kid_id unique constraint
         return self.kids.filter(id=kid_id).first()
 
 

@@ -15,33 +15,9 @@ class Sanity(BaseTestCase):
         self.assertEqual(expected_str, str(standard))
 
     def test_parameter_str(self):
-        parameter = model_factories.ParameterFactory(standards=[])
+        parameter = model_factories.ParameterFactory()
         expected_str = '{0}, {1}'.format(parameter.name, parameter.unit)
         self.assertEqual(str(parameter), expected_str)
-
-    def test_parameter_without_standards(self):
-        parameter = model_factories.ParameterFactory(standards=[])
-        parameter.save()
-        self.assertIsNotNone(parameter)
-
-    def test_parameter_with_several_standards(self):
-        parameter = model_factories.ParameterFactory()
-        parameter.save()
-        self.assertIsNotNone(parameter.id)
-        for standard in parameter.standards:
-            self.assertIsNotNone(standard.id)
-
-    @unittest.skip('Not Implemented')
-    def test_duplicate_standard(self):
-        pass
-
-    @unittest.skip('Not Implemented')
-    def test_same_standard_different_parameters(self):
-        pass
-
-    @unittest.skip('Not Implemented')
-    def test_duplicate_parameters(self):
-        pass
 
 
 class StandardValidation(BaseTestCase):

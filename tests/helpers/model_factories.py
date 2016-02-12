@@ -19,17 +19,6 @@ class EmbeddedDocumentFactory(factory.Factory):
         return super()._prepare(False, **kwargs)
 
 
-class StandardFactory(EmbeddedDocumentFactory):
-
-    class Meta:
-        model = models.Standard
-
-    age = factory.fuzzy.FuzzyInteger(low=1, high=300)
-    gender = factory.Iterator([models.MALE, models.FEMALE])
-    value = factory.fuzzy.FuzzyFloat(low=1.3, high=20.4)
-    percentile = factory.fuzzy.FuzzyInteger(low=1, high=99)
-
-
 class ParameterFactory(MongoEngineFactory):
 
     class Meta:
@@ -38,10 +27,20 @@ class ParameterFactory(MongoEngineFactory):
     name = factory.Sequence(lambda n: 'parameter-%d' % n)
     description = factory.Sequence(lambda n: 'Description of parameter%d' % n)
     unit = factory.Iterator(['kg', 'm'])
-    standards = factory.LazyAttribute(lambda o: [StandardFactory() for _ in range(3)])
 
 
-#######
+class StandardFactory(MongoEngineFactory):
+
+    class Meta:
+        model = models.Standard
+
+    age = factory.fuzzy.FuzzyInteger(low=1, high=300)
+    gender = factory.Iterator([models.MALE, models.FEMALE])
+    value = factory.fuzzy.FuzzyFloat(low=1.3, high=20.4)
+    percentile = factory.fuzzy.FuzzyInteger(low=1, high=99)
+    parameter = factory.SubFactory(ParameterFactory)
+
+
 class ObservationFactory(EmbeddedDocumentFactory):
 
     class Meta:

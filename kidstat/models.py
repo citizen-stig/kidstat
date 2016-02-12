@@ -42,6 +42,12 @@ class Observation(db.EmbeddedDocument):
     def __str__(self):
         return '{0}: {1}'.format(self.timestamp, self.value)
 
+    def get_standards(self, kid):
+        age = (self.timestamp - kid.birthday).days
+        return Standard.objects.filter(parameter=self.parameter,
+                                       gender=kid.gender,
+                                       age=age)
+
 
 class Kid(db.EmbeddedDocument):
     id = db.ObjectIdField(primary_key=True, default=ObjectId)

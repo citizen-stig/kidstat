@@ -65,8 +65,8 @@ class ParameterResource(MarshMallowSingleResource):
 
 # Kid
 class KidSchema(Schema):
-    # FIXME: overriding a name could be bad
-    name = fields.String(attribute='name', dump_to='name', required=True)
+    name_field = fields.String(attribute='name', dump_to='name',
+                               load_from='name', required=True)
     gender = fields.String(required=True,
                            validate=validate.OneOf(
                                choices=(models.MALE, models.FEMALE)))

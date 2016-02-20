@@ -5,6 +5,7 @@ from .base import Config as BaseConfig
 class Config(BaseConfig):
     DEBUG = True
     SECRET_KEY = 'super-secret'
+    DEBUG_TB_ENABLED = False
     DEBUG_TB_PANELS = [
         'flask_debugtoolbar.panels.versions.VersionDebugPanel',
         'flask_debugtoolbar.panels.headers.HeaderDebugPanel',

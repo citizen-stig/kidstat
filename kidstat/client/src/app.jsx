@@ -1,16 +1,9 @@
 var React = require('react');
+var ReactDOM = require('react-dom');
 var ReactBootstrap = require('react-bootstrap');
-
+var Header = require('./components/header');
 var options = {};
 
-var Button = ReactBootstrap.Button;
 
-var Badge = React.createClass({
-  render: function() {
-    return <Button bsStyle="primary">This is my first button</Button>
-  }
-});
-
-
-var element = React.createElement(Badge, options);
-React.render(element, document.querySelector('.main-container'));
+var element = React.createElement(Header, options);
+ReactDOM.render(element, document.querySelector('.main-container'));

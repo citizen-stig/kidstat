@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 import os
 import importlib
-from flask import Flask
+from flask import Flask, render_template
 from flask_admin import Admin
 from flask_mail import Mail
 from flask_restful import Api
@@ -30,6 +30,11 @@ def create_app():
     app.config.from_object(config_obj)
     db.init_app(app)
     Mail(app)
+
+    @app.route('/')
+    def home():
+        return render_template('index.html')
+
     return app
 
 

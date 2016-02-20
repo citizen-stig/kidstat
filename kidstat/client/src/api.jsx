@@ -10,6 +10,7 @@ module.exports = {
         return localStorage.getItem(tokenName);
     },
     post(url, body){
+        console.log("Posting from api.jsx");
         return fetch(rootUrl + url, {
             method: 'post',
             headers: {

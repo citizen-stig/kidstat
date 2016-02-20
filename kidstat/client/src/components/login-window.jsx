@@ -7,7 +7,7 @@ var LoginForm = require('./login-form');
 
 module.exports = React.createClass({
     mixins: [
-        Reflux.listenTo(AuthStore,"authenticated")
+        Reflux.listenTo(AuthStore, "authenticated")
     ],
     authenticated(event){
         console.log("Kinda authenticated");

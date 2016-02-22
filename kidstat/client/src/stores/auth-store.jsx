@@ -25,7 +25,7 @@ module.exports = Reflux.createStore({
             }.bind(this));
     },
     Logout(){
-        localStorage.removeItem(tokenName);
+        Api.removeToken();
         this.triggerLogout();
     }
 });

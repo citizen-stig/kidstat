@@ -9,6 +9,9 @@ module.exports = {
     getToken(){
         return localStorage.getItem(tokenName);
     },
+    removeToken(){
+        localStorage.removeItem(tokenName);
+    },
     post(url, body){
         console.log("Posting from api.jsx");
         return fetch(rootUrl + url, {

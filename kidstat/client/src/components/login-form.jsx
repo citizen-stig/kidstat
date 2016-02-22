@@ -22,7 +22,7 @@ module.exports = React.createClass({
     },
     render: function() {
     return (
-    <form className="form-horizontal">
+    <form>
         <Input type="email" label="Email Address"  placeholder="Enter email"
                value={this.state.email}
                onChange={this.handleEmailChange}

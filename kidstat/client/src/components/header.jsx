@@ -3,6 +3,8 @@ var Reflux = require('reflux');
 var ReactBootstrap = require('react-bootstrap');
 var LoginWindow = require('./login-window');
 var AuthStore = require('../stores/auth-store');
+var Actions = require('../actions');
+
 
 var Navbar = ReactBootstrap.Navbar;
 var Nav = ReactBootstrap.Nav;
@@ -29,7 +31,7 @@ module.exports = React.createClass({
         if (this.state.authenticated) {
             nav = (
                 <Nav pullRight>
-                    <NavItem eventKey={3} href="#">Logout</NavItem>
+                    <NavItem eventKey={3} onClick={Actions.Logout} href="#">Logout</NavItem>
                 </Nav>
             )
 

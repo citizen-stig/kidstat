@@ -10,7 +10,6 @@ module.exports = React.createClass({
         Reflux.listenTo(AuthStore, "authenticated")
     ],
     authenticated(event){
-        console.log("Kinda authenticated");
         if (event == 'authenticated'){this.close();}
     },
     getInitialState() {return {showModal: false};},

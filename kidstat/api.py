@@ -65,6 +65,7 @@ class ParameterResource(MarshMallowSingleResource):
 
 # Kid
 class KidSchema(Schema):
+    id = fields.String(dump_only=True)
     name_field = fields.String(attribute='name', dump_to='name',
                                load_from='name', required=True)
     gender = fields.String(required=True,

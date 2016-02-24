@@ -11,7 +11,6 @@ module.exports = React.createClass({
     },
     login(event){
         event.preventDefault();
-        console.log("We need to trigger Login action!");
         Actions.Login(this.state.email, this.state.password);
     },
     handleEmailChange(){

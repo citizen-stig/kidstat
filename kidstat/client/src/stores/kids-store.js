@@ -10,9 +10,9 @@ module.exports = Reflux.createStore({
     getKids: function(){
         return Api.authorizedGet('kids')
             .then(function(data){
-                this.kids = data;
+                this.kids = data.data;
                 this.triggerKidsReceived()
-            }.bind(this))
+            }.bind(this));
     },
     triggerKidsReceived: function(){
         this.trigger('change', this.kids);

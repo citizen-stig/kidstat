@@ -23,7 +23,7 @@ module.exports = {
             body: body
         }).then(function (response) {
             return response.json()
-        })
+        });
     },
     authorizedGet(url){
         return fetch(rootUrl + url, {
@@ -32,6 +32,8 @@ module.exports = {
                 'Content-Type': 'application/json',
                 'Authorization': 'JWT ' + this.getToken()
             }
-        })
+        }).then(function (response) {
+            return response.json()
+        });
     }
 };

@@ -67,6 +67,10 @@ def setup_admin(app):
 def setup_api(app):
     api_instance = Api(app, prefix='/api/v1')
     api_instance.add_resource(
+        api.CheckTokenResource,
+        '/check-token',
+        endpoint='check-token')
+    api_instance.add_resource(
         api.ParametersListResource,
         '/parameters',
         endpoint='parameters_list')

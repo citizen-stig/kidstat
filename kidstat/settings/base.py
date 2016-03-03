@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+from datetime import timedelta
 
 
 class Config(object):
@@ -14,7 +15,7 @@ class Config(object):
     SECURITY_PASSWORD_SALT = 'justsalt'
     JWT_AUTH_URL_RULE = '/api/v1/auth'
     JWT_AUTH_USERNAME_KEY = 'email'
-
+    JWT_EXPIRATION_DELTA = timedelta(hours=12)
     # SECURITY_CHANGEABLE = True
     # SECURITY_CHANGE_PASSWORD_TEMPLATE = 'auth/change_password.html'
     # SECURITY_RECOVERABLE = True

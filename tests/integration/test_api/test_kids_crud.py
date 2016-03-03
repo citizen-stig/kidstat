@@ -45,15 +45,13 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
                                  headers={'Authorization': 'JWT ' + access_token})
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
-        self.assertIn('data', response_data)
-        self.assertEqual(len(response_data['data']), 1)
-        kid_data = response_data['data'][0]
+        kid_data = response_data
         self.assertEqual(kid_data['name'], name)
         self.assertEqual(kid_data['gender'], models.MALE)
-        # TODO: Fix this
-        # self.assertEqual(response_data['birthday'],
-        #                  birthday.strftime('%Y-%m-%dT%H:%M:%S+00:00'))
-
+        # # TODO: Fix this
+        # # self.assertEqual(response_data['birthday'],
+        # #                  birthday.strftime('%Y-%m-%dT%H:%M:%S+00:00'))
+        #
         user = models.User.objects.get(id=user.id)
         self.assertEqual(len(user.kids), 1)
 
@@ -77,6 +75,7 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
+
         for field in ('name', 'birthday', 'gender'):
             self.assertIn(field, response_data)
 

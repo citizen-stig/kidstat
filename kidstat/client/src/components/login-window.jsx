@@ -1,31 +1,22 @@
 var React = require('react');
 var Reflux = require('reflux');
-var ReactBootstrap = require('react-bootstrap');
-var Modal = ReactBootstrap.Modal;
 var AuthStore = require('../stores/auth-store');
 var LoginForm = require('./login-form');
+var ModalWindow = require('./modal');
 
 module.exports = React.createClass({
     mixins: [
         Reflux.listenTo(AuthStore, "authenticated")
     ],
     authenticated(event){
-        if (event == 'authenticated'){this.close();}
+        if (event == 'authenticated'){this.refs.modal.close();}
     },
-    getInitialState() {return {showModal: false};},
-    close() {this.setState({showModal: false});},
-    open() {this.setState({showModal: true});},
+    open: function(){
+        this.refs.modal.open()
+    },
     render: function () {
-        return (
-            <div>
-                <Modal show={this.state.showModal} onHide={this.close}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Login</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <LoginForm />
-                    </Modal.Body>
-                </Modal>
-            </div>)
+        return <ModalWindow ref="modal" title="Login">
+            <LoginForm/>
+            </ModalWindow>
     }
 });

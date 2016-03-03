@@ -8,6 +8,7 @@ from webargs.flaskparser import parser, use_args
 from kidstat import models
 import mongoengine.errors
 
+
 @parser.error_handler
 def handle_request_parsing_error(error):
     """
@@ -22,23 +23,20 @@ def handle_request_parsing_error(error):
 class MarshMallowResource(Resource):
     schema = None
 
-    def get_result(self, data):
+    def object_response(self, data):
         result = self.schema.dump(data)
-        return result
+        return jsonify(result.data)
 
-
-class MarshMallowListResource(MarshMallowResource):
-
-    def response(self, data):
-        result = self.get_result(data)
+    def list_response(self, data):
+        result = self.schema.dump(data, many=True)
         return jsonify({'data': result.data})
 
 
-class MarshMallowSingleResource(MarshMallowResource):
+class CheckTokenResource(Resource):
 
-    def response(self, data):
-        result = self.get_result(data)
-        return jsonify(result.data)
+    @jwt_required()
+    def get(self):
+        return {"success": True}
 
 
 # PARAMETER
@@ -48,18 +46,18 @@ class ParameterSchema(Schema):
     description = fields.String(required=True)
 
 
-class ParametersListResource(MarshMallowListResource):
+class ParametersListResource(MarshMallowResource):
     schema = ParameterSchema(many=True)
 
     def get(self):
-        return self.response(models.Parameter.objects.all())
+        return self.list_response(models.Parameter.objects.all())
 
 
-class ParameterResource(MarshMallowSingleResource):
+class ParameterResource(MarshMallowResource):
     schema = ParameterSchema()
 
     def get(self, parameter_name):
-        return self.response(models.Parameter.objects
+        return self.object_response(models.Parameter.objects
                              .filter(name=parameter_name).first())
 
 
@@ -74,12 +72,12 @@ class KidSchema(Schema):
     birthday = fields.DateTime(required=True, format='iso8601')
 
 
-class KidsListResource(MarshMallowListResource):
-    schema = KidSchema(many=True)
+class KidsListResource(MarshMallowResource):
+    schema = KidSchema()
 
     @jwt_required()
     def get(self):
-        return self.response(current_identity.kids)
+        return self.list_response(current_identity.kids)
 
     @jwt_required()
     @use_args(KidSchema(strict=True))
@@ -90,15 +88,15 @@ class KidsListResource(MarshMallowListResource):
             gender=args['gender'])
         current_identity.kids.append(kid)
         current_identity.save()
-        return self.response([kid])
+        return self.object_response(kid)
 
 
-class KidResource(MarshMallowSingleResource):
+class KidResource(MarshMallowResource):
     schema = KidSchema()
 
     @jwt_required()
     def get(self, kid_id):
-        return self.response(current_identity.get_kid_by_id(kid_id))
+        return self.object_response(current_identity.get_kid_by_id(kid_id))
 
     @jwt_required()
     @use_args(KidSchema(strict=True))
@@ -108,7 +106,7 @@ class KidResource(MarshMallowSingleResource):
         kid.gender = args['gender']
         kid.birthday = args['birthday']
         current_identity.save()
-        return self.response(current_identity.get_kid_by_id(kid_id))
+        return self.object_response(current_identity.get_kid_by_id(kid_id))
 
     @jwt_required()
     def delete(self, kid_id):
@@ -126,14 +124,14 @@ class ObservationSchema(Schema):
     value = fields.Float(required=True)
 
 
-class ObservationsListResource(MarshMallowListResource):
-    schema = ObservationSchema(many=True)
+class ObservationsListResource(MarshMallowResource):
+    schema = ObservationSchema()
 
     @jwt_required()
     def get(self, kid_id):
         kid = current_identity.get_kid_by_id(kid_id)
         if kid:
-            return self.response(kid.observations)
+            return self.list_response(kid.observations)
         abort(404, errors={"error": "Kid with id {0} not found".format(kid_id)})
 
     @jwt_required()
@@ -151,10 +149,10 @@ class ObservationsListResource(MarshMallowListResource):
             value=args['value'])
         kid.observations.append(observation)
         current_identity.save()
-        return self.response([observation])
+        return self.object_response(observation)
 
 
-class ObservationResource(MarshMallowSingleResource):
+class ObservationResource(MarshMallowResource):
     schema = ObservationSchema()
 
     @staticmethod
@@ -169,7 +167,7 @@ class ObservationResource(MarshMallowSingleResource):
 
     @jwt_required()
     def get(self, kid_id, observation_id):
-        return self.response(self.get_observation_or_404(kid_id,
+        return self.object_response(self.get_observation_or_404(kid_id,
                                                          observation_id))
 
     @jwt_required()
@@ -185,7 +183,7 @@ class ObservationResource(MarshMallowSingleResource):
         observation.value = args['value']
         observation.parameter = parameter
         current_identity.save()
-        return self.response(observation)
+        return self.object_response(observation)
 
     @jwt_required()
     def delete(self, kid_id, observation_id):

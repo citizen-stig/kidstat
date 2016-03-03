@@ -43,8 +43,6 @@ module.exports = React.createClass({
                 </Nav>
             );
         }
-
-
         return (
             <div>
                 <Navbar>

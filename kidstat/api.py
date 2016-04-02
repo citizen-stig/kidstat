@@ -57,8 +57,8 @@ class ParameterResource(MarshMallowResource):
     schema = ParameterSchema()
 
     def get(self, parameter_name):
-        return self.object_response(models.Parameter.objects
-                             .filter(name=parameter_name).first())
+        return self.object_response(
+            models.Parameter.objects.filter(name=parameter_name).first())
 
 
 # Kid
@@ -167,8 +167,8 @@ class ObservationResource(MarshMallowResource):
 
     @jwt_required()
     def get(self, kid_id, observation_id):
-        return self.object_response(self.get_observation_or_404(kid_id,
-                                                         observation_id))
+        return self.object_response(
+            self.get_observation_or_404(kid_id, observation_id))
 
     @jwt_required()
     @use_args(ObservationSchema(strict=True))

@@ -2,7 +2,6 @@
 import unittest
 from tests.helpers.testcases import BaseTestCase
 from tests.helpers import model_factories
-from kidstat import models
 
 
 class Sanity(BaseTestCase):

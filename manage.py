@@ -36,7 +36,8 @@ class PopulateStandardsValues(Command):
                  header[15] == 'P95',
                  header[17] == 'P99')
         if not all(check):
-            raise ValueError('Data file structure is changed: {0}'.format(check))
+            raise ValueError(
+                'Data file structure has changed: {0}'.format(check))
 
         for row in reader:
             if not row:
@@ -60,10 +61,12 @@ class PopulateStandardsValues(Command):
                                       description='Body length for age',
                                       unit='cm')
         height.save()
-        url_height_boys = 'http://www.who.int/childgrowth/standards/lhfa_boys_p_exp.txt'
+        url_height_boys = \
+            'http://www.who.int/childgrowth/standards/lhfa_boys_p_exp.txt'
         self.get_standards_data(models.MALE, url_height_boys, height)
 
-        url_height_girls = 'http://www.who.int/childgrowth/standards/lhfa_girls_p_exp.txt'
+        url_height_girls = \
+            'http://www.who.int/childgrowth/standards/lhfa_girls_p_exp.txt'
         self.get_standards_data(models.FEMALE, url_height_girls, height)
 
         # Weight
@@ -73,10 +76,12 @@ class PopulateStandardsValues(Command):
                                       description='Body weight',
                                       unit='kg')
         weight.save()
-        url_weight_boys = 'http://www.who.int/childgrowth/standards/wfa_boys_p_exp.txt'
+        url_weight_boys = \
+            'http://www.who.int/childgrowth/standards/wfa_boys_p_exp.txt'
         self.get_standards_data(models.MALE, url_weight_boys, weight)
 
-        url_weight_girls = 'http://www.who.int/childgrowth/standards/wfa_girls_p_exp.txt'
+        url_weight_girls = \
+            'http://www.who.int/childgrowth/standards/wfa_girls_p_exp.txt'
         self.get_standards_data(models.MALE, url_weight_girls, weight)
 
 
@@ -88,7 +93,8 @@ class CreateAdminUser(Command):
     )
 
     def run(self, email, password):
-        admin_role = models.user_datastore.find_or_create_role(models.ADMIN_ROLE)
+        admin_role = models.user_datastore.find_or_create_role(
+            models.ADMIN_ROLE)
         admin_user = models.User(email=email)
         admin_user.set_password(password)
         models.user_datastore.add_role_to_user(admin_user, admin_role)

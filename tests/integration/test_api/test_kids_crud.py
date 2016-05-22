@@ -89,7 +89,8 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         pass
 
     def test_update(self):
-        user = model_factories.UserFactory(kids=[model_factories.KidFactory() for _ in range(3)])
+        user = model_factories.UserFactory(
+            kids=[model_factories.KidFactory() for _ in range(3)])
         user.set_password(user.email)
         user.save()
         user = models.User.objects.get(id=user.id)
@@ -104,8 +105,10 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         new_kid_data = {'name': new_name,
                         'gender': gender,
                         'birthday': birthday.strftime('%Y-%m-%dT%H:%M:%SZ')}
-        response = requests.put(url, json=new_kid_data,
-                                headers={'Authorization': 'JWT ' + access_token})
+        response = requests.put(
+            url,
+            json=new_kid_data,
+            headers={'Authorization': 'JWT ' + access_token})
 
         self.assertEqual(response.status_code, 200)
         response_data = response.json()

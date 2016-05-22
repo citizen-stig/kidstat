@@ -9,3 +9,8 @@ sudo apt-get install -y build-essential python3 python3-dev python3-setuptools p
 sudo apt-get install -y mongodb-org
 
 sudo pip3 install -r /vagrant/kidstat/requirements/develop.txt
+
+
+# Install node
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get install -y nodejs

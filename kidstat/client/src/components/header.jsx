@@ -24,6 +24,7 @@ module.exports = React.createClass({
     },
     openLogin: function () {
         console.log("Open login window");
+        console.log(this.refs);
         this.refs.login_window.open();
     },
     render: function () {

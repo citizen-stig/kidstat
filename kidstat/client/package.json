@@ -14,8 +14,6 @@
     "node-notifier": "^4.2.1",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
-    "react-bootstrap": "^0.28.3",
-    "react-date-picker": "^4.0.8",
     "reactify": "^1.1.0",
     "reflux": "^0.2.8",
     "vinyl-source-stream": "^1.1.0",
@@ -34,7 +32,6 @@
   "browserify-shim": {
     "react": "global:React",
     "react-dom": "global:ReactDOM",
-    "react-bootstrap": "global:ReactBootstrap",
     "reflux": "global:Reflux"
  }
 }

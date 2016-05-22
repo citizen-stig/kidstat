@@ -3,7 +3,6 @@ var rootUrl = '/api/v1/';
 var tokenName = 'accessToken';
 
 function checkStatus(response) {
-    console.log("Check response status");
   if (response.status >= 200 && response.status < 300) {
     return response
   } else {
@@ -28,7 +27,6 @@ module.exports = {
         localStorage.removeItem(tokenName);
     },
     post(url, body){
-        console.log("Posting from api.jsx");
         return fetch(rootUrl + url, {
             method: 'post',
             headers: {
@@ -41,7 +39,6 @@ module.exports = {
             .then(parseJSON);
     },
     authorizedGet(url){
-        console.log("Authorized get from API");
         return fetch(rootUrl + url, {
             headers: {
                 'Accept': 'application/json',

@@ -34,7 +34,6 @@ module.exports = Reflux.createStore({
                     this.triggerAuthenticated();
                 }.bind(this))
                 .catch(function(error){
-                    console.log(error);
                     this.triggerLogout()
                 }.bind(this))
         } else {

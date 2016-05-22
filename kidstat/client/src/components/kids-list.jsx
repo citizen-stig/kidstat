@@ -5,7 +5,6 @@ var Reflux = require('reflux');
 var Image = ReactBootstrap.Image;
 var KidsStore = require('../stores/kids-store');
 var Actions = require('../actions');
-var KidForm = require('./kid-form');
 
 var oneDay = 24*60*60*1000;
 
@@ -29,10 +28,7 @@ module.exports = React.createClass({
         var birthday = Date.parse(kid.birthday);
         return Math.round((today.getTime() - birthday) / oneDay)
     },
-    updateKid: function(kid){
-        console.log('Are you going to update this kid');
-        console.log(kid);
-    },
+    updateKid: function(kid){},
     deleteKid: function(kid){
         Actions.deleteKid(kid);
     },

@@ -18,8 +18,6 @@ module.exports = Reflux.createStore({
         this.triggerLoading();
         return Api.authorizedPost('kids', kid)
             .then(function(new_kid){
-                    console.log("HAHAHAHA");
-                    console.log(new_kid);
                     this.kids.push(new_kid);
                     this.triggerKidsReceived();
             }.bind(this));

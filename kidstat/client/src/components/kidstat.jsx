@@ -10,7 +10,6 @@ var KidsList = require('./kids-list');
 var PublicIndex = require('./public-index');
 var Actions = require('../actions');
 var Loader = require('./loading.jsx');
-var AddNewKid = require('./add-new-kid');
 
 module.exports = React.createClass({
     mixins: [
@@ -30,23 +29,17 @@ module.exports = React.createClass({
     getInitialState: function () {
         return {authorized: false, loaded: false}
     },
-    openAddNewKidWindow: function(){
-        this.refs.addNewKidWindow.open()
-    },
     render: function () {
 
         var body;
         if (this.state.authenticated) {
             body = <div>
                 <div className="row">
-                    <div className="pull-right">
-                        <Button onClick={this.openAddNewKidWindow} bsStyle="primary">Add new kid</Button>
-                    </div>
                 </div>
                 <div>
                     <KidsList/>
                 </div>
-                <AddNewKid ref="addNewKidWindow"/>
+                <p>Under construction</p>
             </div>
         } else {
             body = <PublicIndex/>

@@ -10,11 +10,9 @@ module.exports = React.createClass({
     ],
     handleAuth: function(event){
         if (event == 'loading'){
-            console.log('Show loader');
             this.show();
         } else {
             this.hide();
-            console.log('Hide loader');
         }
     },
     getInitialState: function () {

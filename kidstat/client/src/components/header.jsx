@@ -4,7 +4,7 @@ var ReactBootstrap = require('react-bootstrap');
 var LoginWindow = require('./login-window');
 var AuthStore = require('../stores/auth-store');
 var Actions = require('../actions');
-
+var FacebookLogin = require('react-facebook-login');
 
 var Navbar = ReactBootstrap.Navbar;
 var Nav = ReactBootstrap.Nav;
@@ -25,6 +25,9 @@ module.exports = React.createClass({
     openLogin: function () {
         this.refs.login_window.open();
     },
+    responseFacebook: function (response) {
+        console.log(response)
+    },
     render: function () {
         var nav;
         if (this.state.authenticated) {
@@ -39,6 +42,10 @@ module.exports = React.createClass({
                 <Nav pullRight>
                     <NavItem eventKey={1} onClick={this.openLogin} href="#">Login</NavItem>
                     <NavItem eventKey={3} href="#">Register</NavItem>
+                    <FacebookLogin
+    appId="288802541458761"
+    autoLoad={true}
+    callback={this.responseFacebook} />
                 </Nav>
             );
         }

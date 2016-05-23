@@ -22,3 +22,7 @@ class Config(object):
     # SECURITY_FORGOT_PASSWORD_TEMPLATE = 'auth/forgot_password.html'
     # SECURITY_RESET_PASSWORD_TEMPLATE = 'auth/reset_password.html'
     # SECURITY_LOGIN_USER_TEMPLATE = 'auth/login.html'
+    SOCIAL_FACEBOOK = {
+        'consumer_key': '288802541458761',
+        'consumer_secret': 'fc13e5c1ccb51dbb73afcd80fce76e0e'
+    }

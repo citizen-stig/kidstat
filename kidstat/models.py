@@ -88,7 +88,9 @@ class User(UserMixin, db.Document):
         self.password = utils.encrypt_password(password)
 
     def check_password(self, password):
-        return utils.verify_password(password, self.password)
+        if self.password:
+            return utils.verify_password(password, self.password)
+        return False
 
     def get_kid_by_id(self, kid_id):
         # We suppose that there's always one result

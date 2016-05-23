@@ -35,7 +35,7 @@ var bundler = watchify(browserify({
     entries: ['./src/app.jsx'],
     transform: [reactify],
     extensions: ['.jsx'],
-    external: ['react', 'react-dom', 'react-bootstrap', 'reflux'],
+    // external: ['react', 'react-dom', 'react-bootstrap', 'reflux'],
     debug: true,
     cache: {},
     packageCache: {},

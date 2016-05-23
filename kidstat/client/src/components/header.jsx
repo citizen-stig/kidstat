@@ -1,8 +1,8 @@
 var React = require('react');
 var Reflux = require('reflux');
 var ReactBootstrap = require('react-bootstrap');
-var LoginWindow = require('./login-window');
-var AuthStore = require('../stores/auth-store');
+var LoginWindow = require('./login-window.jsx');
+var AuthStore = require('../stores/auth-store.jsx');
 var Actions = require('../actions');
 var FacebookLogin = require('react-facebook-login');
 

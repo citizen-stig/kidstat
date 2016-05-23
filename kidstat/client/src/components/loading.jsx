@@ -1,6 +1,6 @@
 var React = require('react');
-var AuthStore = require('../stores/auth-store');
-var KidsStore = require('../stores/kids-store');
+var AuthStore = require('../stores/auth-store.jsx');
+var KidsStore = require('../stores/kids-store.jsx');
 var Reflux = require('reflux');
 
 module.exports = React.createClass({

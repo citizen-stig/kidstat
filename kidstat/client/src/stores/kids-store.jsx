@@ -2,8 +2,8 @@
  * Created by nikolaygolub on 20/02/16.
  */
 var Reflux = require('reflux');
-var Api = require('../api');
-var Actions = require('../actions');
+var Api = require('../api.jsx');
+var Actions = require('../actions.jsx');
 
 module.exports = Reflux.createStore({
     listenables: [Actions],

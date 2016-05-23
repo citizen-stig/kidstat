@@ -20,9 +20,14 @@
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^2.4.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jsdom": "^9.1.0",
+    "mocha": "^2.5.1",
+    "mocha-jsdom": "^1.1.0",
+    "react-addons-test-utils": "^15.1.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --compilers .:test/compiler.js --require ./test/dom-mock.js ./test/test*.js"
   },
   "keywords": [],
   "author": "",
@@ -32,7 +37,5 @@
       "browserify-shim"
     ]
   },
-  "browserify-shim": {
-
-  }
+  "browserify-shim": {}
 }

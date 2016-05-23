@@ -55,4 +55,10 @@ gulp.task('build', function () {
     bundle()
 });
 
+
+// TODO: add "test" task
+// gulp.task('test', function () {
+//     return 
+// })
+
 gulp.task('default', ['build']);

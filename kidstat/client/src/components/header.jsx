@@ -26,7 +26,8 @@ module.exports = React.createClass({
         this.refs.login_window.open();
     },
     responseFacebook: function (response) {
-        console.log(response)
+        console.log(response);
+        Actions.FacebookLogin(response['accessToken']);
     },
     render: function () {
         var nav;

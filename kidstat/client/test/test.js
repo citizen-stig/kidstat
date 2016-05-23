@@ -54,3 +54,4 @@ describe('Loader', function () {
 //  - Gulp task
 //  - How to mock
 //  - How to run coverage
+//  - How to test react state

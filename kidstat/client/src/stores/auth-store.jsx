@@ -13,6 +13,10 @@ module.exports = Reflux.createStore({
     triggerLoading(){
         this.trigger('loading');
     },
+    _storeToken(data){
+        Api.storeToken(data['access_token']);
+        this.triggerAuthenticated();
+    },
     Login(email, password){
         this.triggerLoading();
         var body = JSON.stringify({
@@ -20,10 +24,13 @@ module.exports = Reflux.createStore({
             password: password
         });
         return Api.post('auth', body)
-            .then(function (data) {
-                Api.storeToken(data['access_token']);
-                this.triggerAuthenticated();
-            }.bind(this));
+            .then(_storeToken);
+    },
+    FacebookLogin(accessToken){
+        this.triggerLoading();
+        var body = JSON.stringify({accessToken: accessToken});
+        return Api.post('facebook-login', body)
+            .then(_storeToken)
     },
     CheckAuthorization(){
         this.triggerLoading();
@@ -39,7 +46,6 @@ module.exports = Reflux.createStore({
         } else {
             this.triggerLogout();
         }
-
     },
     Logout(){
         Api.removeToken();

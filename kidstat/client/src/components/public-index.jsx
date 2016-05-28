@@ -23,7 +23,7 @@ module.exports = React.createClass({
                         </div>
                     </Col>
                     <Col xs={12} md={4}>
-                        <h1>Login</h1>
+                        <h2>Login</h2>
                         <LoginForm/>
                         <hr/>
                         <FacebookLogin

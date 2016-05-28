@@ -10,6 +10,9 @@ var TestUtils = require('react-addons-test-utils');
 var sinon = require('sinon');
 var chai = require('chai');
 var expect = chai.expect;
+var rewire = require('rewire');
+var CompnentMock = require('./component-mock');
+
 
 describe('Empty test', function () {
     it('should run successfully', function () {
@@ -17,12 +20,17 @@ describe('Empty test', function () {
     });
 });
 
+
 describe('Public index', function () {
-    jsdom({skipWindowCheck: true});
-    var PublicIndex = require('../src/components/public-index.jsx');
-    var indexDiv = TestUtils.renderIntoDocument(
-            <PublicIndex />
-    );
+
+    var PublicIndex;
+    var indexDiv;
+
+    before(function () {
+        PublicIndex = rewire('../src/components/public-index.jsx');
+        PublicIndex.__set__('FacebookLogin', CompnentMock);
+        indexDiv = TestUtils.renderIntoDocument(<PublicIndex />);
+    });
 
     it('should contain header: Welcome to the Kidstat', function () {
         var header = TestUtils.findRenderedDOMComponentWithTag(indexDiv, 'h1');
@@ -95,7 +103,6 @@ describe('Loader', function () {
 // http://www.hammerlab.org/2015/02/14/testing-react-web-apps-with-mocha/
 // http://willcodefor.beer/react-testing-with-mocha-chai-sinon-and-gulp/
 // TODO:
-//  - Gulp task
-//  - How to mock
+//  + How to mock
 //  - How to run coverage
 //  - How to test react state

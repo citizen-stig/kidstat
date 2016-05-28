@@ -20,8 +20,8 @@
     "mocha": "^2.5.1",
     "mocha-jsdom": "^1.1.0",
     "path": "^0.12.7",
-    "proxyquire": "^1.7.9",
     "react-addons-test-utils": "^15.1.0",
+    "rewire": "^2.5.1",
     "sinon": "^1.17.4",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"

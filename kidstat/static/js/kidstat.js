@@ -40481,7 +40481,7 @@
 	                { className: 'show-grid' },
 	                React.createElement(
 	                    Col,
-	                    { xs: 12, md: 8 },
+	                    { xs: 12, md: 7 },
 	                    React.createElement(
 	                        'div',
 	                        { className: 'text-center' },
@@ -40500,18 +40500,13 @@
 	                ),
 	                React.createElement(
 	                    Col,
-	                    { xs: 12, md: 4 },
+	                    { xs: 12, md: 5 },
 	                    React.createElement(
-	                        'h1',
+	                        'h2',
 	                        null,
 	                        'Login'
 	                    ),
 	                    React.createElement(LoginForm, null),
-	                    React.createElement(
-	                        'p',
-	                        null,
-	                        'Some Change!'
-	                    ),
 	                    React.createElement('hr', null),
 	                    React.createElement(FacebookLogin, {
 	                        appId: '288802541458761',
@@ -40537,9 +40532,15 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(38);
 	var ReactBootstrap = __webpack_require__(169);
-	var Input = ReactBootstrap.Input;
-	var ButtonInput = ReactBootstrap.ButtonInput;
+	var Form = ReactBootstrap.Form;
+	var Col = ReactBootstrap.Col;
+	var FormGroup = ReactBootstrap.FormGroup;
+	var FormControl = ReactBootstrap.FormControl;
+	var InputGroup = ReactBootstrap.InputGroup;
+	var ControlLabel = ReactBootstrap.ControlLabel;
+	var Button = ReactBootstrap.Button;
 
 	var Actions = __webpack_require__(438);
 
@@ -40554,26 +40555,79 @@
 	        Actions.Login(this.state.email, this.state.password);
 	    },
 	    handleEmailChange() {
-	        this.setState({ email: this.refs.email.getValue() });
+	        this.setState({ email: ReactDOM.findDOMNode(this.refs.email).value });
 	    },
 	    handlePasswordChange() {
-	        this.setState({ password: this.refs.password.getValue() });
+	        this.setState({ password: ReactDOM.findDOMNode(this.refs.password).value });
 	    },
 	    render: function () {
 	        return React.createElement(
-	            'form',
-	            null,
-	            React.createElement(Input, { type: 'email', label: 'Email Address', placeholder: 'Enter email',
-	                value: this.state.email,
-	                onChange: this.handleEmailChange,
-	                hasFeedback: true,
-	                addonBefore: '@',
-	                ref: 'email' }),
-	            React.createElement(Input, { type: 'password', label: 'Password',
-	                value: this.state.password,
-	                onChange: this.handlePasswordChange,
-	                ref: 'password' }),
-	            React.createElement(ButtonInput, { type: 'submit', onClick: this.login, value: 'Login' })
+	            Form,
+	            { horizontal: true },
+	            React.createElement(
+	                FormGroup,
+	                { controlId: 'formControlsEmail' },
+	                React.createElement(
+	                    Col,
+	                    { componentClass: ControlLabel, sm: 3 },
+	                    'Email'
+	                ),
+	                React.createElement(
+	                    Col,
+	                    { sm: 9 },
+	                    React.createElement(
+	                        InputGroup,
+	                        null,
+	                        React.createElement(
+	                            InputGroup.Addon,
+	                            null,
+	                            '@'
+	                        ),
+	                        React.createElement(FormControl, {
+	                            type: 'email',
+	                            value: this.state.email,
+	                            placeholder: 'Enter email',
+	                            onChange: this.handleEmailChange,
+	                            addonBefore: '@',
+	                            ref: 'email' })
+	                    ),
+	                    React.createElement(FormControl.Feedback, null)
+	                )
+	            ),
+	            React.createElement(
+	                FormGroup,
+	                { controlId: 'formControlsPassword' },
+	                React.createElement(
+	                    Col,
+	                    { componentClass: ControlLabel, sm: 3 },
+	                    'Password'
+	                ),
+	                React.createElement(
+	                    Col,
+	                    { sm: 9 },
+	                    React.createElement(FormControl, {
+	                        type: 'password',
+	                        value: this.state.password,
+	                        placeholder: 'Enter password',
+	                        onChange: this.handlePasswordChange,
+	                        ref: 'password' }),
+	                    React.createElement(FormControl.Feedback, null)
+	                )
+	            ),
+	            React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                    Col,
+	                    { smOffset: 3, sm: 9 },
+	                    React.createElement(
+	                        Button,
+	                        { type: 'submit',
+	                            onClick: this.login },
+	                        'Login'
+	                    )
+	                )
+	            )
 	        );
 	    }
 	});

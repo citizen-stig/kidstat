@@ -15,14 +15,14 @@ module.exports = React.createClass({
     render: function () {
         return <Grid>
                 <Row className="show-grid">
-                    <Col xs={12} md={8}>
+                    <Col xs={12} md={7}>
                         <div className="text-center">
                             <h1>Welcome to the Kidstat!</h1>
                             <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Baby2.gif"/>
                             <p>This a web site, where you can track how your baby grows!</p>
                         </div>
                     </Col>
-                    <Col xs={12} md={4}>
+                    <Col xs={12} md={5}>
                         <h2>Login</h2>
                         <LoginForm/>
                         <hr/>

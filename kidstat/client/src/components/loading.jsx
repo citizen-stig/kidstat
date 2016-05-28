@@ -5,10 +5,10 @@ var Reflux = require('reflux');
 
 module.exports = React.createClass({
     mixins: [
-        Reflux.listenTo(AuthStore, "handleAuth"),
-        Reflux.listenTo(KidsStore, "handleAuth")
+        Reflux.listenTo(AuthStore, "handleEvent"),
+        Reflux.listenTo(KidsStore, "handleEvent")
     ],
-    handleAuth: function(event){
+    handleEvent: function(event){
         if (event == 'loading'){
             this.show();
         } else {
@@ -26,7 +26,7 @@ module.exports = React.createClass({
     },
     render: function(){
         return <div className={this.state.active ? '' : 'hidden'} id="loading">
-                <img id="loading-image" src="/static/images/loader.gif" alt="Loading..." />
+                <i id="spinner" class="fa fa-refresh fa-spin"></i>
             </div>
     }
 });

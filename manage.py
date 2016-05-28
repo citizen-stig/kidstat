@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
+import os
 import csv
+from flask import url_for
 from flask_script import Manager, Command, Option
 from flask_security import MongoEngineUserDatastore
 import requests
@@ -103,6 +105,20 @@ class CreateAdminUser(Command):
 
 if __name__ == "__main__":
     app = app_factory.create_app()
+
+    @app.context_processor
+    def override_url_for():
+        return dict(url_for=dated_url_for)
+
+    def dated_url_for(endpoint, **values):
+        if endpoint == 'static':
+            filename = values.get('filename', None)
+            if filename:
+                file_path = os.path.join(app.root_path,
+                                         endpoint, filename)
+                values['q'] = int(os.stat(file_path).st_mtime)
+        return url_for(endpoint, **values)
+
     app_factory.setup_security(app)
     app_factory.setup_admin(app)
     app_factory.setup_api(app)

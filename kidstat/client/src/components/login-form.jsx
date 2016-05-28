@@ -3,7 +3,7 @@ var ReactBootstrap = require('react-bootstrap');
 var Input = ReactBootstrap.Input;
 var ButtonInput = ReactBootstrap.ButtonInput;
 
-var Actions = require('../actions');
+var Actions = require('../actions.jsx');
 
 module.exports = React.createClass({
     getInitialState() {
@@ -27,13 +27,11 @@ module.exports = React.createClass({
                onChange={this.handleEmailChange}
                hasFeedback={true}
                addonBefore="@"
-               ref="email"
-        />
+               ref="email"/>
         <Input type="password" label="Password"
                value={this.state.password}
                onChange={this.handlePasswordChange}
-               ref="password"
-        />
+               ref="password"/>
         <ButtonInput type="submit" onClick={this.login} value="Login"/>
     </form>
     )

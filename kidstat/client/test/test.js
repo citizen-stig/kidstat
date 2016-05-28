@@ -7,7 +7,9 @@ var jsdom = require('mocha-jsdom');
 var assert = require('assert');
 var React = require('react');
 var TestUtils = require('react-addons-test-utils');
-
+var sinon = require('sinon');
+var chai = require('chai');
+var expect = chai.expect;
 
 describe('Empty test', function () {
     it('should run successfully', function () {
@@ -41,15 +43,57 @@ describe('Public index', function () {
 
 describe('Loader', function () {
     jsdom({skipWindowCheck: true});
-    // TODO: mock stores
     var Loading = require('../src/components/loading.jsx');
-    it('should be hidden by default');
-    it('should be shown when event is "loading"');
-    it('should be hidden for all non "loading" events');
+
+    it('should be hidden by default', function () {
+        var loaderRendered = TestUtils.renderIntoDocument(<Loading/>);
+        var loaderDiv = TestUtils.findRenderedDOMComponentWithTag(loaderRendered, 'div');
+        expect(loaderDiv.className).to.equal('hidden');
+        expect(loaderDiv.id).to.equal('loading');
+    });
+    it('should have fa refresh loader inside', function(){
+        var loaderRendered = TestUtils.renderIntoDocument(<Loading/>);
+        var loaderDiv = TestUtils.findRenderedDOMComponentWithTag(loaderRendered, 'div');
+        expect(loaderDiv.firstChild.tagName).to.equal('I');
+        // TODO: check classes
+        // expect(loaderDiv.firstChild.classList).to.contain.all('fa', 'fa-refresh', 'fa-spin');
+    });
+    
+    it('should be shown when event is "loading"', function () {
+        var loaderRendered = TestUtils.renderIntoDocument(<Loading/>);
+        sinon.stub(loaderRendered, 'show').returns(false);
+        sinon.stub(loaderRendered, 'hide').returns(false);
+        loaderRendered.handleEvent('loading');
+
+        sinon.assert.calledOnce(loaderRendered.show);
+        sinon.assert.notCalled(loaderRendered.hide);
+    });
+
+    it('should be hidden for all non "loading" events', function(){
+        var loaderRendered = TestUtils.renderIntoDocument(<Loading/>);
+        sinon.stub(loaderRendered, 'show').returns(false);
+        sinon.stub(loaderRendered, 'hide').returns(false);
+        loaderRendered.handleEvent('authenticated');
+
+        sinon.assert.notCalled(loaderRendered.show);
+        sinon.assert.calledOnce(loaderRendered.hide);
+    });
+
+    it('it should change "hidden" class when show and hide called', function(){
+        var loaderRendered = TestUtils.renderIntoDocument(<Loading/>);
+        var loaderDiv = TestUtils.findRenderedDOMComponentWithTag(loaderRendered, 'div');
+        expect(loaderDiv.className).to.equal('hidden');
+        loaderRendered.show();
+        expect(loaderDiv.className).to.equal('');
+        loaderRendered.hide();
+        expect(loaderDiv.className).to.equal('hidden');
+    });
+
 });
 
 // http://www.bebetterdeveloper.com/coding/getting-started-react-mocha.html
 // http://www.hammerlab.org/2015/02/14/testing-react-web-apps-with-mocha/
+// http://willcodefor.beer/react-testing-with-mocha-chai-sinon-and-gulp/
 // TODO:
 //  - Gulp task
 //  - How to mock

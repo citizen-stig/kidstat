@@ -24,13 +24,13 @@ module.exports = Reflux.createStore({
             password: password
         });
         return Api.post('auth', body)
-            .then(_storeToken);
+            .then(this._storeToken);
     },
     FacebookLogin(accessToken){
         this.triggerLoading();
         var body = JSON.stringify({accessToken: accessToken});
         return Api.post('facebook-login', body)
-            .then(_storeToken)
+            .then(this._storeToken)
     },
     CheckAuthorization(){
         this.triggerLoading();

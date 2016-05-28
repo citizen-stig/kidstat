@@ -1,10 +1,8 @@
 var React = require('react');
 var Reflux = require('reflux');
 var ReactBootstrap = require('react-bootstrap');
-var LoginWindow = require('./login-window.jsx');
 var AuthStore = require('../stores/auth-store.jsx');
-var Actions = require('../actions');
-var FacebookLogin = require('react-facebook-login');
+var Actions = require('../actions.jsx');
 
 var Navbar = ReactBootstrap.Navbar;
 var Nav = ReactBootstrap.Nav;
@@ -22,37 +20,17 @@ module.exports = React.createClass({
     getInitialState: function () {
         return {authenticated: false}
     },
-    openLogin: function () {
-        this.refs.login_window.open();
-    },
-    responseFacebook: function (response) {
-        console.log(response);
-        Actions.FacebookLogin(response['accessToken']);
-    },
     render: function () {
         var nav;
         if (this.state.authenticated) {
-            nav = (
-                <Nav pullRight>
-                    <NavItem eventKey={3} onClick={Actions.Logout} href="#">Logout</NavItem>
+            nav = <Nav pullRight>
+                    <NavItem eventKey={3} 
+                             onClick={Actions.Logout} href="#">
+                        Logout
+                    </NavItem>
                 </Nav>
-            )
-
-        } else {
-            nav = (
-                <Nav pullRight>
-                    <NavItem eventKey={1} onClick={this.openLogin} href="#">Login</NavItem>
-                    <NavItem eventKey={3} href="#">Register</NavItem>
-                    <FacebookLogin
-    appId="288802541458761"
-    autoLoad={true}
-    callback={this.responseFacebook} />
-                </Nav>
-            );
         }
-        return (
-            <div>
-                <Navbar>
+        return <Navbar>
                     <Navbar.Header>
                         <Navbar.Brand>
                             <a href="#">Kidstat</a>
@@ -60,9 +38,5 @@ module.exports = React.createClass({
                     </Navbar.Header>
                     {nav}
                 </Navbar>
-                <LoginWindow ref="login_window"/>
-            </div>
-        )
     }
-
 });

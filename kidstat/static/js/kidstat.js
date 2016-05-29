@@ -40559,10 +40559,6 @@
 	    mixins: [Reflux.listenTo(AuthStore, "handleAuthAction")],
 	    handleAuthAction(event, message) {
 	        if (event === 'authenticationFailed') {
-	            console.log('-=-=-=-=');
-	            console.log(event);
-	            console.log(message);
-	            console.log('-=-=-=-=-');
 	            this.setState({ error: message });
 	        }
 	    },
@@ -40688,10 +40684,16 @@
 	        this.setState({ active: false });
 	    },
 	    render: function () {
+	        var spinnerStyle = { 'fontSize': '20em' };
 	        return React.createElement(
 	            'div',
 	            { className: this.state.active ? '' : 'hidden', id: 'loading' },
-	            React.createElement('i', { id: 'spinner', 'class': 'fa fa-refresh fa-spin' })
+	            React.createElement('i', { id: 'spinner', className: 'fa fa-refresh fa-spin', style: spinnerStyle }),
+	            React.createElement(
+	                'span',
+	                { className: 'sr-only' },
+	                'Loading...'
+	            )
 	        );
 	    }
 	});

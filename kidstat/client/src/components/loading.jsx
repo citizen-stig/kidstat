@@ -25,8 +25,10 @@ module.exports = React.createClass({
         this.setState({active: false})
     },
     render: function(){
+        var spinnerStyle = {'fontSize': '20em'};
         return <div className={this.state.active ? '' : 'hidden'} id="loading">
-                <i id="spinner" class="fa fa-refresh fa-spin"></i>
+                <i id="spinner" className="fa fa-refresh fa-spin" style={spinnerStyle}/>
+                <span className="sr-only">Loading...</span>
             </div>
     }
 });

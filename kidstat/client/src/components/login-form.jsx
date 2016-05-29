@@ -38,9 +38,11 @@ module.exports = React.createClass({
         this.setState(
             {password: ReactDOM.findDOMNode(this.refs.password).value})
     },
+    
     render: function () {
+        var extraStyle = {'paddingTop': '20px'};
         return (
-            <Form horizontal>
+            <Form horizontal style={extraStyle}>
                 <FormGroup controlId="formControlsEmail">
                     <Col componentClass={ControlLabel} sm={3}>
                         Email

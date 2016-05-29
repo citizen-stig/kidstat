@@ -40292,6 +40292,8 @@
 	var Grid = ReactBootstrap.Grid;
 	var Row = ReactBootstrap.Row;
 	var Col = ReactBootstrap.Col;
+	var Tabs = ReactBootstrap.Tabs;
+	var Tab = ReactBootstrap.Tab;
 
 	var Actions = __webpack_require__(173);
 	var LoginForm = __webpack_require__(442);
@@ -40302,6 +40304,7 @@
 	    responseFacebook: function (response) {
 	        Actions.FacebookLogin(response['accessToken']);
 	    },
+
 	    render: function () {
 	        return React.createElement(
 	            Grid,
@@ -40320,7 +40323,8 @@
 	                            null,
 	                            'Welcome to the Kidstat!'
 	                        ),
-	                        React.createElement('img', { src: 'https://upload.wikimedia.org/wikipedia/commons/4/46/Baby2.gif' }),
+	                        React.createElement('img', {
+	                            src: 'https://upload.wikimedia.org/wikipedia/commons/4/46/Baby2.gif' }),
 	                        React.createElement(
 	                            'p',
 	                            null,
@@ -40336,7 +40340,24 @@
 	                        null,
 	                        'Login'
 	                    ),
-	                    React.createElement(LoginForm, null),
+	                    React.createElement(
+	                        Tabs,
+	                        { defaultActiveKey: "login", id: 'login-signup-tabs' },
+	                        React.createElement(
+	                            Tab,
+	                            { eventKey: 'login', title: 'Login' },
+	                            React.createElement(LoginForm, null)
+	                        ),
+	                        React.createElement(
+	                            Tab,
+	                            { eventKey: 'signup', title: 'Signup' },
+	                            React.createElement(
+	                                'p',
+	                                null,
+	                                'Here will be register form'
+	                            )
+	                        )
+	                    ),
 	                    React.createElement('hr', null),
 	                    React.createElement(FacebookLogin, {
 	                        appId: '288802541458761',
@@ -40400,10 +40421,12 @@
 	    handlePasswordChange() {
 	        this.setState({ password: ReactDOM.findDOMNode(this.refs.password).value });
 	    },
+
 	    render: function () {
+	        var extraStyle = { 'paddingTop': '20px' };
 	        return React.createElement(
 	            Form,
-	            { horizontal: true },
+	            { horizontal: true, style: extraStyle },
 	            React.createElement(
 	                FormGroup,
 	                { controlId: 'formControlsEmail' },

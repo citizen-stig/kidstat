@@ -40784,6 +40784,8 @@
 	var Row = ReactBootstrap.Row;
 	var Col = ReactBootstrap.Col;
 
+	var KidsList = __webpack_require__(447);
+
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
@@ -40791,10 +40793,111 @@
 	        return React.createElement(
 	            Row,
 	            null,
+	            React.createElement(KidsList, null)
+	        );
+	    }
+	});
+
+/***/ },
+/* 447 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactBootstrap = __webpack_require__(175);
+	var ListGroup = ReactBootstrap.ListGroup;
+	var ListGroupItem = ReactBootstrap.ListGroupItem;
+
+	var Actions = __webpack_require__(173);
+	var KidsStore = __webpack_require__(445);
+
+	var KidDetail = __webpack_require__(448);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    mixins: [Reflux.listenTo(KidsStore, "handleKids")],
+	    getInitialState: function () {
+	        return { kids: [] };
+	    },
+	    componentWillMount: function () {
+	        // Actions.getKids();
+	        var kids = [{ 'id': 1, 'name': 'John', 'birthday': '2015-01-01' }, { 'id': 2, 'name': 'Jack', 'birthday': '2015-02-02' }, { 'id': 3, 'name': 'Joseph', 'birthday': '2015-03-03' }, { 'id': 4, 'name': 'Jason', 'birthday': '2015-04-04' }];
+	        this.handleKids("event", kids);
+	    },
+	    handleKids: function (event, kids) {
+	        this.setState({ kids: kids });
+	    },
+	    renderKidsList: function () {
+	        return this.state.kids.map(function (kid) {
+	            return React.createElement(
+	                ListGroupItem,
+	                { eventKey: kid.id, key: kid.id },
+	                React.createElement(KidDetail, { kid: kid })
+	            );
+	        });
+	    },
+	    render: function () {
+	        var kids = [{ 'name': 'John', 'birthday': '2015-01-01' }, { 'name': 'Jack', 'birthday': '2015-02-02' }, { 'name': 'Joseph', 'birthday': '2015-03-03' }, { 'name': 'Jason', 'birthday': '2015-04-04' }];
+	        return React.createElement(
+	            ListGroup,
+	            null,
+	            this.renderKidsList()
+	        );
+	    }
+	});
+
+/***/ },
+/* 448 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactBootstrap = __webpack_require__(175);
+	var Image = ReactBootstrap.Image;
+	var Grid = ReactBootstrap.Grid;
+	var Row = ReactBootstrap.Row;
+	var Col = ReactBootstrap.Col;
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    propTypes: {
+	        kid: React.PropTypes.object.isRequired
+	    },
+	    render: function () {
+	        return React.createElement(
+	            Grid,
+	            null,
 	            React.createElement(
-	                'p',
+	                Row,
 	                null,
-	                'Under construction'
+	                React.createElement(
+	                    Col,
+	                    { xs: 12, md: 2 },
+	                    React.createElement(Image, { src: 'http://placehold.it/120x120', circle: true })
+	                ),
+	                React.createElement(
+	                    Col,
+	                    { xs: 12, md: 4 },
+	                    React.createElement(
+	                        'h1',
+	                        null,
+	                        this.props.kid.name
+	                    ),
+	                    React.createElement(
+	                        'p',
+	                        null,
+	                        this.props.kid.birthday
+	                    )
+	                ),
+	                React.createElement(
+	                    Col,
+	                    { xs: 12, md: 6 },
+	                    React.createElement(
+	                        'p',
+	                        null,
+	                        'Some other information'
+	                    )
+	                )
 	            )
 	        );
 	    }

@@ -4,10 +4,12 @@ var Grid = ReactBootstrap.Grid;
 var Row = ReactBootstrap.Row;
 var Col = ReactBootstrap.Col;
 
+var KidsList = require('./kids-list.jsx');
+
 module.exports = React.createClass({
     render: function(){
         return <Row>
-                <p>Under construction</p>
+            <KidsList/>
             </Row>
     }
 });

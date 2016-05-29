@@ -11,7 +11,7 @@ var ControlLabel = ReactBootstrap.ControlLabel;
 var Button = ReactBootstrap.Button;
 var HelpBlock = ReactBootstrap.HelpBlock;
 
-var AuthStore = require('../stores/auth-store');
+var AuthStore = require('../stores/auth-store.jsx');
 var Actions = require('../actions.jsx');
 
 module.exports = React.createClass({

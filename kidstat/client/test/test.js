@@ -36,16 +36,16 @@ describe('Public index', function () {
 
     it('should contain header: Welcome to the Kidstat', function () {
         var header = TestUtils.findRenderedDOMComponentWithTag(indexDiv, 'h1');
-        assert.equal(header.textContent, 'Welcome to the Kidstat!');
+        expect(header.textContent).to.equal('Welcome to the Kidstat!');
     });
     it('should have a paragraph describes the site', function () {
         var paragraph = TestUtils.findRenderedDOMComponentWithTag(indexDiv, 'p');
-        assert.equal(paragraph.textContent,
-            'This a web site, where you can track how your baby grows!')
+        expect(paragraph.textContent).to.equal(
+            'This a web site, where you can track how your baby grows!');
     });
     it('should have a picture of a baby', function () {
         var img = TestUtils.findRenderedDOMComponentWithTag(indexDiv, 'img');
-        assert.equal(img.src,
+        expect(img.src).to.equal(
             'https://upload.wikimedia.org/wikipedia/commons/4/46/Baby2.gif');
     })
 });
@@ -116,6 +116,7 @@ describe('LoginForm', function () {
         LoginAction = sinon.spy();
         ActionsStub = {Login: LoginAction};
         LoginForm.__set__('Actions', ActionsStub);
+        LoginForm.__set__('AuthStore', {});
     });
 
     beforeEach(function(){
@@ -125,6 +126,7 @@ describe('LoginForm', function () {
     it('should have empty state by default', function () {
         expect(loginFormRendered.state.email).to.equal('');
         expect(loginFormRendered.state.password).to.equal('');
+        expect(loginFormRendered.state.error).to.equal('');
     });
     it('should change state when email has changed', function () {
         var emailInput = ReactDOM.findDOMNode(loginFormRendered.refs.email);
@@ -147,9 +149,15 @@ describe('LoginForm', function () {
         TestUtils.Simulate.click(submitButton);
         assert(LoginAction.calledOnce);
         assert(LoginAction.calledWith(email, password));
+    });
+    it('should show authentication error', function(){
+        var event = 'authenticationFailed';
+        var message = 'Invalid Credentials';
+        loginFormRendered.handleAuthAction(event, message);
+        var helpBlock = TestUtils.findRenderedDOMComponentWithClass(
+            loginFormRendered, 'help-block');
+        expect(helpBlock.textContent).to.equal(message);
     })
-    
-
 });
 // http://www.bebetterdeveloper.com/coding/getting-started-react-mocha.html
 // http://www.hammerlab.org/2015/02/14/testing-react-web-apps-with-mocha/
@@ -157,4 +165,4 @@ describe('LoginForm', function () {
 // TODO:
 //  + How to mock
 //  - How to run coverage
-//  - How to test react state
+//  + How to test react state

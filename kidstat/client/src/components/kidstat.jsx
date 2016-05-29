@@ -1,11 +1,10 @@
 var React = require('react');
 var Reflux = require('reflux');
 
-var AuthStore = require('../stores/auth-store');
-var Header = require('./header');
-var KidsList = require('./kids-list');
-var PublicIndex = require('./public-index');
-var Actions = require('../actions');
+var AuthStore = require('../stores/auth-store.jsx');
+var Header = require('./header.jsx');
+var PublicIndex = require('./public-index.jsx');
+var Actions = require('../actions.jsx');
 var Loader = require('./loading.jsx');
 
 module.exports = React.createClass({
@@ -32,9 +31,6 @@ module.exports = React.createClass({
         if (this.state.authenticated) {
             body = <div>
                 <div className="row">
-                </div>
-                <div>
-                    <KidsList/>
                 </div>
                 <p>Under construction</p>
             </div>

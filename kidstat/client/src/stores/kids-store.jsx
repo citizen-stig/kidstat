@@ -1,6 +1,3 @@
-/**
- * Created by nikolaygolub on 20/02/16.
- */
 var Reflux = require('reflux');
 var Api = require('../api.jsx');
 var Actions = require('../actions.jsx');

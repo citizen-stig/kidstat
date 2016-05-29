@@ -20337,7 +20337,7 @@
 	var Header = __webpack_require__(174);
 	var PublicIndex = __webpack_require__(440);
 	var Actions = __webpack_require__(173);
-	var Loader = __webpack_require__(443);
+	var Loader = __webpack_require__(444);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -20432,6 +20432,16 @@
 	                this.triggerAuthenticationFailed(error);
 	            }.bind(this));
 	        }.bind(this));
+	    },
+	    Signup(firstName, lastName, email, password) {
+	        this.triggerLoading();
+	        var body = JSON.stringify({
+	            first_name: firstName,
+	            last_name: lastName,
+	            email: email,
+	            password: password
+	        });
+	        return Api.post('register', body).then(this._storeToken);
 	    },
 	    FacebookLogin(accessToken) {
 	        this.triggerLoading();
@@ -20976,7 +20986,7 @@
 
 	var Reflux = __webpack_require__(169);
 
-	module.exports = Reflux.createActions(['CheckAuthorization', 'Login', 'FacebookLogin', 'Logout', 'getKids', 'addNewKid', 'deleteKid', 'getObservations']);
+	module.exports = Reflux.createActions(['CheckAuthorization', 'Login', 'FacebookLogin', 'Signup', 'Logout', 'getKids', 'addNewKid', 'deleteKid', 'getObservations']);
 
 /***/ },
 /* 174 */
@@ -40297,6 +40307,7 @@
 
 	var Actions = __webpack_require__(173);
 	var LoginForm = __webpack_require__(442);
+	var SignupForm = __webpack_require__(443);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -40351,11 +40362,7 @@
 	                        React.createElement(
 	                            Tab,
 	                            { eventKey: 'signup', title: 'Signup' },
-	                            React.createElement(
-	                                'p',
-	                                null,
-	                                'Here will be register form'
-	                            )
+	                            React.createElement(SignupForm, null)
 	                        )
 	                    ),
 	                    React.createElement('hr', null),
@@ -40451,7 +40458,6 @@
 	                            value: this.state.email,
 	                            placeholder: 'Enter email',
 	                            onChange: this.handleEmailChange,
-	                            addonBefore: '@',
 	                            ref: 'email' })
 	                    ),
 	                    React.createElement(FormControl.Feedback, null)
@@ -40506,8 +40512,183 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(38);
+	var ReactBootstrap = __webpack_require__(175);
+	var Reflux = __webpack_require__(169);
+	var Form = ReactBootstrap.Form;
+	var Col = ReactBootstrap.Col;
+	var FormGroup = ReactBootstrap.FormGroup;
+	var FormControl = ReactBootstrap.FormControl;
+	var InputGroup = ReactBootstrap.InputGroup;
+	var ControlLabel = ReactBootstrap.ControlLabel;
+	var Button = ReactBootstrap.Button;
+	var HelpBlock = ReactBootstrap.HelpBlock;
+
 	var AuthStore = __webpack_require__(170);
-	var KidsStore = __webpack_require__(444);
+	var Actions = __webpack_require__(173);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    mixins: [Reflux.listenTo(AuthStore, "handleAuthAction")],
+	    handleAuthAction(event, message) {},
+	    getInitialState() {
+	        return {
+	            firstName: '',
+	            lastName: '',
+	            email: '',
+	            password: '',
+	            error: ''
+	        };
+	    },
+	    changeInput(field) {
+	        var changedState = {};
+	        changedState[field] = ReactDOM.findDOMNode(this.refs[field]).value;
+	        this.setState(changedState);
+	    },
+	    handleFirstNameChange() {
+	        this.changeInput('firstName');
+	    },
+	    handleLastNameChange() {
+	        this.changeInput('lastName');
+	    },
+	    handleEmailChange() {
+	        this.changeInput('email');
+	    },
+	    handlePasswordChange() {
+	        this.changeInput('password');
+	    },
+	    signup(event) {
+	        event.preventDefault();
+	        console.log('SIGNUPPP');
+	        Actions.Signup(this.state.firstName, this.state.lastName, this.state.email, this.state.password);
+	    },
+	    render: function () {
+	        var extraStyle = { 'paddingTop': '20px' };
+	        return React.createElement(
+	            Form,
+	            { horizontal: true, style: extraStyle },
+	            React.createElement(
+	                FormGroup,
+	                { controlId: 'formControlsFirstEmail' },
+	                React.createElement(
+	                    Col,
+	                    { componentClass: ControlLabel, sm: 3 },
+	                    'First Name'
+	                ),
+	                React.createElement(
+	                    Col,
+	                    { sm: 9 },
+	                    React.createElement(FormControl, {
+	                        type: 'text',
+	                        value: this.state.firstName,
+	                        placeholder: 'Enter first name',
+	                        onChange: this.handleFirstNameChange,
+	                        ref: 'firstName' }),
+	                    React.createElement(FormControl.Feedback, null)
+	                )
+	            ),
+	            React.createElement(
+	                FormGroup,
+	                { controlId: 'formControlsLastEmail' },
+	                React.createElement(
+	                    Col,
+	                    { componentClass: ControlLabel, sm: 3 },
+	                    'Last Name'
+	                ),
+	                React.createElement(
+	                    Col,
+	                    { sm: 9 },
+	                    React.createElement(FormControl, {
+	                        type: 'text',
+	                        value: this.state.lastName,
+	                        placeholder: 'Enter last name',
+	                        onChange: this.handleLastNameChange,
+	                        ref: 'lastName' }),
+	                    React.createElement(FormControl.Feedback, null)
+	                )
+	            ),
+	            React.createElement(
+	                FormGroup,
+	                { controlId: 'formControlsEmail' },
+	                React.createElement(
+	                    Col,
+	                    { componentClass: ControlLabel, sm: 3 },
+	                    'Email'
+	                ),
+	                React.createElement(
+	                    Col,
+	                    { sm: 9 },
+	                    React.createElement(
+	                        InputGroup,
+	                        null,
+	                        React.createElement(
+	                            InputGroup.Addon,
+	                            null,
+	                            '@'
+	                        ),
+	                        React.createElement(FormControl, {
+	                            type: 'email',
+	                            value: this.state.email,
+	                            placeholder: 'Enter email',
+	                            onChange: this.handleEmailChange,
+	                            addonBefore: '@',
+	                            ref: 'email' })
+	                    ),
+	                    React.createElement(FormControl.Feedback, null)
+	                )
+	            ),
+	            React.createElement(
+	                FormGroup,
+	                { controlId: 'formControlsPassword' },
+	                React.createElement(
+	                    Col,
+	                    { componentClass: ControlLabel, sm: 3 },
+	                    'Password'
+	                ),
+	                React.createElement(
+	                    Col,
+	                    { sm: 9 },
+	                    React.createElement(FormControl, {
+	                        type: 'password',
+	                        value: this.state.password,
+	                        placeholder: 'Enter password',
+	                        onChange: this.handlePasswordChange,
+	                        ref: 'password' }),
+	                    React.createElement(FormControl.Feedback, null),
+	                    this.state.error ? React.createElement(
+	                        HelpBlock,
+	                        null,
+	                        this.state.error
+	                    ) : ''
+	                )
+	            ),
+	            React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                    Col,
+	                    { smOffset: 3, sm: 9 },
+	                    React.createElement(
+	                        Button,
+	                        { type: 'submit',
+	                            ref: 'submitButton',
+	                            onClick: this.signup },
+	                        'Register'
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 444 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var AuthStore = __webpack_require__(170);
+	var KidsStore = __webpack_require__(445);
 	var Reflux = __webpack_require__(169);
 
 	module.exports = React.createClass({
@@ -40546,7 +40727,7 @@
 	});
 
 /***/ },
-/* 444 */
+/* 445 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Reflux = __webpack_require__(169);

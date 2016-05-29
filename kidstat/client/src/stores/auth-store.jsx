@@ -38,6 +38,17 @@ module.exports = Reflux.createStore({
                     }.bind(this));
             }.bind(this));
     },
+    Signup(firstName, lastName, email, password){
+        this.triggerLoading();
+        var body = JSON.stringify({
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            password: password
+        });
+        return Api.post('register', body)
+            .then(this._storeToken)
+    },
     FacebookLogin(accessToken){
         this.triggerLoading();
         var body = JSON.stringify({accessToken: accessToken});

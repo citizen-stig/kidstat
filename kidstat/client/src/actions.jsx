@@ -4,6 +4,7 @@ module.exports = Reflux.createActions([
     'CheckAuthorization',
     'Login',
     'FacebookLogin',
+    'Signup',
     'Logout',
     'getKids',
     'addNewKid',

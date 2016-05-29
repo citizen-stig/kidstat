@@ -9,6 +9,7 @@ var Tab = ReactBootstrap.Tab;
 
 var Actions = require('../actions.jsx');
 var LoginForm = require('./login-form.jsx');
+var SignupForm = require('./signup-form.jsx');
 
 module.exports = React.createClass({
     responseFacebook: function (response) {
@@ -34,7 +35,7 @@ module.exports = React.createClass({
                             <LoginForm/>
                         </Tab>
                         <Tab eventKey="signup" title="Signup">
-                            <p>Here will be register form</p>
+                            <SignupForm/>
                         </Tab>
                     </Tabs>
                     <hr/>

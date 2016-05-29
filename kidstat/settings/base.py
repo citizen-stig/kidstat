@@ -13,6 +13,8 @@ class Config(object):
     }
     SECURITY_PASSWORD_HASH = 'pbkdf2_sha512'
     SECURITY_PASSWORD_SALT = 'justsalt'
+    SECURITY_CONFIRMABLE = False
+    SECURITY_SEND_REGISTER_EMAIL = False
     JWT_AUTH_URL_RULE = '/api/v1/auth'
     JWT_AUTH_USERNAME_KEY = 'email'
     JWT_EXPIRATION_DELTA = timedelta(hours=12)

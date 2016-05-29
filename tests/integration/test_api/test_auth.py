@@ -105,6 +105,8 @@ class Registration(BaseAPIIntegrationTestCase):
         response_data = response.json()
         self.assertIn('success', response_data)
         self.assertTrue(response_data['success'])
+        self.assertIn('access_token', response_data)
+        self.assertIsNotNone(response_data['access_token'])
         # Check database
         users = models.User.objects.all()
         self.assertEqual(users.count(), 1)

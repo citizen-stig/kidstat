@@ -19,30 +19,76 @@ module.exports = React.createClass({
         Reflux.listenTo(AuthStore, "handleAuthAction")
     ],
     handleAuthAction(event, message){
-        if(event === 'authenticationFailed'){
+        if(event === 'signupFailed'){
             this.setState({error: message})
         }
     },
     getInitialState() {
-        return {email: '', password: '', error: ''};
+        return {
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: '',
+            error: ''
+        };
     },
-    login(event){
-        event.preventDefault();
-        this.setState({error: ''});
-        Actions.Login(this.state.email, this.state.password);
+    changeInput(field){
+        var changedState = {};
+        changedState[field] =  ReactDOM.findDOMNode(this.refs[field]).value;
+        this.setState(changedState)
+    },
+    handleFirstNameChange(){
+        this.changeInput('firstName')
+    },
+    handleLastNameChange(){
+        this.changeInput('lastName');
     },
     handleEmailChange(){
-        this.setState({email: ReactDOM.findDOMNode(this.refs.email).value})
+        this.changeInput('email');
     },
     handlePasswordChange(){
-        this.setState(
-            {password: ReactDOM.findDOMNode(this.refs.password).value})
+        this.changeInput('password');
     },
-
+    signup(event){
+        event.preventDefault();
+        Actions.Signup(
+            this.state.firstName,
+            this.state.lastName,
+            this.state.email,
+            this.state.password)
+    },
     render: function () {
         var extraStyle = {'paddingTop': '20px'};
         return (
             <Form horizontal style={extraStyle}>
+                <FormGroup controlId="formControlsFirstEmail">
+                    <Col componentClass={ControlLabel} sm={3}>
+                        First Name
+                    </Col>
+                    <Col sm={9}>
+                        <FormControl
+                            type="text"
+                            value={this.state.firstName}
+                            placeholder="Enter first name"
+                            onChange={this.handleFirstNameChange}
+                            ref="firstName"/>
+                        <FormControl.Feedback />
+                    </Col>
+                </FormGroup>
+                <FormGroup controlId="formControlsLastEmail">
+                    <Col componentClass={ControlLabel} sm={3}>
+                        Last Name
+                    </Col>
+                    <Col sm={9}>
+                        <FormControl
+                            type="text"
+                            value={this.state.lastName}
+                            placeholder="Enter last name"
+                            onChange={this.handleLastNameChange}
+                            ref="lastName"/>
+                        <FormControl.Feedback />
+                    </Col>
+                </FormGroup>
                 <FormGroup controlId="formControlsEmail">
                     <Col componentClass={ControlLabel} sm={3}>
                         Email
@@ -55,6 +101,7 @@ module.exports = React.createClass({
                                 value={this.state.email}
                                 placeholder="Enter email"
                                 onChange={this.handleEmailChange}
+                                addonBefore="@"
                                 ref="email"/>
                         </InputGroup>
                         <FormControl.Feedback />
@@ -79,7 +126,7 @@ module.exports = React.createClass({
                     <Col smOffset={3} sm={9}>
                         <Button type="submit"
                                 ref="submitButton"
-                                onClick={this.login}>Login</Button>
+                                onClick={this.signup}>Register</Button>
                     </Col>
                 </FormGroup>
             </Form>

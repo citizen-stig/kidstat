@@ -29,8 +29,11 @@ class RegistrationResource(Resource):
     @use_args(RegistrationSchema(strict=True))
     def post(self, args):
         try:
-            register_user(**args)
-            return {'success': True}
+            user = register_user(**args)
+            jwt = current_app.extensions['jwt']
+            access_token = jwt.jwt_encode_callback(user)
+            return {'success': True,
+                    'access_token': access_token.decode('utf-8')}
         except (mongoengine.errors.OperationError,
                 mongoengine.errors.ValidationError) as exc:
             return abort(422, errors=str(exc))

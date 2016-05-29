@@ -17,7 +17,7 @@ def setup_api(app):
         endpoint='facebook-login')
     api.add_resource(
         auth.RegistrationResource,
-        '/registrer',
+        '/register',
         endpoint='register')
     # Parameters
     api.add_resource(

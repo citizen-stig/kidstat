@@ -126,7 +126,7 @@ module.exports = React.createClass({
                     <Col smOffset={3} sm={9}>
                         <Button type="submit"
                                 ref="submitButton"
-                                onClick={this.signup}>Register</Button>
+                                onClick={this.signup}>Signup</Button>
                     </Col>
                 </FormGroup>
             </Form>

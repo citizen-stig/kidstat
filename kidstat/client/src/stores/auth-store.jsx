@@ -10,6 +10,9 @@ module.exports = Reflux.createStore({
     triggerAuthenticationFailed(event){
         this.trigger('authenticationFailed', event);
     },
+    triggerSignupFailed(event){
+        this.trigger('signupFailed', event)
+    },
     triggerLogout(){
         this.trigger('logout');
     },
@@ -48,6 +51,15 @@ module.exports = Reflux.createStore({
         });
         return Api.post('register', body)
             .then(this._storeToken)
+            .catch(function(error){
+                return error.response.json()
+                    .then(function(data){
+                        this.triggerSignupFailed(data['description']);
+                    }.bind(this))
+                    .catch(function (exc) {
+                        this.triggerSignupFailed(error)
+                    }.bind(this));
+            }.bind(this))
     },
     FacebookLogin(accessToken){
         this.triggerLoading();

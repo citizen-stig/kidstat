@@ -15,7 +15,6 @@ module.exports = React.createClass({
     responseFacebook: function (response) {
         Actions.FacebookLogin(response['accessToken']);
     },
-    
     render: function () {
         return <Grid>
             <Row className="show-grid">
@@ -30,7 +29,7 @@ module.exports = React.createClass({
                 </Col>
                 <Col xs={12} md={5}>
                     <h2>Login</h2>
-                    <Tabs defaultActiveKey={"login"} id="login-signup-tabs">
+                    <Tabs defaultActiveKey="login" id="login-signup-tabs">
                         <Tab eventKey="login" title="Login">
                             <LoginForm/>
                         </Tab>

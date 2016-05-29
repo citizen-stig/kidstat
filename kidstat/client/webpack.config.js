@@ -8,7 +8,6 @@ var config = {
     entry: APP_DIR + '/app.js',
     externals: {
         "reflux": "Reflux"
-        // "react-bootstrap": "ReactBootstrap"
     },
     resolve: {
         extensions: ['', '.js', '.jsx']

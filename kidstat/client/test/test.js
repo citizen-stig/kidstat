@@ -159,6 +159,60 @@ describe('LoginForm', function () {
         expect(helpBlock.textContent).to.equal(message);
     })
 });
+describe('SignupForm', function () {
+
+    var SignupForm;
+    var ActionsStub;
+    var SignupAction;
+    var signupFormRendered;
+    var fields = ['firstName', 'lastName', 'email', 'password'];
+    var firstName = 'John';
+    var lastName = 'Snow';
+    var email = 'email@example.com';
+    var password = 'myPassword';
+
+    before(function () {
+        SignupForm = rewire('../src/components/signup-form.jsx');
+        SignupAction = sinon.spy();
+        ActionsStub = {Signup: SignupAction};
+        SignupForm.__set__('Actions', ActionsStub);
+        SignupForm.__set__('AuthStore', {});
+    });
+
+    beforeEach(function(){
+        signupFormRendered = TestUtils.renderIntoDocument(<SignupForm/>);
+    });
+
+    it('should have empty state by default', function () {
+        expect(signupFormRendered.state.firstName).to.equal('');
+        expect(signupFormRendered.state.lastName).to.equal('');
+        expect(signupFormRendered.state.email).to.equal('');
+        expect(signupFormRendered.state.password).to.equal('');
+        expect(signupFormRendered.state.error).to.equal('');
+    });
+
+    it('should change state when email has changed', function () {
+        var emailInput = ReactDOM.findDOMNode(signupFormRendered.refs.email);
+        emailInput.value = email;
+        TestUtils.Simulate.change(emailInput);
+        expect(signupFormRendered.state.email).to.equal(email);
+        expect(signupFormRendered.state.password).to.equal('');
+        expect(signupFormRendered.state.firstName).to.equal('');
+        expect(signupFormRendered.state.lastName).to.equal('');
+    });
+
+    it('should change state when password has changed', function () {
+        var passwordInput = ReactDOM.findDOMNode(signupFormRendered.refs.password);
+        passwordInput.value = password;
+        TestUtils.Simulate.change(passwordInput);
+        expect(signupFormRendered.state.email).to.equal('');
+        expect(signupFormRendered.state.password).to.equal(password);
+        expect(signupFormRendered.state.firstName).to.equal('');
+        expect(signupFormRendered.state.lastName).to.equal('');
+    });
+
+});
+
 // http://www.bebetterdeveloper.com/coding/getting-started-react-mocha.html
 // http://www.hammerlab.org/2015/02/14/testing-react-web-apps-with-mocha/
 // http://willcodefor.beer/react-testing-with-mocha-chai-sinon-and-gulp/

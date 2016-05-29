@@ -20338,6 +20338,7 @@
 	var PublicIndex = __webpack_require__(440);
 	var Actions = __webpack_require__(173);
 	var Loader = __webpack_require__(444);
+	var Dashboard = __webpack_require__(446);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -20357,22 +20358,6 @@
 	        return { authorized: false, loaded: false };
 	    },
 	    render: function () {
-
-	        var body;
-	        if (this.state.authenticated) {
-	            body = React.createElement(
-	                'div',
-	                null,
-	                React.createElement('div', { className: 'row' }),
-	                React.createElement(
-	                    'p',
-	                    null,
-	                    'Under construction'
-	                )
-	            );
-	        } else {
-	            body = React.createElement(PublicIndex, null);
-	        }
 	        return React.createElement(
 	            'div',
 	            null,
@@ -20380,7 +20365,7 @@
 	            React.createElement(
 	                'div',
 	                { className: 'container' },
-	                body
+	                this.state.authenticated ? React.createElement(Dashboard, null) : React.createElement(PublicIndex, null)
 	            ),
 	            React.createElement(Loader, { ref: 'loader' })
 	        );
@@ -20408,6 +20393,9 @@
 	    },
 	    triggerAuthenticationFailed(event) {
 	        this.trigger('authenticationFailed', event);
+	    },
+	    triggerSignupFailed(event) {
+	        this.trigger('signupFailed', event);
 	    },
 	    triggerLogout() {
 	        this.trigger('logout');
@@ -20441,7 +20429,13 @@
 	            email: email,
 	            password: password
 	        });
-	        return Api.post('register', body).then(this._storeToken);
+	        return Api.post('register', body).then(this._storeToken).catch(function (error) {
+	            return error.response.json().then(function (data) {
+	                this.triggerSignupFailed(data['description']);
+	            }.bind(this)).catch(function (exc) {
+	                this.triggerSignupFailed(error);
+	            }.bind(this));
+	        }.bind(this));
 	    },
 	    FacebookLogin(accessToken) {
 	        this.triggerLoading();
@@ -40315,7 +40309,6 @@
 	    responseFacebook: function (response) {
 	        Actions.FacebookLogin(response['accessToken']);
 	    },
-
 	    render: function () {
 	        return React.createElement(
 	            Grid,
@@ -40353,7 +40346,7 @@
 	                    ),
 	                    React.createElement(
 	                        Tabs,
-	                        { defaultActiveKey: "login", id: 'login-signup-tabs' },
+	                        { defaultActiveKey: 'login', id: 'login-signup-tabs' },
 	                        React.createElement(
 	                            Tab,
 	                            { eventKey: 'login', title: 'Login' },
@@ -40531,7 +40524,11 @@
 	    displayName: 'exports',
 
 	    mixins: [Reflux.listenTo(AuthStore, "handleAuthAction")],
-	    handleAuthAction(event, message) {},
+	    handleAuthAction(event, message) {
+	        if (event === 'signupFailed') {
+	            this.setState({ error: message });
+	        }
+	    },
 	    getInitialState() {
 	        return {
 	            firstName: '',
@@ -40560,7 +40557,6 @@
 	    },
 	    signup(event) {
 	        event.preventDefault();
-	        console.log('SIGNUPPP');
 	        Actions.Signup(this.state.firstName, this.state.lastName, this.state.email, this.state.password);
 	    },
 	    render: function () {
@@ -40674,7 +40670,7 @@
 	                        { type: 'submit',
 	                            ref: 'submitButton',
 	                            onClick: this.signup },
-	                        'Register'
+	                        'Signup'
 	                    )
 	                )
 	            )
@@ -40775,6 +40771,32 @@
 	    },
 	    triggerLoading: function () {
 	        this.trigger('loading');
+	    }
+	});
+
+/***/ },
+/* 446 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactBootstrap = __webpack_require__(175);
+	var Grid = ReactBootstrap.Grid;
+	var Row = ReactBootstrap.Row;
+	var Col = ReactBootstrap.Col;
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    render: function () {
+	        return React.createElement(
+	            Row,
+	            null,
+	            React.createElement(
+	                'p',
+	                null,
+	                'Under construction'
+	            )
+	        );
 	    }
 	});
 

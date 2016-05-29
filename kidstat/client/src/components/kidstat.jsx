@@ -6,6 +6,7 @@ var Header = require('./header.jsx');
 var PublicIndex = require('./public-index.jsx');
 var Actions = require('../actions.jsx');
 var Loader = require('./loading.jsx');
+var Dashboard = require('./dashboard.jsx');
 
 module.exports = React.createClass({
     mixins: [
@@ -26,21 +27,10 @@ module.exports = React.createClass({
         return {authorized: false, loaded: false}
     },
     render: function () {
-
-        var body;
-        if (this.state.authenticated) {
-            body = <div>
-                <div className="row">
-                </div>
-                <p>Under construction</p>
-            </div>
-        } else {
-            body = <PublicIndex/>
-        }
         return (<div>
             <Header/>
             <div className="container">
-                {body}
+                {this.state.authenticated ? <Dashboard/> : <PublicIndex/>}
             </div>
             <Loader ref="loader"/>
         </div>)

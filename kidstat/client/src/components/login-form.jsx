@@ -57,7 +57,6 @@ module.exports = React.createClass({
                                 onChange={this.handleEmailChange}
                                 ref="email"/>
                         </InputGroup>
-                        <FormControl.Feedback />
                     </Col>
                 </FormGroup>
                 <FormGroup controlId="formControlsPassword">
@@ -71,7 +70,6 @@ module.exports = React.createClass({
                             placeholder="Enter password"
                             onChange={this.handlePasswordChange}
                             ref="password"/>
-                        <FormControl.Feedback />
                         {this.state.error ? <HelpBlock>{this.state.error}</HelpBlock> : ''}
                     </Col>
                 </FormGroup>

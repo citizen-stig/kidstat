@@ -16,17 +16,14 @@ module.exports = React.createClass({
         return {kids: []}
     },
     componentWillMount: function () {
-        // Actions.getKids();
-        var kids = [
-            {'id': 1, 'name': 'John', 'birthday': '2015-01-01'},
-            {'id': 2, 'name': 'Jack', 'birthday': '2015-02-02'},
-            {'id': 3, 'name': 'Joseph', 'birthday': '2015-03-03'},
-            {'id': 4, 'name': 'Jason', 'birthday': '2015-04-04'}
-        ];
-        this.handleKids("event", kids);
+        Actions.getKids();
     },
     handleKids: function (event, kids) {
-        this.setState({kids: kids});
+        console.log('-.-.-.-.-.-.-');
+        console.log(event);
+        if (event === 'change'){
+            this.setState({kids: kids});
+        }
     },
     renderKidsList: function () {
         return this.state.kids.map(function(kid){
@@ -36,12 +33,6 @@ module.exports = React.createClass({
         })
     },
     render: function () {
-        var kids = [
-            {'name': 'John', 'birthday': '2015-01-01'},
-            {'name': 'Jack', 'birthday': '2015-02-02'},
-            {'name': 'Joseph', 'birthday': '2015-03-03'},
-            {'name': 'Jason', 'birthday': '2015-04-04'}
-        ];
         return <ListGroup>
                 {this.renderKidsList()}
             </ListGroup>

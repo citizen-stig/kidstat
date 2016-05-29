@@ -40452,8 +40452,7 @@
 	                            placeholder: 'Enter email',
 	                            onChange: this.handleEmailChange,
 	                            ref: 'email' })
-	                    ),
-	                    React.createElement(FormControl.Feedback, null)
+	                    )
 	                )
 	            ),
 	            React.createElement(
@@ -40473,7 +40472,6 @@
 	                        placeholder: 'Enter password',
 	                        onChange: this.handlePasswordChange,
 	                        ref: 'password' }),
-	                    React.createElement(FormControl.Feedback, null),
 	                    this.state.error ? React.createElement(
 	                        HelpBlock,
 	                        null,
@@ -40785,6 +40783,7 @@
 	var Col = ReactBootstrap.Col;
 
 	var KidsList = __webpack_require__(447);
+	var AddKid = __webpack_require__(449);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -40793,6 +40792,7 @@
 	        return React.createElement(
 	            Row,
 	            null,
+	            React.createElement(AddKid, null),
 	            React.createElement(KidsList, null)
 	        );
 	    }
@@ -40820,12 +40820,21 @@
 	        return { kids: [] };
 	    },
 	    componentWillMount: function () {
-	        // Actions.getKids();
-	        var kids = [{ 'id': 1, 'name': 'John', 'birthday': '2015-01-01' }, { 'id': 2, 'name': 'Jack', 'birthday': '2015-02-02' }, { 'id': 3, 'name': 'Joseph', 'birthday': '2015-03-03' }, { 'id': 4, 'name': 'Jason', 'birthday': '2015-04-04' }];
-	        this.handleKids("event", kids);
+	        Actions.getKids();
+	        // var kids = [
+	        //     {'id': 1, 'name': 'John', 'birthday': '2015-01-01'},
+	        //     {'id': 2, 'name': 'Jack', 'birthday': '2015-02-02'},
+	        //     {'id': 3, 'name': 'Joseph', 'birthday': '2015-03-03'},
+	        //     {'id': 4, 'name': 'Jason', 'birthday': '2015-04-04'}
+	        // ];
+	        // this.handleKids("event", kids);
 	    },
 	    handleKids: function (event, kids) {
-	        this.setState({ kids: kids });
+	        console.log('-.-.-.-.-.-.-');
+	        console.log(event);
+	        if (event === 'change') {
+	            this.setState({ kids: kids });
+	        }
 	    },
 	    renderKidsList: function () {
 	        return this.state.kids.map(function (kid) {
@@ -40897,6 +40906,268 @@
 	                        null,
 	                        'Some other information'
 	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 449 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactBootstrap = __webpack_require__(175);
+	var Button = ReactBootstrap.Button;
+	var Modal = ReactBootstrap.Modal;
+	var Row = ReactBootstrap.Row;
+
+	var Actions = __webpack_require__(173);
+	var KidForm = __webpack_require__(450);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    getInitialState() {
+	        return { showModal: false };
+	    },
+
+	    close() {
+	        this.setState({ showModal: false });
+	    },
+	    addKid(kid) {
+	        Actions.addNewKid(kid);
+	    },
+	    open() {
+	        this.setState({ showModal: true });
+	    },
+	    render: function () {
+	        return React.createElement(
+	            Row,
+	            null,
+	            React.createElement(
+	                Button,
+	                { onClick: this.open },
+	                'Add Kid'
+	            ),
+	            React.createElement(
+	                Modal,
+	                { show: this.state.showModal, onHide: this.close },
+	                React.createElement(
+	                    Modal.Header,
+	                    { closeButton: true },
+	                    React.createElement(
+	                        Modal.Title,
+	                        null,
+	                        'Modal heading'
+	                    )
+	                ),
+	                React.createElement(
+	                    Modal.Body,
+	                    null,
+	                    React.createElement(KidForm, { buttonText: 'Add New Kid', submitAction: this.addKid })
+	                ),
+	                React.createElement(
+	                    Modal.Footer,
+	                    null,
+	                    React.createElement(
+	                        Button,
+	                        { onClick: this.close },
+	                        'Close'
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 450 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactBootstrap = __webpack_require__(175);
+	var Form = ReactBootstrap.Form;
+	var Col = ReactBootstrap.Col;
+	var FormGroup = ReactBootstrap.FormGroup;
+	var Button = ReactBootstrap.Button;
+
+	var RegularInput = __webpack_require__(451);
+	var ButtonChoiceInput = __webpack_require__(452);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    getDefaultProps: function () {
+	        return { buttonText: "Add Kid",
+	            kid: { name: '', gender: '', birthday: '' },
+	            submitAction: function (kid) {
+	                console.log(kid);
+	            } };
+	    },
+	    submit: function () {
+	        var kid = { name: this.refs.name.state.value,
+	            gender: this.refs.gender.state.value,
+	            birthday: this.refs.birthday.state.value };
+	        this.props.submitAction(kid);
+	    },
+
+	    render: function () {
+	        var genderChoices = [{ label: 'Boy', value: 'male' }, { label: 'Girl', value: 'female' }];
+	        return React.createElement(
+	            Form,
+	            { horizontal: true },
+	            React.createElement(RegularInput, { name: 'Name', ref: 'name',
+	                value: this.props.kid.name }),
+	            React.createElement(ButtonChoiceInput, { name: 'Gender',
+	                value: this.props.kid.gender,
+	                ref: 'gender',
+	                choices: genderChoices }),
+	            React.createElement(RegularInput, { name: 'Birthday',
+	                value: this.props.kid.birthday,
+	                ref: 'birthday',
+	                type: 'date' }),
+	            React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                    Col,
+	                    { smOffset: 3, sm: 9 },
+	                    React.createElement(
+	                        Button,
+	                        { type: 'button',
+	                            onClick: this.submit,
+	                            ref: 'submitButton' },
+	                        this.props.buttonText
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 451 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(38);
+	var ReactBootstrap = __webpack_require__(175);
+	var Col = ReactBootstrap.Col;
+	var FormGroup = ReactBootstrap.FormGroup;
+	var FormControl = ReactBootstrap.FormControl;
+	var ControlLabel = ReactBootstrap.ControlLabel;
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    propTypes: {
+	        placeholder: React.PropTypes.string,
+	        name: React.PropTypes.string.isRequired,
+	        labelCol: React.PropTypes.number,
+	        inputCol: React.PropTypes.number,
+	        type: React.PropTypes.string,
+	        value: React.PropTypes.string
+	    },
+	    getDefaultProps: function () {
+	        return {
+	            placeholder: '',
+	            labelCol: 3,
+	            inputCol: 9,
+	            type: 'text'
+	        };
+	    },
+	    getInitialState() {
+	        return { value: this.props.value, error: '' };
+	    },
+	    changeValue() {
+	        this.setState({ value: ReactDOM.findDOMNode(this.refs.input).value });
+	    },
+	    render: function () {
+	        return React.createElement(
+	            FormGroup,
+	            { controlId: "FormControls" + this.props.name },
+	            React.createElement(
+	                Col,
+	                { componentClass: ControlLabel, sm: this.props.labelCol },
+	                this.props.name
+	            ),
+	            React.createElement(
+	                Col,
+	                { sm: this.props.inputCol },
+	                React.createElement(FormControl, {
+	                    ref: 'input',
+	                    type: this.props.type,
+	                    value: this.state.value,
+	                    placeholder: this.props.placeholder,
+	                    onChange: this.changeValue }),
+	                React.createElement(FormControl.Feedback, null)
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 452 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactBootstrap = __webpack_require__(175);
+	var Col = ReactBootstrap.Col;
+	var FormGroup = ReactBootstrap.FormGroup;
+	var ControlLabel = ReactBootstrap.ControlLabel;
+	var ButtonGroup = ReactBootstrap.ButtonGroup;
+	var Button = ReactBootstrap.Button;
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    propTypes: {
+	        choices: React.PropTypes.array.isRequired,
+	        name: React.PropTypes.string.isRequired,
+	        labelCol: React.PropTypes.number,
+	        inputCol: React.PropTypes.number
+	    },
+	    getDefaultProps: function () {
+	        return {
+	            labelCol: 3,
+	            inputCol: 9
+	        };
+	    },
+	    getInitialState() {
+	        return { value: '', error: '' };
+	    },
+	    changeValue(value) {
+	        this.setState({ value: value });
+	    },
+	    renderChoices: function (choices) {
+	        return choices.map(function (choice) {
+	            return React.createElement(
+	                Button,
+	                {
+	                    key: choice.value,
+	                    onClick: this.changeValue.bind(this, choice.value),
+	                    active: this.state.value === choice.value },
+	                choice.label
+	            );
+	        }.bind(this));
+	    },
+	    render: function () {
+	        return React.createElement(
+	            FormGroup,
+	            { controlId: "FormControls" + this.props.name },
+	            React.createElement(
+	                Col,
+	                { componentClass: ControlLabel, sm: this.props.labelCol },
+	                this.props.name
+	            ),
+	            React.createElement(
+	                Col,
+	                { sm: this.props.inputCol },
+	                React.createElement(
+	                    ButtonGroup,
+	                    null,
+	                    this.renderChoices(this.props.choices)
 	                )
 	            )
 	        );

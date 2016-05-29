@@ -7,6 +7,9 @@ module.exports = Reflux.createStore({
     triggerAuthenticated(){
         this.trigger('authenticated');
     },
+    triggerAuthenticationFailed(event){
+        this.trigger('authenticationFailed', event);
+    },
     triggerLogout(){
         this.trigger('logout');
     },
@@ -24,7 +27,16 @@ module.exports = Reflux.createStore({
             password: password
         });
         return Api.post('auth', body)
-            .then(this._storeToken);
+            .then(this._storeToken)
+            .catch(function(error){
+                return error.response.json()
+                    .then(function(data){
+                        this.triggerAuthenticationFailed(data['description']);
+                    }.bind(this))
+                    .catch(function (exc) {
+                        this.triggerAuthenticationFailed(error)
+                    }.bind(this));
+            }.bind(this));
     },
     FacebookLogin(accessToken){
         this.triggerLoading();

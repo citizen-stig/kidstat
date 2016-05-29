@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactBootstrap = require('react-bootstrap');
+var Reflux = require('reflux');
 var Form = ReactBootstrap.Form;
 var Col = ReactBootstrap.Col;
 var FormGroup = ReactBootstrap.FormGroup;
@@ -8,15 +9,26 @@ var FormControl = ReactBootstrap.FormControl;
 var InputGroup = ReactBootstrap.InputGroup;
 var ControlLabel = ReactBootstrap.ControlLabel;
 var Button = ReactBootstrap.Button;
+var HelpBlock = ReactBootstrap.HelpBlock;
 
+var AuthStore = require('../stores/auth-store');
 var Actions = require('../actions.jsx');
 
 module.exports = React.createClass({
+    mixins: [
+        Reflux.listenTo(AuthStore, "handleAuthAction")
+    ],
+    handleAuthAction(event, message){
+        if(event === 'authenticationFailed'){
+            this.setState({error: message})
+        }
+    },
     getInitialState() {
-        return {email: '', password: ''};
+        return {email: '', password: '', error: ''};
     },
     login(event){
         event.preventDefault();
+        this.setState({error: ''});
         Actions.Login(this.state.email, this.state.password);
     },
     handleEmailChange(){
@@ -59,11 +71,13 @@ module.exports = React.createClass({
                             onChange={this.handlePasswordChange}
                             ref="password"/>
                         <FormControl.Feedback />
+                        {this.state.error ? <HelpBlock>{this.state.error}</HelpBlock> : ''}
                     </Col>
                 </FormGroup>
                 <FormGroup>
                     <Col smOffset={3} sm={9}>
-                        <Button type="submit"
+                        <Button type="submit" 
+                                ref="submitButton"
                                 onClick={this.login}>Login</Button>
                     </Col>
                 </FormGroup>

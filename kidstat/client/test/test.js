@@ -6,12 +6,13 @@ require('./dom-mock.js');
 var jsdom = require('mocha-jsdom');
 var assert = require('assert');
 var React = require('react');
+var ReactDOM = require('react-dom');
 var TestUtils = require('react-addons-test-utils');
 var sinon = require('sinon');
 var chai = require('chai');
 var expect = chai.expect;
 var rewire = require('rewire');
-var CompnentMock = require('./component-mock');
+var ComponentMock = require('./component-mock');
 
 
 describe('Empty test', function () {
@@ -28,7 +29,8 @@ describe('Public index', function () {
 
     before(function () {
         PublicIndex = rewire('../src/components/public-index.jsx');
-        PublicIndex.__set__('FacebookLogin', CompnentMock);
+        PublicIndex.__set__('FacebookLogin', ComponentMock);
+        PublicIndex.__set__('LoginForm', ComponentMock);
         indexDiv = TestUtils.renderIntoDocument(<PublicIndex />);
     });
 
@@ -99,6 +101,56 @@ describe('Loader', function () {
 
 });
 
+
+describe('LoginForm', function () {
+
+    var LoginForm;
+    var ActionsStub;
+    var LoginAction;
+    var loginFormRendered;
+    var email = 'email@example.com';
+    var password = 'myPassword';
+
+    before(function () {
+        LoginForm = rewire('../src/components/login-form.jsx');
+        LoginAction = sinon.spy();
+        ActionsStub = {Login: LoginAction};
+        LoginForm.__set__('Actions', ActionsStub);
+    });
+
+    beforeEach(function(){
+        loginFormRendered = TestUtils.renderIntoDocument(<LoginForm/>);
+    });
+
+    it('should have empty state by default', function () {
+        expect(loginFormRendered.state.email).to.equal('');
+        expect(loginFormRendered.state.password).to.equal('');
+    });
+    it('should change state when email has changed', function () {
+        var emailInput = ReactDOM.findDOMNode(loginFormRendered.refs.email);
+        emailInput.value = email;
+        TestUtils.Simulate.change(emailInput);
+        expect(loginFormRendered.state.email).to.equal(email);
+        expect(loginFormRendered.state.password).to.equal('');
+    });
+    it('should change state when password has changed', function () {
+        var passwordInput = ReactDOM.findDOMNode(loginFormRendered.refs.password);
+        passwordInput.value = password;
+        TestUtils.Simulate.change(passwordInput);
+        expect(loginFormRendered.state.email).to.equal('');
+        expect(loginFormRendered.state.password).to.equal(password);
+    });
+    it('should call "Login" action when submit is pressed', function () {
+        loginFormRendered.setState({email: email, password: password});
+        var submitButton = ReactDOM.findDOMNode(
+            loginFormRendered.refs.submitButton);
+        TestUtils.Simulate.click(submitButton);
+        assert(LoginAction.calledOnce);
+        assert(LoginAction.calledWith(email, password));
+    })
+    
+
+});
 // http://www.bebetterdeveloper.com/coding/getting-started-react-mocha.html
 // http://www.hammerlab.org/2015/02/14/testing-react-web-apps-with-mocha/
 // http://willcodefor.beer/react-testing-with-mocha-chai-sinon-and-gulp/

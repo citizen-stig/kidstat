@@ -1,8 +1,5 @@
 var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
 var Reflux = require('reflux');
-
-var Button = ReactBootstrap.Button;
 
 var AuthStore = require('../stores/auth-store');
 var Header = require('./header');

@@ -3,7 +3,7 @@ import os
 import csv
 from flask import url_for
 from flask_script import Manager, Command, Option
-from flask_security import MongoEngineUserDatastore
+from flask_debugtoolbar import DebugToolbarExtension
 import requests
 from kidstat import app as app_factory
 from kidstat import models
@@ -102,6 +102,10 @@ class CreateAdminUser(Command):
         models.user_datastore.add_role_to_user(admin_user, admin_role)
         admin_user.save()
 
+
+def setup_debug_toolbar(app):
+    toolbar = DebugToolbarExtension(app)
+    return toolbar
 
 if __name__ == "__main__":
     app = app_factory.create_app()

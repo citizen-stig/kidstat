@@ -5,7 +5,6 @@ from flask import Flask, render_template
 from flask_admin import Admin
 from flask_mail import Mail
 from flask_jwt import JWT
-from flask_debugtoolbar import DebugToolbarExtension
 from flask_security import Security
 
 from kidstat.models import db, User, Role, Parameter, Standard, user_datastore
@@ -61,11 +60,6 @@ def setup_admin(app):
     admin_portal.add_view(admin.AdminProtectedModelView(Parameter))
     admin_portal.add_view(admin.AdminProtectedModelView(Standard))
     return admin_portal
-
-
-def setup_debug_toolbar(app):
-    toolbar = DebugToolbarExtension(app)
-    return toolbar
 
 
 def create_full_app():

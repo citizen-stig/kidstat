@@ -1,0 +1,1 @@
+web: gunicorn --config deploy/gunicorn.conf.py --workers=1 --log-file=- kidstat.wsgi:app

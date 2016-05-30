@@ -12,6 +12,7 @@ from kidstat.models import db, User, Role, Parameter, Standard, user_datastore
 from kidstat import auth
 
 
+from kidstat.api.factory import setup_api
 from kidstat import admin
 
 
@@ -65,3 +66,11 @@ def setup_admin(app):
 def setup_debug_toolbar(app):
     toolbar = DebugToolbarExtension(app)
     return toolbar
+
+
+def create_full_app():
+    app = create_app()
+    setup_security(app)
+    setup_admin(app)
+    setup_api(app)
+    return app

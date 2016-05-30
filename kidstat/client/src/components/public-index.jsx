@@ -40,7 +40,7 @@ module.exports = React.createClass({
                     <hr/>
                     <FacebookLogin
                         appId="288802541458761"
-                        autoLoad={true}
+                        autoLoad={false}
                         callback={this.responseFacebook}
                         textButton="Facebook"
                         cssClass="btn btn-primary"

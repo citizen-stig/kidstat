@@ -10,7 +10,6 @@ from flask_security import Security
 
 from kidstat.models import db, User, Role, Parameter, Standard, user_datastore
 from kidstat import auth
-from kidstat.api.factory import setup_api
 
 
 from kidstat import admin

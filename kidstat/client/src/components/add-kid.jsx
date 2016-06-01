@@ -1,17 +1,27 @@
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
+var Reflux = require('reflux');
 var Button = ReactBootstrap.Button;
 var Modal = ReactBootstrap.Modal;
 var Row = ReactBootstrap.Row;
 
-var Actions = require('../actions');
+var Actions = require('../actions.jsx');
+var KidsStore = require('../stores/kids-store.jsx');
 var KidForm = require('./kid-form.jsx');
 
 module.exports = React.createClass({
+    mixins: [
+        Reflux.listenTo(KidsStore, "handleKidActions")
+    ],
     getInitialState: function() {
         return {showModal: false};
     },
-
+    handleKidActions: function (event) {
+        console.log('Hi');
+        if(event === 'change'){
+            this.close()
+        }
+    },
     close: function() {
         this.setState({showModal: false});
     },

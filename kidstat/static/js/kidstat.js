@@ -40910,20 +40910,28 @@
 
 	var React = __webpack_require__(1);
 	var ReactBootstrap = __webpack_require__(175);
+	var Reflux = __webpack_require__(169);
 	var Button = ReactBootstrap.Button;
 	var Modal = ReactBootstrap.Modal;
 	var Row = ReactBootstrap.Row;
 
 	var Actions = __webpack_require__(173);
+	var KidsStore = __webpack_require__(445);
 	var KidForm = __webpack_require__(450);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
+	    mixins: [Reflux.listenTo(KidsStore, "handleKidActions")],
 	    getInitialState: function () {
 	        return { showModal: false };
 	    },
-
+	    handleKidActions: function (event) {
+	        console.log('Hi');
+	        if (event === 'change') {
+	            this.close();
+	        }
+	    },
 	    close: function () {
 	        this.setState({ showModal: false });
 	    },

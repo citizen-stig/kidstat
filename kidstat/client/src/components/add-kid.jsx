@@ -3,36 +3,24 @@ var ReactBootstrap = require('react-bootstrap');
 var Reflux = require('reflux');
 var Button = ReactBootstrap.Button;
 var Modal = ReactBootstrap.Modal;
-var Row = ReactBootstrap.Row;
 
 var Actions = require('../actions.jsx');
 var KidsStore = require('../stores/kids-store.jsx');
 var KidForm = require('./kid-form.jsx');
 
 module.exports = React.createClass({
-    mixins: [
-        Reflux.listenTo(KidsStore, "handleKidActions")
-    ],
+    mixins: [ Reflux.listenTo(KidsStore, "handleKidActions") ],
     getInitialState: function() {
         return {showModal: false};
     },
     handleKidActions: function (event) {
-        console.log('Hi');
-        if(event === 'change'){
-            this.close()
-        }
+        if(event === 'change'){ this.close() }
     },
-    close: function() {
-        this.setState({showModal: false});
-    },
-    addKid: function(kid){
-        Actions.addNewKid(kid);
-    },
-    open: function() {
-        this.setState({showModal: true});
-    },
+    close: function() { this.setState({showModal: false}); },
+    addKid: function(kid){ Actions.addNewKid(kid); },
+    open: function() { this.setState({showModal: true}); },
     render: function () {
-        return <Row>
+        return <div className="pull-right">
             <Button onClick={this.open}>Add Kid</Button>
             <Modal show={this.state.showModal} onHide={this.close}>
                 <Modal.Header closeButton>
@@ -45,6 +33,6 @@ module.exports = React.createClass({
                     <Button onClick={this.close}>Close</Button>
                 </Modal.Footer>
             </Modal>
-        </Row>
+        </div>
     }
 });

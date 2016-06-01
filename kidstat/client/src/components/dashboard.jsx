@@ -10,8 +10,9 @@ var AddKid = require('./add-kid.jsx');
 module.exports = React.createClass({
     render: function(){
         return <Row>
-            <AddKid/>
+            
             <KidsList/>
+            <AddKid/>
             </Row>
     }
 });

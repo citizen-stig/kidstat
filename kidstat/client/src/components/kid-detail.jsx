@@ -5,9 +5,14 @@ var Grid = ReactBootstrap.Grid;
 var Row = ReactBootstrap.Row;
 var Col = ReactBootstrap.Col;
 
+var Actions = require('../actions');
+
 module.exports = React.createClass({
     propTypes: {
         kid: React.PropTypes.object.isRequired
+    },
+    deleteKid: function(){
+        Actions.deleteKid(this.props.kid);
     },
     render: function () {
         return <Grid>
@@ -20,6 +25,8 @@ module.exports = React.createClass({
                     <p>{this.props.kid.birthday}</p>
                 </Col>
                 <Col xs={12} md={6}>
+                    <i className="fa fa-trash" 
+                       onClick={this.deleteKid}/>
                     <p>Some other information</p>
                 </Col>
             </Row>

@@ -40792,8 +40792,8 @@
 	        return React.createElement(
 	            Row,
 	            null,
-	            React.createElement(AddKid, null),
-	            React.createElement(KidsList, null)
+	            React.createElement(KidsList, null),
+	            React.createElement(AddKid, null)
 	        );
 	    }
 	});
@@ -40823,8 +40823,6 @@
 	        Actions.getKids();
 	    },
 	    handleKids: function (event, kids) {
-	        console.log('-.-.-.-.-.-.-');
-	        console.log(event);
 	        if (event === 'change') {
 	            this.setState({ kids: kids });
 	        }
@@ -40858,11 +40856,16 @@
 	var Row = ReactBootstrap.Row;
 	var Col = ReactBootstrap.Col;
 
+	var Actions = __webpack_require__(173);
+
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
 	    propTypes: {
 	        kid: React.PropTypes.object.isRequired
+	    },
+	    deleteKid: function () {
+	        Actions.deleteKid(this.props.kid);
 	    },
 	    render: function () {
 	        return React.createElement(
@@ -40893,6 +40896,8 @@
 	                React.createElement(
 	                    Col,
 	                    { xs: 12, md: 6 },
+	                    React.createElement('i', { className: 'fa fa-trash',
+	                        onClick: this.deleteKid }),
 	                    React.createElement(
 	                        'p',
 	                        null,
@@ -40913,7 +40918,6 @@
 	var Reflux = __webpack_require__(169);
 	var Button = ReactBootstrap.Button;
 	var Modal = ReactBootstrap.Modal;
-	var Row = ReactBootstrap.Row;
 
 	var Actions = __webpack_require__(173);
 	var KidsStore = __webpack_require__(445);
@@ -40927,7 +40931,6 @@
 	        return { showModal: false };
 	    },
 	    handleKidActions: function (event) {
-	        console.log('Hi');
 	        if (event === 'change') {
 	            this.close();
 	        }
@@ -40943,8 +40946,8 @@
 	    },
 	    render: function () {
 	        return React.createElement(
-	            Row,
-	            null,
+	            'div',
+	            { className: 'pull-right' },
 	            React.createElement(
 	                Button,
 	                { onClick: this.open },

@@ -12,18 +12,10 @@ module.exports = React.createClass({
     mixins: [
         Reflux.listenTo(KidsStore, "handleKids")
     ],
-    getInitialState: function () {
-        return {kids: []}
-    },
-    componentWillMount: function () {
-        Actions.getKids();
-    },
+    getInitialState: function () { return {kids: []} },
+    componentWillMount: function () { Actions.getKids(); },
     handleKids: function (event, kids) {
-        console.log('-.-.-.-.-.-.-');
-        console.log(event);
-        if (event === 'change'){
-            this.setState({kids: kids});
-        }
+        if (event === 'change'){this.setState({kids: kids});}
     },
     renderKidsList: function () {
         return this.state.kids.map(function(kid){

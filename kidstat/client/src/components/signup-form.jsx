@@ -18,12 +18,12 @@ module.exports = React.createClass({
     mixins: [
         Reflux.listenTo(AuthStore, "handleAuthAction")
     ],
-    handleAuthAction(event, message){
+    handleAuthAction: function(event, message){
         if(event === 'signupFailed'){
             this.setState({error: message})
         }
     },
-    getInitialState() {
+    getInitialState: function() {
         return {
             firstName: '',
             lastName: '',
@@ -32,24 +32,24 @@ module.exports = React.createClass({
             error: ''
         };
     },
-    changeInput(field){
+    changeInput: function(field){
         var changedState = {};
         changedState[field] =  ReactDOM.findDOMNode(this.refs[field]).value;
         this.setState(changedState)
     },
-    handleFirstNameChange(){
+    handleFirstNameChange: function(){
         this.changeInput('firstName')
     },
-    handleLastNameChange(){
+    handleLastNameChange: function(){
         this.changeInput('lastName');
     },
-    handleEmailChange(){
+    handleEmailChange: function(){
         this.changeInput('email');
     },
-    handlePasswordChange(){
+    handlePasswordChange: function(){
         this.changeInput('password');
     },
-    signup(event){
+    signup: function(event){
         event.preventDefault();
         Actions.Signup(
             this.state.firstName,

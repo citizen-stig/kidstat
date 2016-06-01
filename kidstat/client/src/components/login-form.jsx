@@ -18,23 +18,23 @@ module.exports = React.createClass({
     mixins: [
         Reflux.listenTo(AuthStore, "handleAuthAction")
     ],
-    handleAuthAction(event, message){
+    handleAuthAction: function(event, message){
         if(event === 'authenticationFailed'){
             this.setState({error: message})
         }
     },
-    getInitialState() {
+    getInitialState: function() {
         return {email: '', password: '', error: ''};
     },
-    login(event){
+    login: function(event){
         event.preventDefault();
         this.setState({error: ''});
         Actions.Login(this.state.email, this.state.password);
     },
-    handleEmailChange(){
+    handleEmailChange: function(){
         this.setState({email: ReactDOM.findDOMNode(this.refs.email).value})
     },
-    handlePasswordChange(){
+    handlePasswordChange: function(){
         this.setState(
             {password: ReactDOM.findDOMNode(this.refs.password).value})
     },

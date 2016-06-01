@@ -17,16 +17,16 @@ function parseJSON(response) {
 }
 
 module.exports = {
-    storeToken(token){
+    storeToken: function(token){
         localStorage.setItem(tokenName, token);
     },
-    getToken(){
+    getToken: function(){
         return localStorage.getItem(tokenName);
     },
-    removeToken(){
+    removeToken: function(){
         localStorage.removeItem(tokenName);
     },
-    post(url, body){
+    post: function(url, body){
         return fetch(rootUrl + url, {
             method: 'post',
             headers: {
@@ -38,7 +38,7 @@ module.exports = {
             .then(checkStatus)
             .then(parseJSON);
     },
-    authorizedGet(url){
+    authorizedGet: function(url){
         return fetch(rootUrl + url, {
             headers: {
                 'Accept': 'application/json',
@@ -49,7 +49,7 @@ module.exports = {
             .then(checkStatus)
             .then(parseJSON);
     },
-    authorizedPost(url, data){
+    authorizedPost: function(url, data){
         return fetch(rootUrl + url, {
             method: 'post',
             headers: {
@@ -62,7 +62,7 @@ module.exports = {
             .then(checkStatus)
             .then(parseJSON);
     },
-    authorizedDelete(url){
+    authorizedDelete: function(url){
        return fetch(rootUrl + url, {
             method: 'delete',
             headers: {

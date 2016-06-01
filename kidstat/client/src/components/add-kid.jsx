@@ -8,17 +8,17 @@ var Actions = require('../actions');
 var KidForm = require('./kid-form.jsx');
 
 module.exports = React.createClass({
-    getInitialState() {
+    getInitialState: function() {
         return {showModal: false};
     },
 
-    close() {
+    close: function() {
         this.setState({showModal: false});
     },
-    addKid(kid){
+    addKid: function(kid){
         Actions.addNewKid(kid);
     },
-    open() {
+    open: function() {
         this.setState({showModal: true});
     },
     render: function () {

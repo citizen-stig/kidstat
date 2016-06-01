@@ -19,10 +19,10 @@ module.exports = React.createClass({
             inputCol: 9
         }
     },
-    getInitialState() {
+    getInitialState: function() {
         return {value: '', error: ''};
     },
-    changeValue(value){
+    changeValue: function(value){
         this.setState({value: value});
     },
     renderChoices: function (choices) {

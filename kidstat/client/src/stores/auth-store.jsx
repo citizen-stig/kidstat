@@ -4,26 +4,26 @@ var Actions = require('../actions.jsx');
 
 module.exports = Reflux.createStore({
     listenables: [Actions],
-    triggerAuthenticated(){
+    triggerAuthenticated: function(){
         this.trigger('authenticated');
     },
-    triggerAuthenticationFailed(event){
+    triggerAuthenticationFailed: function(event){
         this.trigger('authenticationFailed', event);
     },
-    triggerSignupFailed(event){
+    triggerSignupFailed: function(event){
         this.trigger('signupFailed', event)
     },
-    triggerLogout(){
+    triggerLogout: function(){
         this.trigger('logout');
     },
-    triggerLoading(){
+    triggerLoading: function(){
         this.trigger('loading');
     },
-    _storeToken(data){
+    _storeToken: function(data){
         Api.storeToken(data['access_token']);
         this.triggerAuthenticated();
     },
-    Login(email, password){
+    Login: function(email, password){
         this.triggerLoading();
         var body = JSON.stringify({
             email: email,
@@ -41,7 +41,7 @@ module.exports = Reflux.createStore({
                     }.bind(this));
             }.bind(this));
     },
-    Signup(firstName, lastName, email, password){
+    Signup: function(firstName, lastName, email, password){
         this.triggerLoading();
         var body = JSON.stringify({
             first_name: firstName,
@@ -61,13 +61,13 @@ module.exports = Reflux.createStore({
                     }.bind(this));
             }.bind(this))
     },
-    FacebookLogin(accessToken){
+    FacebookLogin: function(accessToken){
         this.triggerLoading();
         var body = JSON.stringify({accessToken: accessToken});
         return Api.post('facebook-login', body)
             .then(this._storeToken)
     },
-    CheckAuthorization(){
+    CheckAuthorization: function(){
         this.triggerLoading();
         var token = Api.getToken();
         if (token){
@@ -82,7 +82,7 @@ module.exports = Reflux.createStore({
             this.triggerLogout();
         }
     },
-    Logout(){
+    Logout: function(){
         Api.removeToken();
         this.triggerLogout();
     }

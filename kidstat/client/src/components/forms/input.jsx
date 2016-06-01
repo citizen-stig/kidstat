@@ -23,10 +23,10 @@ module.exports = React.createClass({
             type: 'text'
         }
     },
-    getInitialState() {
+    getInitialState: function() {
         return {value: this.props.value, error: ''};
     },
-    changeValue(){
+    changeValue: function(){
         this.setState({value: ReactDOM.findDOMNode(this.refs.input).value})
     },
     render: function () {

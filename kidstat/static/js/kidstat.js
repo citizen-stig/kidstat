@@ -20388,26 +20388,26 @@
 
 	module.exports = Reflux.createStore({
 	    listenables: [Actions],
-	    triggerAuthenticated() {
+	    triggerAuthenticated: function () {
 	        this.trigger('authenticated');
 	    },
-	    triggerAuthenticationFailed(event) {
+	    triggerAuthenticationFailed: function (event) {
 	        this.trigger('authenticationFailed', event);
 	    },
-	    triggerSignupFailed(event) {
+	    triggerSignupFailed: function (event) {
 	        this.trigger('signupFailed', event);
 	    },
-	    triggerLogout() {
+	    triggerLogout: function () {
 	        this.trigger('logout');
 	    },
-	    triggerLoading() {
+	    triggerLoading: function () {
 	        this.trigger('loading');
 	    },
-	    _storeToken(data) {
+	    _storeToken: function (data) {
 	        Api.storeToken(data['access_token']);
 	        this.triggerAuthenticated();
 	    },
-	    Login(email, password) {
+	    Login: function (email, password) {
 	        this.triggerLoading();
 	        var body = JSON.stringify({
 	            email: email,
@@ -20421,7 +20421,7 @@
 	            }.bind(this));
 	        }.bind(this));
 	    },
-	    Signup(firstName, lastName, email, password) {
+	    Signup: function (firstName, lastName, email, password) {
 	        this.triggerLoading();
 	        var body = JSON.stringify({
 	            first_name: firstName,
@@ -20437,12 +20437,12 @@
 	            }.bind(this));
 	        }.bind(this));
 	    },
-	    FacebookLogin(accessToken) {
+	    FacebookLogin: function (accessToken) {
 	        this.triggerLoading();
 	        var body = JSON.stringify({ accessToken: accessToken });
 	        return Api.post('facebook-login', body).then(this._storeToken);
 	    },
-	    CheckAuthorization() {
+	    CheckAuthorization: function () {
 	        this.triggerLoading();
 	        var token = Api.getToken();
 	        if (token) {
@@ -20455,7 +20455,7 @@
 	            this.triggerLogout();
 	        }
 	    },
-	    Logout() {
+	    Logout: function () {
 	        Api.removeToken();
 	        this.triggerLogout();
 	    }
@@ -20484,16 +20484,16 @@
 	}
 
 	module.exports = {
-	    storeToken(token) {
+	    storeToken: function (token) {
 	        localStorage.setItem(tokenName, token);
 	    },
-	    getToken() {
+	    getToken: function () {
 	        return localStorage.getItem(tokenName);
 	    },
-	    removeToken() {
+	    removeToken: function () {
 	        localStorage.removeItem(tokenName);
 	    },
-	    post(url, body) {
+	    post: function (url, body) {
 	        return fetch(rootUrl + url, {
 	            method: 'post',
 	            headers: {
@@ -20503,7 +20503,7 @@
 	            body: body
 	        }).then(checkStatus).then(parseJSON);
 	    },
-	    authorizedGet(url) {
+	    authorizedGet: function (url) {
 	        return fetch(rootUrl + url, {
 	            headers: {
 	                'Accept': 'application/json',
@@ -20512,7 +20512,7 @@
 	            }
 	        }).then(checkStatus).then(parseJSON);
 	    },
-	    authorizedPost(url, data) {
+	    authorizedPost: function (url, data) {
 	        return fetch(rootUrl + url, {
 	            method: 'post',
 	            headers: {
@@ -20523,7 +20523,7 @@
 	            body: JSON.stringify(data)
 	        }).then(checkStatus).then(parseJSON);
 	    },
-	    authorizedDelete(url) {
+	    authorizedDelete: function (url) {
 	        return fetch(rootUrl + url, {
 	            method: 'delete',
 	            headers: {
@@ -40402,23 +40402,23 @@
 	    displayName: 'exports',
 
 	    mixins: [Reflux.listenTo(AuthStore, "handleAuthAction")],
-	    handleAuthAction(event, message) {
+	    handleAuthAction: function (event, message) {
 	        if (event === 'authenticationFailed') {
 	            this.setState({ error: message });
 	        }
 	    },
-	    getInitialState() {
+	    getInitialState: function () {
 	        return { email: '', password: '', error: '' };
 	    },
-	    login(event) {
+	    login: function (event) {
 	        event.preventDefault();
 	        this.setState({ error: '' });
 	        Actions.Login(this.state.email, this.state.password);
 	    },
-	    handleEmailChange() {
+	    handleEmailChange: function () {
 	        this.setState({ email: ReactDOM.findDOMNode(this.refs.email).value });
 	    },
-	    handlePasswordChange() {
+	    handlePasswordChange: function () {
 	        this.setState({ password: ReactDOM.findDOMNode(this.refs.password).value });
 	    },
 
@@ -40522,12 +40522,12 @@
 	    displayName: 'exports',
 
 	    mixins: [Reflux.listenTo(AuthStore, "handleAuthAction")],
-	    handleAuthAction(event, message) {
+	    handleAuthAction: function (event, message) {
 	        if (event === 'signupFailed') {
 	            this.setState({ error: message });
 	        }
 	    },
-	    getInitialState() {
+	    getInitialState: function () {
 	        return {
 	            firstName: '',
 	            lastName: '',
@@ -40536,24 +40536,24 @@
 	            error: ''
 	        };
 	    },
-	    changeInput(field) {
+	    changeInput: function (field) {
 	        var changedState = {};
 	        changedState[field] = ReactDOM.findDOMNode(this.refs[field]).value;
 	        this.setState(changedState);
 	    },
-	    handleFirstNameChange() {
+	    handleFirstNameChange: function () {
 	        this.changeInput('firstName');
 	    },
-	    handleLastNameChange() {
+	    handleLastNameChange: function () {
 	        this.changeInput('lastName');
 	    },
-	    handleEmailChange() {
+	    handleEmailChange: function () {
 	        this.changeInput('email');
 	    },
-	    handlePasswordChange() {
+	    handlePasswordChange: function () {
 	        this.changeInput('password');
 	    },
-	    signup(event) {
+	    signup: function (event) {
 	        event.preventDefault();
 	        Actions.Signup(this.state.firstName, this.state.lastName, this.state.email, this.state.password);
 	    },
@@ -40920,17 +40920,17 @@
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
-	    getInitialState() {
+	    getInitialState: function () {
 	        return { showModal: false };
 	    },
 
-	    close() {
+	    close: function () {
 	        this.setState({ showModal: false });
 	    },
-	    addKid(kid) {
+	    addKid: function (kid) {
 	        Actions.addNewKid(kid);
 	    },
-	    open() {
+	    open: function () {
 	        this.setState({ showModal: true });
 	    },
 	    render: function () {
@@ -41069,10 +41069,10 @@
 	            type: 'text'
 	        };
 	    },
-	    getInitialState() {
+	    getInitialState: function () {
 	        return { value: this.props.value, error: '' };
 	    },
-	    changeValue() {
+	    changeValue: function () {
 	        this.setState({ value: ReactDOM.findDOMNode(this.refs.input).value });
 	    },
 	    render: function () {
@@ -41126,10 +41126,10 @@
 	            inputCol: 9
 	        };
 	    },
-	    getInitialState() {
+	    getInitialState: function () {
 	        return { value: '', error: '' };
 	    },
-	    changeValue(value) {
+	    changeValue: function (value) {
 	        this.setState({ value: value });
 	    },
 	    renderChoices: function (choices) {

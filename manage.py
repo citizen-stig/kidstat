@@ -126,7 +126,7 @@ if __name__ == "__main__":
     app_factory.setup_security(app)
     app_factory.setup_admin(app)
     app_factory.setup_api(app)
-    app_factory.setup_debug_toolbar(app)
+    setup_debug_toolbar(app)
     manager = Manager(app)
     manager.add_command("createsuperuser", CreateAdminUser())
     manager.add_command('download_standards', PopulateStandardsValues())

@@ -41,7 +41,8 @@ class KidsListResource(MarshMallowResource):
             current_identity.kids.append(kid)
             current_identity.save()
             return self.object_response(kid)
-        return abort(409, message="Kid with this name already exists")
+        return abort(409, error="Kid with this name already exists",
+                     success=False)
 
 
 class KidResource(MarshMallowResource):

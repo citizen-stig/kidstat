@@ -40730,6 +40730,11 @@
 
 	module.exports = Reflux.createStore({
 	    listenables: [Actions],
+	    events: {
+	        change: 'change',
+	        loading: 'loading',
+	        addError: 'add-error'
+	    },
 	    getKids: function () {
 	        return Api.authorizedGet('kids').then(function (data) {
 	            this.kids = data.data;
@@ -40741,6 +40746,10 @@
 	        return Api.authorizedPost('kids', kid).then(function (new_kid) {
 	            this.kids.push(new_kid);
 	            this.triggerKidsReceived();
+	        }.bind(this)).catch(function (error) {
+	            return error.response.json().then(function (data) {
+	                this.triggerAddError(data['error']);
+	            }.bind(this));
 	        }.bind(this));
 	    },
 	    deleteKid: function (kid) {
@@ -40765,10 +40774,13 @@
 	        return idx;
 	    },
 	    triggerKidsReceived: function () {
-	        this.trigger('change', this.kids);
+	        this.trigger(this.events.change, this.kids);
+	    },
+	    triggerAddError: function (message) {
+	        this.trigger(this.events.addError, message);
 	    },
 	    triggerLoading: function () {
-	        this.trigger('loading');
+	        this.trigger(this.events.loading);
 	    }
 	});
 
@@ -40918,6 +40930,7 @@
 	var Reflux = __webpack_require__(169);
 	var Button = ReactBootstrap.Button;
 	var Modal = ReactBootstrap.Modal;
+	var HelpBlock = ReactBootstrap.HelpBlock;
 
 	var Actions = __webpack_require__(173);
 	var KidsStore = __webpack_require__(445);
@@ -40928,17 +40941,20 @@
 
 	    mixins: [Reflux.listenTo(KidsStore, "handleKidActions")],
 	    getInitialState: function () {
-	        return { showModal: false };
+	        return { showModal: false, error: '' };
 	    },
-	    handleKidActions: function (event) {
-	        if (event === 'change') {
+	    handleKidActions: function (event, message) {
+	        if (event === KidsStore.events.change) {
 	            this.close();
+	        } else if (event == KidsStore.events.addError) {
+	            this.setState({ error: message });
 	        }
 	    },
 	    close: function () {
 	        this.setState({ showModal: false });
 	    },
 	    addKid: function (kid) {
+	        this.setState({ error: '' });
 	        Actions.addNewKid(kid);
 	    },
 	    open: function () {
@@ -40968,6 +40984,11 @@
 	                React.createElement(
 	                    Modal.Body,
 	                    null,
+	                    this.state.error ? React.createElement(
+	                        HelpBlock,
+	                        null,
+	                        this.state.error
+	                    ) : '',
 	                    React.createElement(KidForm, { buttonText: 'Add New Kid', submitAction: this.addKid })
 	                ),
 	                React.createElement(

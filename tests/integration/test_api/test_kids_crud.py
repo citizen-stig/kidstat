@@ -88,6 +88,13 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         self.assertEqual(response.status_code, 409)
         user = models.User.objects.get(id=user.id)
         self.assertEqual(len(user.kids), 1)
+        response_data = response.json()
+        print('======')
+        print(response.json())
+        self.assertIn('error', response_data)
+        self.assertEqual(response_data['error'],
+                         'Kid with this name already exists')
+        print('======')
 
     def test_get_one(self):
         user = model_factories.UserFactory(kids=[model_factories.KidFactory() for _ in range(3)])

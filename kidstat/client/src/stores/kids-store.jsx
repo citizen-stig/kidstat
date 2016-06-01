@@ -4,6 +4,11 @@ var Actions = require('../actions.jsx');
 
 module.exports = Reflux.createStore({
     listenables: [Actions],
+    events: {
+        change: 'change',
+        loading: 'loading',
+        addError: 'add-error'
+    },
     getKids: function(){
         return Api.authorizedGet('kids')
             .then(function(data){
@@ -17,6 +22,11 @@ module.exports = Reflux.createStore({
             .then(function(new_kid){
                     this.kids.push(new_kid);
                     this.triggerKidsReceived();
+            }.bind(this)).catch(function (error) {
+                return error.response.json()
+                    .then(function(data){
+                        this.triggerAddError(data['error'])
+                    }.bind(this))
             }.bind(this));
     },
     deleteKid: function(kid){
@@ -42,9 +52,12 @@ module.exports = Reflux.createStore({
         return idx;
     },
     triggerKidsReceived: function(){
-        this.trigger('change', this.kids);
+        this.trigger(this.events.change, this.kids);
+    },
+    triggerAddError: function(message){
+        this.trigger(this.events.addError, message);
     },
     triggerLoading: function(){
-        this.trigger('loading');
+        this.trigger(this.events.loading);
     }
 });

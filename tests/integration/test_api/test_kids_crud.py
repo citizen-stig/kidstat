@@ -3,6 +3,7 @@ import unittest
 from datetime import datetime, timedelta
 import pytz
 from flask import url_for
+from flask_restful import abort
 import requests
 from .base import BaseAPIIntegrationTestCase
 from tests.helpers import model_factories
@@ -60,6 +61,33 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         self.assertEqual(new_kid.name, name)
         self.assertEqual(new_kid.gender, models.MALE)
         self.assertEqual(new_kid.birthday, birthday)
+
+    def test_add_second_same_name(self):
+        user = model_factories.UserFactory(kids=[])
+        user.set_password(user.email)
+        user.save()
+
+        access_token = self.login(user.email, user.email)
+
+        birthday = datetime(2016, 1, 2, 15, 30).replace(tzinfo=pytz.UTC)
+        name = 'John'
+        new_kid_data = {'name': name,
+                        'gender': models.MALE,
+                        'birthday': birthday.strftime('%Y-%m-%dT%H:%M:%SZ')}
+
+        response = requests.post(self.url, json=new_kid_data,
+                                 headers={
+                                     'Authorization': 'JWT ' + access_token})
+        self.assertEqual(response.status_code, 200)
+        user = models.User.objects.get(id=user.id)
+        self.assertEqual(len(user.kids), 1)
+
+        response = requests.post(self.url, json=new_kid_data,
+                                 headers={
+                                     'Authorization': 'JWT ' + access_token})
+        self.assertEqual(response.status_code, 409)
+        user = models.User.objects.get(id=user.id)
+        self.assertEqual(len(user.kids), 1)
 
     def test_get_one(self):
         user = model_factories.UserFactory(kids=[model_factories.KidFactory() for _ in range(3)])

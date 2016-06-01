@@ -31,13 +31,17 @@ class KidsListResource(MarshMallowResource):
     @jwt_required()
     @use_args(KidSchema(strict=True))
     def post(self, args):
-        kid = models.Kid(
-            name=args['name'],
-            birthday=args['birthday'],
-            gender=args['gender'])
-        current_identity.kids.append(kid)
-        current_identity.save()
-        return self.object_response(kid)
+        # TODO: might be issues with multiple threads
+        existed_kid = current_identity.get_kid_by_name(args['name'])
+        if existed_kid is None:
+            kid = models.Kid(
+                name=args['name'],
+                birthday=args['birthday'],
+                gender=args['gender'])
+            current_identity.kids.append(kid)
+            current_identity.save()
+            return self.object_response(kid)
+        return abort(409, message="Kid with this name already exists")
 
 
 class KidResource(MarshMallowResource):

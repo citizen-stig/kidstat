@@ -97,5 +97,8 @@ class User(UserMixin, db.Document):
         # because of kid_id unique constraint
         return self.kids.filter(id=kid_id).first()
 
+    def get_kid_by_name(self, kid_name):
+        return self.kids.filter(name=kid_name).first()
+
 
 user_datastore = MongoEngineUserDatastore(db, User, Role)

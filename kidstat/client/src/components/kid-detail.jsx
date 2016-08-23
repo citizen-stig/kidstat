@@ -18,7 +18,7 @@ module.exports = React.createClass({
         return <Grid>
             <Row>
                 <Col xs={12} md={2}>
-                    <Image src="//placehold.it/120x120" circle/>
+                    <Image src="//placehold.it/120x120" circle="true"/>
                 </Col>
                 <Col xs={12} md={4}>
                     <h1>{this.props.kid.name}</h1>

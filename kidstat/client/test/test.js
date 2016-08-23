@@ -45,8 +45,7 @@ describe('Public index', function () {
     });
     it('should have a picture of a baby', function () {
         var img = TestUtils.findRenderedDOMComponentWithTag(indexDiv, 'img');
-        expect(img.src).to.equal(
-            'https://upload.wikimedia.org/wikipedia/commons/4/46/Baby2.gif');
+        expect(img.src).to.equal('/static/images/monkey-98455_1280.png');
     })
 });
 
@@ -159,6 +158,8 @@ describe('LoginForm', function () {
         expect(helpBlock.textContent).to.equal(message);
     })
 });
+
+
 describe('SignupForm', function () {
 
     var SignupForm;
@@ -212,6 +213,12 @@ describe('SignupForm', function () {
     });
 
 });
+
+
+describe('Dashboard', function () {});
+
+
+describe('Add Kid Form', function() {});
 
 // http://www.bebetterdeveloper.com/coding/getting-started-react-mocha.html
 // http://www.hammerlab.org/2015/02/14/testing-react-web-apps-with-mocha/

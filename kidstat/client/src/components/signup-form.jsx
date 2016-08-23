@@ -101,7 +101,6 @@ module.exports = React.createClass({
                                 value={this.state.email}
                                 placeholder="Enter email"
                                 onChange={this.handleEmailChange}
-                                addonBefore="@"
                                 ref="email"/>
                         </InputGroup>
                         <FormControl.Feedback />

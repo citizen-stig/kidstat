@@ -1,11 +1,8 @@
 # -*- encoding: utf-8 -*-
 import unittest
 import os
-import multiprocessing
 import threading
-import time
 from wsgiref.simple_server import make_server
-from flask import url_for
 from kidstat.models import db
 from kidstat.app import create_app
 
@@ -70,5 +67,3 @@ class LiveServerTestCase(BaseTestCase):
     def get_server_url(cls):
         return 'http://localhost:{0}'.format(
             cls.app.config.get('LIVESERVER_PORT', cls.DEFAULT_LIVESERVER_PORT))
-
-

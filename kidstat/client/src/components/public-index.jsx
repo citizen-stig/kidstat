@@ -21,8 +21,8 @@ module.exports = React.createClass({
                 <Col xs={12} md={7}>
                     <div className="text-center">
                         <h1>Welcome to the Kidstat!</h1>
-                        <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/4/46/Baby2.gif"/>
+                        <img className="img-responsive"
+                            src="/static/images/monkey-98455_1280.png"/>
                         <p>This a web site, where you can track how your baby
                             grows!</p>
                     </div>

@@ -40327,8 +40327,8 @@
 	                            null,
 	                            'Welcome to the Kidstat!'
 	                        ),
-	                        React.createElement('img', {
-	                            src: 'https://upload.wikimedia.org/wikipedia/commons/4/46/Baby2.gif' }),
+	                        React.createElement('img', { className: 'img-responsive',
+	                            src: '/static/images/monkey-98455_1280.png' }),
 	                        React.createElement(
 	                            'p',
 	                            null,

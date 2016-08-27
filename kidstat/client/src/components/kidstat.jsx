@@ -2,10 +2,10 @@ var React = require('react');
 var Reflux = require('reflux');
 
 var AuthStore = require('../stores/auth-store.jsx');
-var Header = require('./header.jsx');
+var Header = require('./common/header.jsx');
 var PublicIndex = require('./public-index.jsx');
 var Actions = require('../actions.jsx');
-var Loader = require('./loading.jsx');
+var Loader = require('./common/loading.jsx');
 var Dashboard = require('./dashboard.jsx');
 
 module.exports = React.createClass({

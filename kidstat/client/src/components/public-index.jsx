@@ -8,8 +8,8 @@ var Tabs = ReactBootstrap.Tabs;
 var Tab = ReactBootstrap.Tab;
 
 var Actions = require('../actions.jsx');
-var LoginForm = require('./login-form.jsx');
-var SignupForm = require('./signup-form.jsx');
+var LoginForm = require('./auth/login-form.jsx');
+var SignupForm = require('./auth/signup-form.jsx');
 
 module.exports = React.createClass({
     responseFacebook: function (response) {

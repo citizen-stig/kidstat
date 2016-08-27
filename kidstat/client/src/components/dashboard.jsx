@@ -4,8 +4,8 @@ var Grid = ReactBootstrap.Grid;
 var Row = ReactBootstrap.Row;
 var Col = ReactBootstrap.Col;
 
-var KidsList = require('./kids-list.jsx');
-var AddKid = require('./add-kid.jsx');
+var KidsList = require('./kids/list.jsx');
+var AddKid = require('./kids/add.jsx');
 
 module.exports = React.createClass({
     render: function(){

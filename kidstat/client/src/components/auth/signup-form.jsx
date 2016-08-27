@@ -11,38 +11,84 @@ var ControlLabel = ReactBootstrap.ControlLabel;
 var Button = ReactBootstrap.Button;
 var HelpBlock = ReactBootstrap.HelpBlock;
 
-var AuthStore = require('../stores/auth-store.jsx');
-var Actions = require('../actions.jsx');
+var AuthStore = require('../../stores/auth-store.jsx');
+var Actions = require('../../actions.jsx');
 
 module.exports = React.createClass({
     mixins: [
         Reflux.listenTo(AuthStore, "handleAuthAction")
     ],
     handleAuthAction: function(event, message){
-        if(event === 'authenticationFailed'){
+        if(event === 'signupFailed'){
             this.setState({error: message})
         }
     },
     getInitialState: function() {
-        return {email: '', password: '', error: ''};
+        return {
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: '',
+            error: ''
+        };
     },
-    login: function(event){
-        event.preventDefault();
-        this.setState({error: ''});
-        Actions.Login(this.state.email, this.state.password);
+    changeInput: function(field){
+        var changedState = {};
+        changedState[field] =  ReactDOM.findDOMNode(this.refs[field]).value;
+        this.setState(changedState)
+    },
+    handleFirstNameChange: function(){
+        this.changeInput('firstName')
+    },
+    handleLastNameChange: function(){
+        this.changeInput('lastName');
     },
     handleEmailChange: function(){
-        this.setState({email: ReactDOM.findDOMNode(this.refs.email).value})
+        this.changeInput('email');
     },
     handlePasswordChange: function(){
-        this.setState(
-            {password: ReactDOM.findDOMNode(this.refs.password).value})
+        this.changeInput('password');
     },
-
+    signup: function(event){
+        event.preventDefault();
+        Actions.Signup(
+            this.state.firstName,
+            this.state.lastName,
+            this.state.email,
+            this.state.password)
+    },
     render: function () {
         var extraStyle = {'paddingTop': '20px'};
         return (
             <Form horizontal style={extraStyle}>
+                <FormGroup controlId="formControlsFirstEmail">
+                    <Col componentClass={ControlLabel} sm={3}>
+                        First Name
+                    </Col>
+                    <Col sm={9}>
+                        <FormControl
+                            type="text"
+                            value={this.state.firstName}
+                            placeholder="Enter first name"
+                            onChange={this.handleFirstNameChange}
+                            ref="firstName"/>
+                        <FormControl.Feedback />
+                    </Col>
+                </FormGroup>
+                <FormGroup controlId="formControlsLastEmail">
+                    <Col componentClass={ControlLabel} sm={3}>
+                        Last Name
+                    </Col>
+                    <Col sm={9}>
+                        <FormControl
+                            type="text"
+                            value={this.state.lastName}
+                            placeholder="Enter last name"
+                            onChange={this.handleLastNameChange}
+                            ref="lastName"/>
+                        <FormControl.Feedback />
+                    </Col>
+                </FormGroup>
                 <FormGroup controlId="formControlsEmail">
                     <Col componentClass={ControlLabel} sm={3}>
                         Email
@@ -57,6 +103,7 @@ module.exports = React.createClass({
                                 onChange={this.handleEmailChange}
                                 ref="email"/>
                         </InputGroup>
+                        <FormControl.Feedback />
                     </Col>
                 </FormGroup>
                 <FormGroup controlId="formControlsPassword">
@@ -70,6 +117,7 @@ module.exports = React.createClass({
                             placeholder="Enter password"
                             onChange={this.handlePasswordChange}
                             ref="password"/>
+                        <FormControl.Feedback />
                         {this.state.error ? <HelpBlock>{this.state.error}</HelpBlock> : ''}
                     </Col>
                 </FormGroup>
@@ -77,7 +125,7 @@ module.exports = React.createClass({
                     <Col smOffset={3} sm={9}>
                         <Button type="submit"
                                 ref="submitButton"
-                                onClick={this.login}>Login</Button>
+                                onClick={this.signup}>Signup</Button>
                     </Col>
                 </FormGroup>
             </Form>

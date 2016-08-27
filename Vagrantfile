@@ -9,7 +9,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 22,   host: 2111, id: 'ssh'
   config.vm.network "forwarded_port", guest: 5001, host: 5001
   config.vm.network "forwarded_port", guest: 80, host: 8088
-  config.vm.network "forwarded_port", guest: 8088, host: 80
   config.vm.network "forwarded_port", guest: 27017, host: 27017
 
   # the path on the host to the actual folder. The second argument is

@@ -52,7 +52,7 @@ describe('Public index', function () {
 
 describe('Loader', function () {
     jsdom({skipWindowCheck: true});
-    var Loading = require('../src/components/loading.jsx');
+    var Loading = require('../src/components/common/loading.jsx');
 
     it('should be hidden by default', function () {
         var loaderRendered = TestUtils.renderIntoDocument(<Loading/>);

@@ -1,8 +1,8 @@
 var React = require('react');
 var Reflux = require('reflux');
 var ReactBootstrap = require('react-bootstrap');
-var AuthStore = require('../stores/auth-store.jsx');
-var Actions = require('../actions.jsx');
+var AuthStore = require('../../stores/auth-store.jsx');
+var Actions = require('../../actions.jsx');
 
 var Navbar = ReactBootstrap.Navbar;
 var Nav = ReactBootstrap.Nav;

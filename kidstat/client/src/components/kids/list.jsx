@@ -3,10 +3,10 @@ var ReactBootstrap = require('react-bootstrap');
 var ListGroup = ReactBootstrap.ListGroup;
 var ListGroupItem = ReactBootstrap.ListGroupItem;
 
-var Actions = require('../actions.jsx');
-var KidsStore = require('../stores/kids-store');
+var Actions = require('../../actions.jsx');
+var KidsStore = require('../../stores/kids-store');
 
-var KidDetail = require('./kid-detail.jsx');
+var KidDetail = require('./detail.jsx');
 
 module.exports = React.createClass({
     mixins: [
@@ -19,7 +19,7 @@ module.exports = React.createClass({
     },
     renderKidsList: function () {
         return this.state.kids.map(function(kid){
-            return <ListGroupItem eventKey={kid.id} key={kid.id}>
+            return <ListGroupItem key={kid.id}>
                     <KidDetail kid={kid}/>
             </ListGroupItem>
         })

@@ -5,8 +5,8 @@ var Col = ReactBootstrap.Col;
 var FormGroup = ReactBootstrap.FormGroup;
 var Button = ReactBootstrap.Button;
 
-var RegularInput = require('./forms/input.jsx');
-var ButtonChoiceInput = require('./forms/button-choices.jsx');
+var RegularInput = require('../forms/input.jsx');
+var ButtonChoiceInput = require('../forms/button-choices.jsx');
 
 
 module.exports = React.createClass({

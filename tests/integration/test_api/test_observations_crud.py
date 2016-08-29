@@ -53,7 +53,6 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        response_data = response.json()
         # self.assertIn('data', response_data)
         # observations_data = response_data['data']
         # self.assertEqual(len(observations_data), 1)

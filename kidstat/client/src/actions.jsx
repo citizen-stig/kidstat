@@ -9,5 +9,7 @@ module.exports = Reflux.createActions([
     'getKids',
     'addNewKid',
     'deleteKid',
-    'getObservations'
+    'getObservations',
+    'addObservation',
+    'deleteObservation'
 ]);

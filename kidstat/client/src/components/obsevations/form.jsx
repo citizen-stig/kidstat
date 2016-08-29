@@ -16,23 +16,18 @@ module.exports = React.createClass({
         return {
             buttonText: "Add Observation",
             observation: {timestamp: '', parameter: '', value: ''},
-            submitAction: function (kid) {
-                console.log(kid)
-            }
+            submitAction: function(observation){console.log(observation)}
         }
     },
-
     submit: function () {
-        console.log('Submittt!!!!!');
         var observation = {timestamp: this.refs.timestamp.state.value,
                            parameter: this.refs.parameter.state.value,
-                           value: this.refs.value.state.value};
-        console.log(observation);
-        console.log(this.props.kid);
+                           value: this.refs.observationValue.state.value};
+        this.props.submitAction(observation);
     },
     changeParameterValue: function(){
         this.refs.parameter.setState(
-            {value: ReactDOM.findDOMNode(this.refs.parameter).value})
+            {value: ReactDOM.findDOMNode(this.refs.parameter).value});
     },
     render: function () {
         return (
@@ -41,9 +36,9 @@ module.exports = React.createClass({
                               value={this.props.observation.timestamp}
                               ref="timestamp"
                               type="date"/>
-                 <RegularInput name="Value"
+                <RegularInput name="Value"
                               value={this.props.observation.value}
-                              ref="value"
+                              ref="observationValue"
                               type="number"/>
                 <FormGroup controlId="formControlsSelect">
                     <Col componentClass={ControlLabel} sm={3}>
@@ -52,6 +47,7 @@ module.exports = React.createClass({
                     <Col sm={9}>
                         <FormControl componentClass="select"
                                      ref="parameter"
+                                     value={this.props.observation.parameter.value}
                                      placeholder="parameter"
                                      onChange={this.changeParameterValue}>
                             <option value="height">Height</option>

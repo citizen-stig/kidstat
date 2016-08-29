@@ -8,6 +8,7 @@ from webargs.flaskparser import parser, use_args
 from kidstat import models
 from .base import MarshMallowResource
 
+
 class ObservationSchema(Schema):
 
     timestamp = fields.DateTime(required=True, format='iso8601')

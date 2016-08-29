@@ -17,12 +17,15 @@
 </head>
 <body>
 <div class="main-container"></div>
-<script src="//fb.me/react-15.1.0.min.js"></script>
-<script src="//fb.me/react-dom-15.1.0.min.js"></script>
-<script src="//cdn.jsdelivr.net/refluxjs/0.4.1/reflux.min.js"></script>
 {%- if config.DEBUG -%}
+    <script src="//npmcdn.com/react@15.3.1/dist/react.js"></script>
+    <script src="//npmcdn.com/react-dom@15.3.1/dist/react-dom.js"></script>
+    <script src="//cdn.jsdelivr.net/refluxjs/0.4.1/reflux.min.js"></script>
     <script src="{{ url_for('static', filename='js/kidstat.js') }}"></script>
 {%- else -%}
+    <script src="//npmcdn.com/react@15.3.1/dist/react.min.js"></script>
+    <script src="//npmcdn.com/react-dom@15.3.1/dist/react-dom.min.js"></script>
+    <script src="//cdn.jsdelivr.net/refluxjs/0.4.1/reflux.min.js"></script>
     <script src="{{ url_for('static', filename='js/kidstat.min.js') }}"></script>
 {%- endif -%}
 </body>

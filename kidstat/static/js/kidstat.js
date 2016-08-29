@@ -22058,7 +22058,7 @@
 
 	var Reflux = __webpack_require__(173);
 
-	module.exports = Reflux.createActions(['CheckAuthorization', 'Login', 'FacebookLogin', 'Signup', 'Logout', 'getKids', 'addNewKid', 'deleteKid', 'getObservations']);
+	module.exports = Reflux.createActions(['CheckAuthorization', 'Login', 'FacebookLogin', 'Signup', 'Logout', 'getKids', 'addNewKid', 'deleteKid', 'getObservations', 'addObservation', 'deleteObservation']);
 
 /***/ },
 /* 178 */
@@ -41435,6 +41435,11 @@
 	        return idx;
 	    },
 	    triggerKidsReceived: function () {
+	        console.log('- - - - - - - -');
+	        console.log(this.events);
+	        console.log(this.events.change);
+	        console.log(this.kids);
+	        console.log('- - - - - - - -');
 	        this.trigger(this.events.change, this.kids);
 	    },
 	    triggerAddError: function (message) {
@@ -41456,7 +41461,7 @@
 	var Col = ReactBootstrap.Col;
 
 	var KidsList = __webpack_require__(439);
-	var AddKid = __webpack_require__(444);
+	var AddKid = __webpack_require__(446);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41592,23 +41597,29 @@
 	var ReactBootstrap = __webpack_require__(179);
 	var Reflux = __webpack_require__(173);
 	var Button = ReactBootstrap.Button;
-	var Modal = ReactBootstrap.Modal;
-	var HelpBlock = ReactBootstrap.HelpBlock;
 
 	var Actions = __webpack_require__(177);
 	var ObservationForm = __webpack_require__(442);
+	var Modal = __webpack_require__(444);
+	var ObservationStore = __webpack_require__(445);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
-	    getInitialState: function () {
-	        return { showModal: false, error: '' };
+	    mixins: [Reflux.listenTo(ObservationStore, "handleObservationStore")],
+	    openModal: function () {
+	        this.refs.modal.open();
 	    },
-	    close: function () {
-	        this.setState({ showModal: false });
+	    handleObservationStore: function (event) {
+	        console.log("handling something from observation store");
+	        console.log(event);
 	    },
-	    open: function () {
-	        this.setState({ showModal: true });
+	    addObservation: function (observation) {
+	        console.log("We need to add this observation:");
+	        console.log(observation);
+	        console.log('To this kid');
+	        console.log(this.props.kid);
+	        Actions.addObservation(this.props.kid, observation);
 	    },
 	    render: function () {
 	        return React.createElement(
@@ -41616,40 +41627,13 @@
 	            { className: 'pull-right' },
 	            React.createElement(
 	                Button,
-	                { onClick: this.open },
-	                'Add Observation'
+	                { onClick: this.openModal },
+	                'Add Ubservation'
 	            ),
 	            React.createElement(
 	                Modal,
-	                { show: this.state.showModal, onHide: this.close },
-	                React.createElement(
-	                    Modal.Header,
-	                    { closeButton: true },
-	                    React.createElement(
-	                        Modal.Title,
-	                        null,
-	                        'Add New Observation'
-	                    )
-	                ),
-	                React.createElement(
-	                    Modal.Body,
-	                    null,
-	                    this.state.error ? React.createElement(
-	                        HelpBlock,
-	                        null,
-	                        this.state.error
-	                    ) : '',
-	                    React.createElement(ObservationForm, null)
-	                ),
-	                React.createElement(
-	                    Modal.Footer,
-	                    null,
-	                    React.createElement(
-	                        Button,
-	                        { onClick: this.close },
-	                        'Close'
-	                    )
-	                )
+	                { title: 'Add Abservation', ref: 'modal' },
+	                React.createElement(ObservationForm, { submitAction: this.addObservation })
 	            )
 	        );
 	    }
@@ -41677,22 +41661,18 @@
 	        return {
 	            buttonText: "Add Observation",
 	            observation: { timestamp: '', parameter: '', value: '' },
-	            submitAction: function (kid) {
-	                console.log(kid);
+	            submitAction: function (observation) {
+	                console.log(observation);
 	            }
 	        };
 	    },
-
 	    submit: function () {
-	        console.log('Submittt!!!!!');
 	        var observation = { timestamp: this.refs.timestamp.state.value,
 	            parameter: this.refs.parameter.state.value,
-	            value: this.refs.value.state.value };
-	        console.log(observation);
-	        console.log(this.props.kid);
+	            value: this.refs.observationValue.state.value };
+	        this.props.submitAction(observation);
 	    },
 	    changeParameterValue: function () {
-	        console.log("FUCK YOU");
 	        this.refs.parameter.setState({ value: ReactDOM.findDOMNode(this.refs.parameter).value });
 	    },
 	    render: function () {
@@ -41705,7 +41685,7 @@
 	                type: 'date' }),
 	            React.createElement(RegularInput, { name: 'Value',
 	                value: this.props.observation.value,
-	                ref: 'value',
+	                ref: 'observationValue',
 	                type: 'number' }),
 	            React.createElement(
 	                FormGroup,
@@ -41722,6 +41702,7 @@
 	                        FormControl,
 	                        { componentClass: 'select',
 	                            ref: 'parameter',
+	                            value: this.props.observation.parameter.value,
 	                            placeholder: 'parameter',
 	                            onChange: this.changeParameterValue },
 	                        React.createElement(
@@ -41823,78 +41804,55 @@
 
 	var React = __webpack_require__(1);
 	var ReactBootstrap = __webpack_require__(179);
-	var Reflux = __webpack_require__(173);
 	var Button = ReactBootstrap.Button;
 	var Modal = ReactBootstrap.Modal;
 	var HelpBlock = ReactBootstrap.HelpBlock;
 
-	var Actions = __webpack_require__(177);
-	var KidsStore = __webpack_require__(437);
-	var KidForm = __webpack_require__(445);
-
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
-	    mixins: [Reflux.listenTo(KidsStore, "handleKidActions")],
+	    getDefaultProps: function () {
+	        return { title: '' };
+	    },
 	    getInitialState: function () {
 	        return { showModal: false, error: '' };
 	    },
-	    handleKidActions: function (event, message) {
-	        if (event === KidsStore.events.change) {
-	            this.close();
-	        } else if (event == KidsStore.events.addError) {
-	            this.setState({ error: message });
-	        }
-	    },
 	    close: function () {
 	        this.setState({ showModal: false });
-	    },
-	    addKid: function (kid) {
-	        this.setState({ error: '' });
-	        Actions.addNewKid(kid);
 	    },
 	    open: function () {
 	        this.setState({ showModal: true });
 	    },
 	    render: function () {
 	        return React.createElement(
-	            'div',
-	            { className: 'pull-right' },
+	            Modal,
+	            { show: this.state.showModal, onHide: this.close },
 	            React.createElement(
-	                Button,
-	                { onClick: this.open },
-	                'Add Kid'
+	                Modal.Header,
+	                { closeButton: true },
+	                React.createElement(
+	                    Modal.Title,
+	                    null,
+	                    this.props.title
+	                )
 	            ),
 	            React.createElement(
-	                Modal,
-	                { show: this.state.showModal, onHide: this.close },
-	                React.createElement(
-	                    Modal.Header,
-	                    { closeButton: true },
-	                    React.createElement(
-	                        Modal.Title,
-	                        null,
-	                        'Modal heading'
-	                    )
-	                ),
-	                React.createElement(
-	                    Modal.Body,
+	                Modal.Body,
+	                null,
+	                this.state.error ? React.createElement(
+	                    HelpBlock,
 	                    null,
-	                    this.state.error ? React.createElement(
-	                        HelpBlock,
-	                        null,
-	                        this.state.error
-	                    ) : '',
-	                    React.createElement(KidForm, { buttonText: 'Add New Kid', submitAction: this.addKid })
-	                ),
+	                    this.state.error
+	                ) : '',
+	                this.props.children
+	            ),
+	            React.createElement(
+	                Modal.Footer,
+	                null,
 	                React.createElement(
-	                    Modal.Footer,
-	                    null,
-	                    React.createElement(
-	                        Button,
-	                        { onClick: this.close },
-	                        'Close'
-	                    )
+	                    Button,
+	                    { onClick: this.close },
+	                    'Close'
 	                )
 	            )
 	        );
@@ -41905,6 +41863,84 @@
 /* 445 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var Reflux = __webpack_require__(173);
+	var Api = __webpack_require__(175);
+	var Actions = __webpack_require__(177);
+
+	module.exports = Reflux.createStore({
+	    listenables: [Actions],
+	    events: {
+	        change: 'change',
+	        loading: 'loading',
+	        addError: 'add-error'
+	    },
+	    addObservation: function (kid, observation) {
+	        this.triggerLoading();
+	        var url = "kids/" + kid['id'] + "/observations";
+	        return Api.authorizedPost(url, observation).then(function (new_observation) {
+	            console.log('Observation has been added!!!');
+	            console.log(new_observation);
+	        }.bind(this));
+	    },
+	    triggerLoading: function () {
+	        this.trigger(this.events.loading);
+	    }
+	});
+
+/***/ },
+/* 446 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactBootstrap = __webpack_require__(179);
+	var Reflux = __webpack_require__(173);
+	var Button = ReactBootstrap.Button;
+
+	var Actions = __webpack_require__(177);
+	var KidsStore = __webpack_require__(437);
+	var Modal = __webpack_require__(444);
+	var KidForm = __webpack_require__(447);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    mixins: [Reflux.listenTo(KidsStore, "handleKidActions")],
+	    openModal: function () {
+	        this.refs.modal.open();
+	    },
+	    addKid: function (kid) {
+	        this.setState({ error: '' });
+	        Actions.addNewKid(kid);
+	    },
+	    handleKidActions: function (event) {
+	        if (event === KidsStore.events.change) {
+	            this.refs.modal.close();
+	        } else if (event == KidsStore.events.addError) {
+	            this.setState({ error: message });
+	        }
+	    },
+	    render: function () {
+	        return React.createElement(
+	            'div',
+	            { className: 'pull-right' },
+	            React.createElement(
+	                Button,
+	                { onClick: this.openModal },
+	                'Add Kid'
+	            ),
+	            React.createElement(
+	                Modal,
+	                { title: 'Add Kid', ref: 'modal' },
+	                React.createElement(KidForm, { buttonText: 'Add New Kid', submitAction: this.addKid })
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 447 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var React = __webpack_require__(1);
 	var ReactBootstrap = __webpack_require__(179);
 	var Form = ReactBootstrap.Form;
@@ -41913,7 +41949,7 @@
 	var Button = ReactBootstrap.Button;
 
 	var RegularInput = __webpack_require__(443);
-	var ButtonChoiceInput = __webpack_require__(446);
+	var ButtonChoiceInput = __webpack_require__(448);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41967,7 +42003,7 @@
 	});
 
 /***/ },
-/* 446 */
+/* 448 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);

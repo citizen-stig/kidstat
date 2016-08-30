@@ -21,7 +21,9 @@ module.exports = React.createClass({
                    birthday: this.refs.birthday.state.value};
         this.props.submitAction(kid);
     },
-
+    getBirthdayValue: function(){
+        return this.props.kid.birthday.toISOString().split("T")[0];
+    },
     render: function () {
         var genderChoices = [
             {label: 'Boy', value: 'male'},
@@ -36,7 +38,7 @@ module.exports = React.createClass({
                                    ref="gender"
                                    choices={genderChoices}/>
                 <RegularInput name="Birthday"
-                              value={this.props.kid.birthday}
+                              value={this.getBirthdayValue()}
                               ref="birthday"
                               type="date"/>
                 <FormGroup>

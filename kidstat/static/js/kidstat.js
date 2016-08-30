@@ -41396,16 +41396,28 @@
 	        loading: 'loading',
 	        addError: 'add-error'
 	    },
+	    parseKid: function (kid) {
+	        console.log('Parsing kid');
+	        console.log(kid);
+	        kid.birthday = new Date(kid.birthday);
+	        console.log(kid);
+	        return kid;
+	    },
 	    getKids: function () {
 	        return Api.authorizedGet('kids').then(function (data) {
-	            this.kids = data.data;
+	            this.kids = [];
+	            console.log('lalala');
+	            for (var i = 0; i < data.data.length; i++) {
+	                this.kids.push(this.parseKid(data.data[i]));
+	            }
+	            console.log(this.kids);
 	            this.triggerKidsReceived();
 	        }.bind(this));
 	    },
 	    addNewKid: function (kid) {
 	        this.triggerLoading();
 	        return Api.authorizedPost('kids', kid).then(function (new_kid) {
-	            this.kids.push(new_kid);
+	            this.kids.push(this.parseKid(new_kid));
 	            this.triggerKidsReceived();
 	        }.bind(this)).catch(function (error) {
 	            return error.response.json().then(function (data) {
@@ -41435,11 +41447,6 @@
 	        return idx;
 	    },
 	    triggerKidsReceived: function () {
-	        console.log('- - - - - - - -');
-	        console.log(this.events);
-	        console.log(this.events.change);
-	        console.log(this.kids);
-	        console.log('- - - - - - - -');
 	        this.trigger(this.events.change, this.kids);
 	    },
 	    triggerAddError: function (message) {
@@ -41461,7 +41468,7 @@
 	var Col = ReactBootstrap.Col;
 
 	var KidsList = __webpack_require__(439);
-	var AddKid = __webpack_require__(446);
+	var AddKid = __webpack_require__(448);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41536,6 +41543,8 @@
 
 	var Actions = __webpack_require__(177);
 	var AddObservation = __webpack_require__(441);
+	var Modal = __webpack_require__(444);
+	var KidForm = __webpack_require__(446);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41546,6 +41555,17 @@
 	    deleteKid: function () {
 	        Actions.deleteKid(this.props.kid);
 	    },
+	    age: function () {
+	        var now = new Date();
+	        return Math.round((now - this.props.kid.birthday) / (1000 * 60 * 60 * 24));
+	    },
+	    editKid: function (kid) {
+	        console.log('Kid needs to be edited');
+	        console.log(kid);
+	    },
+	    openModal: function () {
+	        this.refs.modal.open();
+	    },
 	    render: function () {
 	        return React.createElement(
 	            Grid,
@@ -41555,12 +41575,12 @@
 	                null,
 	                React.createElement(
 	                    Col,
-	                    { xs: 12, md: 2 },
+	                    { xs: 6, md: 2 },
 	                    React.createElement(Image, { src: '//placehold.it/120x120', circle: true })
 	                ),
 	                React.createElement(
 	                    Col,
-	                    { xs: 12, md: 4 },
+	                    { xs: 6, md: 3 },
 	                    React.createElement(
 	                        'h1',
 	                        null,
@@ -41569,21 +41589,62 @@
 	                    React.createElement(
 	                        'p',
 	                        null,
-	                        this.props.kid.birthday
+	                        'Age: ',
+	                        this.age(),
+	                        ' days'
 	                    )
 	                ),
 	                React.createElement(
 	                    Col,
-	                    { xs: 12, md: 6 },
-	                    React.createElement('i', { className: 'fa fa-trash',
-	                        onClick: this.deleteKid }),
+	                    { xs: 12, md: 4 },
 	                    React.createElement(
 	                        'p',
 	                        null,
-	                        'Some other information'
+	                        React.createElement(
+	                            'strong',
+	                            null,
+	                            'Weight:'
+	                        ),
+	                        ' N/A (average)'
 	                    ),
+	                    React.createElement(
+	                        'p',
+	                        null,
+	                        React.createElement(
+	                            'strong',
+	                            null,
+	                            'Height:'
+	                        ),
+	                        ' N/A (average)'
+	                    )
+	                ),
+	                React.createElement(
+	                    Col,
+	                    { xs: 12, md: 3 },
+	                    React.createElement(
+	                        'div',
+	                        { className: 'pull-right' },
+	                        React.createElement(
+	                            'a',
+	                            { onClick: this.openModal, href: '#' },
+	                            React.createElement('i', { className: 'fa fa-pencil' })
+	                        ),
+	                        React.createElement(
+	                            'a',
+	                            { onClick: this.deleteKid, href: '#' },
+	                            React.createElement('i', { className: 'fa fa-trash' })
+	                        )
+	                    ),
+	                    React.createElement('div', { className: 'clearfix' }),
 	                    React.createElement(AddObservation, { kid: this.props.kid })
 	                )
+	            ),
+	            React.createElement(
+	                Modal,
+	                { title: 'Edit Kid', ref: 'modal' },
+	                React.createElement(KidForm, { buttonText: 'Edit Kid Info',
+	                    kid: this.props.kid,
+	                    submitAction: this.editKid })
 	            )
 	        );
 	    }
@@ -41615,10 +41676,6 @@
 	        console.log(event);
 	    },
 	    addObservation: function (observation) {
-	        console.log("We need to add this observation:");
-	        console.log(observation);
-	        console.log('To this kid');
-	        console.log(this.props.kid);
 	        Actions.addObservation(this.props.kid, observation);
 	    },
 	    render: function () {
@@ -41628,11 +41685,11 @@
 	            React.createElement(
 	                Button,
 	                { onClick: this.openModal },
-	                'Add Ubservation'
+	                'Add Observation'
 	            ),
 	            React.createElement(
 	                Modal,
-	                { title: 'Add Abservation', ref: 'modal' },
+	                { title: 'Add Observation', ref: 'modal' },
 	                React.createElement(ObservationForm, { submitAction: this.addObservation })
 	            )
 	        );
@@ -41880,65 +41937,19 @@
 	        return Api.authorizedPost(url, observation).then(function (new_observation) {
 	            console.log('Observation has been added!!!');
 	            console.log(new_observation);
+	            this.triggerObservationReceived();
 	        }.bind(this));
 	    },
 	    triggerLoading: function () {
 	        this.trigger(this.events.loading);
+	    },
+	    triggerObservationReceived: function () {
+	        this.trigger(this.events.change);
 	    }
 	});
 
 /***/ },
 /* 446 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactBootstrap = __webpack_require__(179);
-	var Reflux = __webpack_require__(173);
-	var Button = ReactBootstrap.Button;
-
-	var Actions = __webpack_require__(177);
-	var KidsStore = __webpack_require__(437);
-	var Modal = __webpack_require__(444);
-	var KidForm = __webpack_require__(447);
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    mixins: [Reflux.listenTo(KidsStore, "handleKidActions")],
-	    openModal: function () {
-	        this.refs.modal.open();
-	    },
-	    addKid: function (kid) {
-	        this.setState({ error: '' });
-	        Actions.addNewKid(kid);
-	    },
-	    handleKidActions: function (event) {
-	        if (event === KidsStore.events.change) {
-	            this.refs.modal.close();
-	        } else if (event == KidsStore.events.addError) {
-	            this.setState({ error: message });
-	        }
-	    },
-	    render: function () {
-	        return React.createElement(
-	            'div',
-	            { className: 'pull-right' },
-	            React.createElement(
-	                Button,
-	                { onClick: this.openModal },
-	                'Add Kid'
-	            ),
-	            React.createElement(
-	                Modal,
-	                { title: 'Add Kid', ref: 'modal' },
-	                React.createElement(KidForm, { buttonText: 'Add New Kid', submitAction: this.addKid })
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 447 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41949,7 +41960,7 @@
 	var Button = ReactBootstrap.Button;
 
 	var RegularInput = __webpack_require__(443);
-	var ButtonChoiceInput = __webpack_require__(448);
+	var ButtonChoiceInput = __webpack_require__(447);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41967,7 +41978,10 @@
 	            birthday: this.refs.birthday.state.value };
 	        this.props.submitAction(kid);
 	    },
-
+	    getBirthdayValue() {
+	        console.log(this.props.kid);
+	        return this.props.kid.birthday.toISOString().split("T")[0];
+	    },
 	    render: function () {
 	        var genderChoices = [{ label: 'Boy', value: 'male' }, { label: 'Girl', value: 'female' }];
 	        return React.createElement(
@@ -41980,7 +41994,7 @@
 	                ref: 'gender',
 	                choices: genderChoices }),
 	            React.createElement(RegularInput, { name: 'Birthday',
-	                value: this.props.kid.birthday,
+	                value: this.getBirthdayValue(),
 	                ref: 'birthday',
 	                type: 'date' }),
 	            React.createElement(
@@ -42003,7 +42017,7 @@
 	});
 
 /***/ },
-/* 448 */
+/* 447 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -42064,6 +42078,56 @@
 	                    null,
 	                    this.renderChoices(this.props.choices)
 	                )
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 448 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactBootstrap = __webpack_require__(179);
+	var Reflux = __webpack_require__(173);
+	var Button = ReactBootstrap.Button;
+
+	var Actions = __webpack_require__(177);
+	var KidsStore = __webpack_require__(437);
+	var Modal = __webpack_require__(444);
+	var KidForm = __webpack_require__(446);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    mixins: [Reflux.listenTo(KidsStore, "handleKidActions")],
+	    openModal: function () {
+	        this.refs.modal.open();
+	    },
+	    addKid: function (kid) {
+	        this.setState({ error: '' });
+	        Actions.addNewKid(kid);
+	    },
+	    handleKidActions: function (event) {
+	        if (event === KidsStore.events.change) {
+	            this.refs.modal.close();
+	        } else if (event == KidsStore.events.addError) {
+	            this.setState({ error: message });
+	        }
+	    },
+	    render: function () {
+	        return React.createElement(
+	            'div',
+	            { className: 'pull-right' },
+	            React.createElement(
+	                Button,
+	                { onClick: this.openModal },
+	                'Add Kid'
+	            ),
+	            React.createElement(
+	                Modal,
+	                { title: 'Add Kid', ref: 'modal' },
+	                React.createElement(KidForm, { buttonText: 'Add New Kid', submitAction: this.addKid })
 	            )
 	        );
 	    }

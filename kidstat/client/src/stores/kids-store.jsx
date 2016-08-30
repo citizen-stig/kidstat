@@ -9,10 +9,22 @@ module.exports = Reflux.createStore({
         loading: 'loading',
         addError: 'add-error'
     },
+    parseKid: function(kid){
+        console.log('Parsing kid');
+        console.log(kid);
+        kid.birthday = new Date(kid.birthday);
+        console.log(kid);
+        return kid;
+    },
     getKids: function(){
         return Api.authorizedGet('kids')
             .then(function(data){
-                this.kids = data.data;
+                this.kids = [];
+                console.log('lalala');
+                for (var i=0; i<data.data.length; i++){
+                    this.kids.push(this.parseKid(data.data[i]));
+                }
+                console.log(this.kids);
                 this.triggerKidsReceived()
             }.bind(this));
     },
@@ -20,7 +32,7 @@ module.exports = Reflux.createStore({
         this.triggerLoading();
         return Api.authorizedPost('kids', kid)
             .then(function(new_kid){
-                    this.kids.push(new_kid);
+                    this.kids.push(this.parseKid(new_kid));
                     this.triggerKidsReceived();
             }.bind(this)).catch(function (error) {
                 return error.response.json()

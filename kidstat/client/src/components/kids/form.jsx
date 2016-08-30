@@ -22,7 +22,9 @@ module.exports = React.createClass({
         this.props.submitAction(kid);
     },
     getBirthdayValue: function(){
-        return this.props.kid.birthday.toISOString().split("T")[0];
+        if (this.props.kid.birthday !== '' && this.props.kid.birthday != null){
+            return this.props.kid.birthday.toISOString().split("T")[0];
+        }
     },
     render: function () {
         var genderChoices = [

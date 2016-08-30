@@ -41978,9 +41978,10 @@
 	            birthday: this.refs.birthday.state.value };
 	        this.props.submitAction(kid);
 	    },
-	    getBirthdayValue() {
-	        console.log(this.props.kid);
-	        return this.props.kid.birthday.toISOString().split("T")[0];
+	    getBirthdayValue: function () {
+	        if (this.props.kid.birthday !== '' && this.props.kid.birthday != null) {
+	            return this.props.kid.birthday.toISOString().split("T")[0];
+	        }
 	    },
 	    render: function () {
 	        var genderChoices = [{ label: 'Boy', value: 'male' }, { label: 'Girl', value: 'female' }];

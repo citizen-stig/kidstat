@@ -26,5 +26,5 @@ class Config(object):
     # SECURITY_LOGIN_USER_TEMPLATE = 'auth/login.html'
     SOCIAL_FACEBOOK = {
         'consumer_key': '288802541458761',
-        'consumer_secret': 'fc13e5c1ccb51dbb73afcd80fce76e0e'
+        'consumer_secret': 'TBD'
     }

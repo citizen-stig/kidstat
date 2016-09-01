@@ -6,13 +6,20 @@ var Row = ReactBootstrap.Row;
 var Col = ReactBootstrap.Col;
 
 var Actions = require('../../actions');
+var KidsStore = require('../../stores/kids-store.jsx');
 var AddObservation = require('../obsevations/add.jsx');
 var Modal = require('../common/modal.jsx');
 var KidForm = require('./form.jsx');
 
 module.exports = React.createClass({
+    mixins: [Reflux.listenTo(KidsStore, "handleKidActions")],
     propTypes: {
         kid: React.PropTypes.object.isRequired
+    },
+    handleKidActions: function (event) {
+        if (event === KidsStore.events.change) {
+            this.refs.modal.close()
+        }
     },
     deleteKid: function () {
         Actions.deleteKid(this.props.kid);
@@ -21,11 +28,11 @@ module.exports = React.createClass({
         var now = new Date();
         return Math.round((now - this.props.kid.birthday) / (1000 * 60 * 60 * 24));
     },
-    editKid: function(kid){
-        console.log('Kid needs to be edited');
-        console.log(kid);
+    editKid: function (kid) {
+        kid.id = this.props.kid.id;
+        return Actions.updateKid(kid);
     },
-    openModal: function(){
+    openModal: function () {
         this.refs.modal.open();
     },
     render: function () {

@@ -21590,9 +21590,9 @@
 	            }
 	        }).then(checkStatus).then(parseJSON);
 	    },
-	    authorizedPost: function (url, data) {
+	    sendDataToSever: function (url, data, method) {
 	        return fetch(rootUrl + url, {
-	            method: 'post',
+	            method: method,
 	            headers: {
 	                'Accept': 'application/json',
 	                'Content-Type': 'application/json',
@@ -21600,6 +21600,12 @@
 	            },
 	            body: JSON.stringify(data)
 	        }).then(checkStatus).then(parseJSON);
+	    },
+	    authorizedPost: function (url, data) {
+	        return this.sendDataToSever(url, data, 'post');
+	    },
+	    authorizedPut: function (url, data) {
+	        return this.sendDataToSever(url, data, 'put');
 	    },
 	    authorizedDelete: function (url) {
 	        return fetch(rootUrl + url, {
@@ -22058,7 +22064,7 @@
 
 	var Reflux = __webpack_require__(173);
 
-	module.exports = Reflux.createActions(['CheckAuthorization', 'Login', 'FacebookLogin', 'Signup', 'Logout', 'getKids', 'addNewKid', 'deleteKid', 'getObservations', 'addObservation', 'deleteObservation']);
+	module.exports = Reflux.createActions(['CheckAuthorization', 'Login', 'FacebookLogin', 'Signup', 'Logout', 'getKids', 'addNewKid', 'updateKid', 'deleteKid', 'getObservations', 'addObservation', 'deleteObservation']);
 
 /***/ },
 /* 178 */
@@ -41397,11 +41403,17 @@
 	        addError: 'add-error'
 	    },
 	    parseKid: function (kid) {
-	        console.log('Parsing kid');
-	        console.log(kid);
 	        kid.birthday = new Date(kid.birthday);
-	        console.log(kid);
 	        return kid;
+	    },
+	    updateKidInStore: function (new_kid) {
+	        for (var i = 0; i < this.kids.length; i++) {
+	            var current_kid = this.kids[i];
+	            if (new_kid['id'] === current_kid['id']) {
+	                this.kids[i] = new_kid;
+	                break;
+	            }
+	        }
 	    },
 	    getKids: function () {
 	        return Api.authorizedGet('kids').then(function (data) {
@@ -41414,16 +41426,25 @@
 	            this.triggerKidsReceived();
 	        }.bind(this));
 	    },
+	    errorHandler: function (error) {
+	        return error.response.json().then(function (data) {
+	            this.triggerAddError(data['error']);
+	        }.bind(this));
+	    },
 	    addNewKid: function (kid) {
 	        this.triggerLoading();
 	        return Api.authorizedPost('kids', kid).then(function (new_kid) {
 	            this.kids.push(this.parseKid(new_kid));
 	            this.triggerKidsReceived();
-	        }.bind(this)).catch(function (error) {
-	            return error.response.json().then(function (data) {
-	                this.triggerAddError(data['error']);
-	            }.bind(this));
-	        }.bind(this));
+	        }.bind(this)).catch(this.errorHandler.bind(this));
+	    },
+	    updateKid: function (kid) {
+	        this.triggerLoading();
+	        var url = 'kids/' + kid['id'];
+	        return Api.authorizedPut(url, kid).then(function (updated_kid) {
+	            this.updateKidInStore(this.parseKid(updated_kid));
+	            this.triggerKidsReceived();
+	        }.bind(this)).catch(this.errorHandler.bind(this));
 	    },
 	    deleteKid: function (kid) {
 	        this.triggerLoading();
@@ -41542,6 +41563,7 @@
 	var Col = ReactBootstrap.Col;
 
 	var Actions = __webpack_require__(177);
+	var KidsStore = __webpack_require__(437);
 	var AddObservation = __webpack_require__(441);
 	var Modal = __webpack_require__(444);
 	var KidForm = __webpack_require__(446);
@@ -41549,8 +41571,14 @@
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
+	    mixins: [Reflux.listenTo(KidsStore, "handleKidActions")],
 	    propTypes: {
 	        kid: React.PropTypes.object.isRequired
+	    },
+	    handleKidActions: function (event) {
+	        if (event === KidsStore.events.change) {
+	            this.refs.modal.close();
+	        }
 	    },
 	    deleteKid: function () {
 	        Actions.deleteKid(this.props.kid);
@@ -41560,8 +41588,8 @@
 	        return Math.round((now - this.props.kid.birthday) / (1000 * 60 * 60 * 24));
 	    },
 	    editKid: function (kid) {
-	        console.log('Kid needs to be edited');
-	        console.log(kid);
+	        kid.id = this.props.kid.id;
+	        return Actions.updateKid(kid);
 	    },
 	    openModal: function () {
 	        this.refs.modal.open();

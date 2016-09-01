@@ -49,9 +49,9 @@ module.exports = {
             .then(checkStatus)
             .then(parseJSON);
     },
-    authorizedPost: function(url, data){
+    sendDataToSever: function(url, data, method){
         return fetch(rootUrl + url, {
-            method: 'post',
+            method: method,
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -61,6 +61,12 @@ module.exports = {
         })
             .then(checkStatus)
             .then(parseJSON);
+    },
+    authorizedPost: function(url, data){
+        return this.sendDataToSever(url, data, 'post');
+    },
+    authorizedPut: function(url, data){
+        return this.sendDataToSever(url, data, 'put');
     },
     authorizedDelete: function(url){
        return fetch(rootUrl + url, {

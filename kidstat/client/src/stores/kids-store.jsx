@@ -10,11 +10,17 @@ module.exports = Reflux.createStore({
         addError: 'add-error'
     },
     parseKid: function(kid){
-        console.log('Parsing kid');
-        console.log(kid);
         kid.birthday = new Date(kid.birthday);
-        console.log(kid);
         return kid;
+    },
+    updateKidInStore: function(new_kid){
+        for(var i = 0; i < this.kids.length; i++){
+            var current_kid = this.kids[i];
+            if (new_kid['id'] === current_kid['id']){
+                this.kids[i] = new_kid;
+                break;
+            }
+        }
     },
     getKids: function(){
         return Api.authorizedGet('kids')
@@ -28,18 +34,28 @@ module.exports = Reflux.createStore({
                 this.triggerKidsReceived()
             }.bind(this));
     },
+    errorHandler: function(error){
+        return error.response.json()
+            .then(function(data){
+                this.triggerAddError(data['error'])
+            }.bind(this))
+    },
     addNewKid: function(kid){
         this.triggerLoading();
         return Api.authorizedPost('kids', kid)
             .then(function(new_kid){
-                    this.kids.push(this.parseKid(new_kid));
-                    this.triggerKidsReceived();
-            }.bind(this)).catch(function (error) {
-                return error.response.json()
-                    .then(function(data){
-                        this.triggerAddError(data['error'])
-                    }.bind(this))
-            }.bind(this));
+                this.kids.push(this.parseKid(new_kid));
+                this.triggerKidsReceived();
+            }.bind(this)).catch(this.errorHandler.bind(this));
+    },
+    updateKid: function(kid){
+        this.triggerLoading();
+        var url = 'kids/' + kid['id'];
+        return Api.authorizedPut(url, kid)
+            .then(function(updated_kid){
+                this.updateKidInStore(this.parseKid(updated_kid));
+                this.triggerKidsReceived();
+            }.bind(this)).catch(this.errorHandler.bind(this))
     },
     deleteKid: function(kid){
         this.triggerLoading();

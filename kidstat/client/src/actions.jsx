@@ -8,6 +8,7 @@ module.exports = Reflux.createActions([
     'Logout',
     'getKids',
     'addNewKid',
+    'updateKid',
     'deleteKid',
     'getObservations',
     'addObservation',

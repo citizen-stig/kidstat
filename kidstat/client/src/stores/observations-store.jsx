@@ -10,9 +10,28 @@ module.exports = Reflux.createStore({
         loading: 'loading',
         addError: 'add-error'
     },
+    init: function() {
+        this.observations = {};
+    },
+    getObservationsUrl: function(kid){
+        return "kids/" + kid['id'] + "/observations";
+    },
+    getObservations: function(kid){
+        var url = this.getObservationsUrl(kid);
+        this.triggerLoading();
+        return Api.authorizedGet(url).then(
+            function(data){
+                console.log('=======');
+                console.log(data);
+                console.log('=======');
+                this.observations[kid.id] = data.data;
+                this.triggerObservationReceived();
+            }.bind(this)
+        )
+    },
     addObservation: function(kid, observation){
         this.triggerLoading();
-        var url = "kids/" + kid['id'] + "/observations";
+        var url = this.getObservationsUrl(kid);
         return Api.authorizedPost(url, observation).then(
             function(new_observation){
                 console.log('Observation has been added!!!');
@@ -25,6 +44,6 @@ module.exports = Reflux.createStore({
         this.trigger(this.events.loading);
     },
     triggerObservationReceived: function(){
-        this.trigger(this.events.change);
+        this.trigger(this.events.change, this.observations);
     }
 });

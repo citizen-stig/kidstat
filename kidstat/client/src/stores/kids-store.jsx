@@ -23,14 +23,13 @@ module.exports = Reflux.createStore({
         }
     },
     getKids: function(){
+        this.triggerLoading();
         return Api.authorizedGet('kids')
             .then(function(data){
                 this.kids = [];
-                console.log('lalala');
                 for (var i=0; i<data.data.length; i++){
                     this.kids.push(this.parseKid(data.data[i]));
                 }
-                console.log(this.kids);
                 this.triggerKidsReceived()
             }.bind(this));
     },

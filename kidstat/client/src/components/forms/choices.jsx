@@ -5,6 +5,7 @@ var FormGroup = ReactBootstrap.FormGroup;
 var ControlLabel = ReactBootstrap.ControlLabel;
 var ButtonGroup = ReactBootstrap.ButtonGroup;
 var Button = ReactBootstrap.Button;
+var Radio = ReactBootstrap.Radio;
 
 module.exports = React.createClass({
     propTypes: {
@@ -27,11 +28,11 @@ module.exports = React.createClass({
     },
     renderChoices: function (choices) {
         return choices.map(function (choice) {
-            return <Button
+            return <Radio
                 key={choice.value}
                 onClick={this.changeValue.bind(this, choice.value)}
-                active={this.state.value === choice.value}>{choice.label}
-            </Button>
+                checked={this.state.value === choice.value}>{choice.label}
+            </Radio>
         }.bind(this))
     },
     render: function () {
@@ -40,9 +41,7 @@ module.exports = React.createClass({
                     {this.props.name}
                 </Col>
                 <Col sm={this.props.inputCol}>
-                    <ButtonGroup>
-                        {this.renderChoices(this.props.choices)}
-                    </ButtonGroup>
+                    {this.renderChoices(this.props.choices)}
                 </Col>
             </FormGroup>
         );

@@ -16,8 +16,12 @@ module.exports = React.createClass({
         return {
             buttonText: "Add Observation",
             observation: {timestamp: '', parameter: '', value: ''},
+            parameters: ['height', 'weight'],
             submitAction: function(observation){console.log(observation)}
         }
+    },
+    componentDidMount: function(){
+        this.refs.parameter.setState({value: this.props.parameters[0]})
     },
     submit: function () {
         var observation = {timestamp: this.refs.timestamp.state.value,
@@ -28,6 +32,11 @@ module.exports = React.createClass({
     changeParameterValue: function(){
         this.refs.parameter.setState(
             {value: ReactDOM.findDOMNode(this.refs.parameter).value});
+    },
+    renderParametersOptions: function(){
+        return this.props.parameters.map(function(parameter){
+            return <option value={parameter} key={parameter}>{parameter}</option>
+        })
     },
     render: function () {
         return (
@@ -50,8 +59,7 @@ module.exports = React.createClass({
                                      value={this.props.observation.parameter.value}
                                      placeholder="parameter"
                                      onChange={this.changeParameterValue}>
-                            <option value="height">Height</option>
-                            <option value="weight">Weight</option>
+                            {this.renderParametersOptions()}
                         </FormControl>
                     </Col>
                 </FormGroup>

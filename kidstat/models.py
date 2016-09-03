@@ -16,7 +16,7 @@ class Parameter(db.Document):
     unit = db.StringField(max_length=10)
 
     def __str__(self):
-        return '{0}, {1}'.format(self.name, self.unit)
+        return self.name
 
 
 class Standard(db.Document):

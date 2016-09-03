@@ -6,7 +6,7 @@ var FormGroup = ReactBootstrap.FormGroup;
 var Button = ReactBootstrap.Button;
 
 var RegularInput = require('../forms/input.jsx');
-var ButtonChoiceInput = require('../forms/button-choices.jsx');
+var ChoicesInput = require('../forms/choices.jsx');
 
 
 module.exports = React.createClass({
@@ -35,10 +35,10 @@ module.exports = React.createClass({
             <Form horizontal>
                 <RegularInput name="Name" ref="name"
                               value={this.props.kid.name}/>
-                <ButtonChoiceInput name="Gender"
-                                   value={this.props.kid.gender}
-                                   ref="gender"
-                                   choices={genderChoices}/>
+                <ChoicesInput name="Gender"
+                              value={this.props.kid.gender}
+                              ref="gender"
+                              choices={genderChoices}/>
                 <RegularInput name="Birthday"
                               value={this.getBirthdayValue()}
                               ref="birthday"

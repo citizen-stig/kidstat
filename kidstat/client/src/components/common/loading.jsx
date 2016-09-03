@@ -1,12 +1,14 @@
 var React = require('react');
 var AuthStore = require('../../stores/auth-store.jsx');
 var KidsStore = require('../../stores/kids-store.jsx');
+var ObservationsStore = require('../../stores/observations-store.jsx');
 var Reflux = require('reflux');
 
 module.exports = React.createClass({
     mixins: [
         Reflux.listenTo(AuthStore, "handleEvent"),
-        Reflux.listenTo(KidsStore, "handleEvent")
+        Reflux.listenTo(KidsStore, "handleEvent"),
+        Reflux.listenTo(ObservationsStore, "handleEvent")
     ],
     handleEvent: function(event){
         if (event == 'loading'){

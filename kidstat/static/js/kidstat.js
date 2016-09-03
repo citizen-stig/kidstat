@@ -21416,7 +21416,7 @@
 	var PublicIndex = __webpack_require__(432);
 	var Actions = __webpack_require__(177);
 	var Loader = __webpack_require__(436);
-	var Dashboard = __webpack_require__(438);
+	var Dashboard = __webpack_require__(439);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41350,12 +41350,13 @@
 	var React = __webpack_require__(1);
 	var AuthStore = __webpack_require__(174);
 	var KidsStore = __webpack_require__(437);
+	var ObservationsStore = __webpack_require__(438);
 	var Reflux = __webpack_require__(173);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
-	    mixins: [Reflux.listenTo(AuthStore, "handleEvent"), Reflux.listenTo(KidsStore, "handleEvent")],
+	    mixins: [Reflux.listenTo(AuthStore, "handleEvent"), Reflux.listenTo(KidsStore, "handleEvent"), Reflux.listenTo(ObservationsStore, "handleEvent")],
 	    handleEvent: function (event) {
 	        if (event == 'loading') {
 	            this.show();
@@ -41416,13 +41417,12 @@
 	        }
 	    },
 	    getKids: function () {
+	        this.triggerLoading();
 	        return Api.authorizedGet('kids').then(function (data) {
 	            this.kids = [];
-	            console.log('lalala');
 	            for (var i = 0; i < data.data.length; i++) {
 	                this.kids.push(this.parseKid(data.data[i]));
 	            }
-	            console.log(this.kids);
 	            this.triggerKidsReceived();
 	        }.bind(this));
 	    },
@@ -41482,13 +41482,62 @@
 /* 438 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var Reflux = __webpack_require__(173);
+	var Api = __webpack_require__(175);
+	var Actions = __webpack_require__(177);
+
+	module.exports = Reflux.createStore({
+	    listenables: [Actions],
+	    events: {
+	        change: 'change',
+	        loading: 'loading',
+	        addError: 'add-error'
+	    },
+	    init: function () {
+	        this.observations = {};
+	    },
+	    getObservationsUrl(kid) {
+	        return "kids/" + kid['id'] + "/observations";
+	    },
+	    getObservations: function (kid) {
+	        var url = this.getObservationsUrl(kid);
+	        this.triggerLoading();
+	        return Api.authorizedGet(url).then(function (data) {
+	            console.log('=======');
+	            console.log(data);
+	            console.log('=======');
+	            this.observations[kid.id] = data.data;
+	            this.triggerObservationReceived();
+	        }.bind(this));
+	    },
+	    addObservation: function (kid, observation) {
+	        this.triggerLoading();
+	        var url = this.getObservationsUrl(kid);
+	        return Api.authorizedPost(url, observation).then(function (new_observation) {
+	            console.log('Observation has been added!!!');
+	            console.log(new_observation);
+	            this.triggerObservationReceived();
+	        }.bind(this));
+	    },
+	    triggerLoading: function () {
+	        this.trigger(this.events.loading);
+	    },
+	    triggerObservationReceived: function () {
+	        this.trigger(this.events.change, this.observations);
+	    }
+	});
+
+/***/ },
+/* 439 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var React = __webpack_require__(1);
 	var ReactBootstrap = __webpack_require__(179);
 	var Grid = ReactBootstrap.Grid;
 	var Row = ReactBootstrap.Row;
 	var Col = ReactBootstrap.Col;
 
-	var KidsList = __webpack_require__(439);
+	var KidsList = __webpack_require__(440);
 	var AddKid = __webpack_require__(448);
 
 	module.exports = React.createClass({
@@ -41505,7 +41554,7 @@
 	});
 
 /***/ },
-/* 439 */
+/* 440 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41516,7 +41565,7 @@
 	var Actions = __webpack_require__(177);
 	var KidsStore = __webpack_require__(437);
 
-	var KidDetail = __webpack_require__(440);
+	var KidDetail = __webpack_require__(441);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41552,7 +41601,7 @@
 	});
 
 /***/ },
-/* 440 */
+/* 441 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41564,21 +41613,70 @@
 
 	var Actions = __webpack_require__(177);
 	var KidsStore = __webpack_require__(437);
-	var AddObservation = __webpack_require__(441);
-	var Modal = __webpack_require__(444);
+	var ObservationsStore = __webpack_require__(438);
+	var AddObservation = __webpack_require__(442);
+	var Modal = __webpack_require__(445);
 	var KidForm = __webpack_require__(446);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
-	    mixins: [Reflux.listenTo(KidsStore, "handleKidActions")],
+	    mixins: [Reflux.listenTo(KidsStore, "handleKidActions"), Reflux.listenTo(ObservationsStore, "handleObservationActions")],
 	    propTypes: {
 	        kid: React.PropTypes.object.isRequired
+	    },
+
+	    getEmptyObservation() {
+	        return { value: "N/A" };
+	    },
+	    getInitialState: function () {
+	        return {
+	            weight: this.getEmptyObservation(),
+	            height: this.getEmptyObservation()
+	        };
+	    },
+	    componentWillMount: function () {
+	        Actions.getObservations(this.props.kid);
 	    },
 	    handleKidActions: function (event) {
 	        if (event === KidsStore.events.change) {
 	            this.refs.modal.close();
 	        }
+	    },
+	    handleObservationActions: function (event, observations) {
+	        console.log('Observation action handler in detail.jsx');
+	        console.log(event);
+	        if (event === 'change') {
+	            this.updateObservationsState(observations);
+	        }
+	    },
+	    getLastOrNotAvailable: function (values) {
+	        if (values.length > 0) {
+	            return values[values.length - 1];
+	        } else {
+	            return this.getEmptyObservation();
+	        }
+	    },
+	    updateObservationsState: function (observations) {
+	        console.log('Update observations state');
+	        console.log(observations);
+	        var kid_observations = observations[this.props.kid.id];
+	        var heights = [];
+	        var weights = [];
+	        for (var i = 0; i < kid_observations.length; i++) {
+	            var parameter = kid_observations[i]["parameter"].toLowerCase();
+	            if (parameter == "height") {
+	                heights.push(kid_observations[i]);
+	            } else if (parameter == "weight") {
+	                weights.push(kid_observations[i]);
+	            }
+	        }
+	        var height = this.getLastOrNotAvailable(heights);
+	        var weight = this.getLastOrNotAvailable(weights);
+	        console.log('New observations');
+	        console.log(height);
+	        console.log(weight);
+	        this.setState({ weight: weight, height: height });
 	    },
 	    deleteKid: function () {
 	        Actions.deleteKid(this.props.kid);
@@ -41633,7 +41731,9 @@
 	                            null,
 	                            'Weight:'
 	                        ),
-	                        ' N/A (average)'
+	                        ' ',
+	                        this.state.weight.value,
+	                        '(N/A)'
 	                    ),
 	                    React.createElement(
 	                        'p',
@@ -41643,7 +41743,9 @@
 	                            null,
 	                            'Height:'
 	                        ),
-	                        ' N/A (average)'
+	                        ' ',
+	                        this.state.height.value,
+	                        '(N/A)'
 	                    )
 	                ),
 	                React.createElement(
@@ -41679,7 +41781,7 @@
 	});
 
 /***/ },
-/* 441 */
+/* 442 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41688,9 +41790,9 @@
 	var Button = ReactBootstrap.Button;
 
 	var Actions = __webpack_require__(177);
-	var ObservationForm = __webpack_require__(442);
-	var Modal = __webpack_require__(444);
-	var ObservationStore = __webpack_require__(445);
+	var ObservationForm = __webpack_require__(443);
+	var Modal = __webpack_require__(445);
+	var ObservationStore = __webpack_require__(438);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41700,8 +41802,9 @@
 	        this.refs.modal.open();
 	    },
 	    handleObservationStore: function (event) {
-	        console.log("handling something from observation store");
-	        console.log(event);
+	        if (event === ObservationStore.events.change) {
+	            this.refs.modal.close();
+	        }
 	    },
 	    addObservation: function (observation) {
 	        Actions.addObservation(this.props.kid, observation);
@@ -41725,7 +41828,7 @@
 	});
 
 /***/ },
-/* 442 */
+/* 443 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41737,7 +41840,7 @@
 	var Button = ReactBootstrap.Button;
 	var ControlLabel = ReactBootstrap.ControlLabel;
 
-	var RegularInput = __webpack_require__(443);
+	var RegularInput = __webpack_require__(444);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41746,10 +41849,14 @@
 	        return {
 	            buttonText: "Add Observation",
 	            observation: { timestamp: '', parameter: '', value: '' },
+	            parameters: ['height', 'weight'],
 	            submitAction: function (observation) {
 	                console.log(observation);
 	            }
 	        };
+	    },
+	    componentDidMount: function () {
+	        this.refs.parameter.setState({ value: this.props.parameters[0] });
 	    },
 	    submit: function () {
 	        var observation = { timestamp: this.refs.timestamp.state.value,
@@ -41759,6 +41866,15 @@
 	    },
 	    changeParameterValue: function () {
 	        this.refs.parameter.setState({ value: ReactDOM.findDOMNode(this.refs.parameter).value });
+	    },
+	    renderParametersOptions: function () {
+	        return this.props.parameters.map(function (parameter) {
+	            return React.createElement(
+	                'option',
+	                { value: parameter, key: parameter },
+	                parameter
+	            );
+	        });
 	    },
 	    render: function () {
 	        return React.createElement(
@@ -41790,16 +41906,7 @@
 	                            value: this.props.observation.parameter.value,
 	                            placeholder: 'parameter',
 	                            onChange: this.changeParameterValue },
-	                        React.createElement(
-	                            'option',
-	                            { value: 'height' },
-	                            'Height'
-	                        ),
-	                        React.createElement(
-	                            'option',
-	                            { value: 'weight' },
-	                            'Weight'
-	                        )
+	                        this.renderParametersOptions()
 	                    )
 	                )
 	            ),
@@ -41823,7 +41930,7 @@
 	});
 
 /***/ },
-/* 443 */
+/* 444 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41884,7 +41991,7 @@
 	});
 
 /***/ },
-/* 444 */
+/* 445 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41945,38 +42052,6 @@
 	});
 
 /***/ },
-/* 445 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Reflux = __webpack_require__(173);
-	var Api = __webpack_require__(175);
-	var Actions = __webpack_require__(177);
-
-	module.exports = Reflux.createStore({
-	    listenables: [Actions],
-	    events: {
-	        change: 'change',
-	        loading: 'loading',
-	        addError: 'add-error'
-	    },
-	    addObservation: function (kid, observation) {
-	        this.triggerLoading();
-	        var url = "kids/" + kid['id'] + "/observations";
-	        return Api.authorizedPost(url, observation).then(function (new_observation) {
-	            console.log('Observation has been added!!!');
-	            console.log(new_observation);
-	            this.triggerObservationReceived();
-	        }.bind(this));
-	    },
-	    triggerLoading: function () {
-	        this.trigger(this.events.loading);
-	    },
-	    triggerObservationReceived: function () {
-	        this.trigger(this.events.change);
-	    }
-	});
-
-/***/ },
 /* 446 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -41987,7 +42062,7 @@
 	var FormGroup = ReactBootstrap.FormGroup;
 	var Button = ReactBootstrap.Button;
 
-	var RegularInput = __webpack_require__(443);
+	var RegularInput = __webpack_require__(444);
 	var ButtonChoiceInput = __webpack_require__(447);
 
 	module.exports = React.createClass({
@@ -42056,6 +42131,7 @@
 	var ControlLabel = ReactBootstrap.ControlLabel;
 	var ButtonGroup = ReactBootstrap.ButtonGroup;
 	var Button = ReactBootstrap.Button;
+	var Radio = ReactBootstrap.Radio;
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -42081,11 +42157,11 @@
 	    renderChoices: function (choices) {
 	        return choices.map(function (choice) {
 	            return React.createElement(
-	                Button,
+	                Radio,
 	                {
 	                    key: choice.value,
 	                    onClick: this.changeValue.bind(this, choice.value),
-	                    active: this.state.value === choice.value },
+	                    checked: this.state.value === choice.value },
 	                choice.label
 	            );
 	        }.bind(this));
@@ -42102,11 +42178,7 @@
 	            React.createElement(
 	                Col,
 	                { sm: this.props.inputCol },
-	                React.createElement(
-	                    ButtonGroup,
-	                    null,
-	                    this.renderChoices(this.props.choices)
-	                )
+	                this.renderChoices(this.props.choices)
 	            )
 	        );
 	    }
@@ -42123,7 +42195,7 @@
 
 	var Actions = __webpack_require__(177);
 	var KidsStore = __webpack_require__(437);
-	var Modal = __webpack_require__(444);
+	var Modal = __webpack_require__(445);
 	var KidForm = __webpack_require__(446);
 
 	module.exports = React.createClass({

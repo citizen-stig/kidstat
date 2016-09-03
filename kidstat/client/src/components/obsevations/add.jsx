@@ -15,8 +15,9 @@ module.exports = React.createClass({
         this.refs.modal.open();
     },
     handleObservationStore: function (event) {
-        console.log("handling something from observation store");
-        console.log(event);
+        if (event === ObservationStore.events.change) {
+            this.refs.modal.close();
+        }
     },
     addObservation: function (observation) {
         Actions.addObservation(this.props.kid, observation);

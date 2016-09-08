@@ -22,7 +22,7 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
             kids=model_factories.KidFactory.create_batch(count))
         user.set_password(user.email)
         user.save()
-        access_token = self.login(user.email, user.email)
+        access_token = self.fast_login(user)
         response = requests.get(self.url,
                                 headers={'Authorization': 'JWT ' + access_token})
         self.assertEqual(response.status_code, 200)
@@ -32,11 +32,12 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         self.assertEqual(len(user.kids), len(kids_list))
 
     def test_add_new(self):
-        user = model_factories.UserFactory(kids=[])
+        user = model_factories.UserFactory()
         user.set_password(user.email)
         user.save()
 
-        access_token = self.login(user.email, user.email)
+        # access_token = self.login(user.email, user.email)
+        access_token = self.fast_login(user)
 
         birthday = datetime(2016, 1, 2, 15, 30).replace(tzinfo=pytz.UTC)
         name = 'John'
@@ -65,11 +66,12 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         self.assertEqual(new_kid.birthday, birthday)
 
     def test_add_second_same_name(self):
-        user = model_factories.UserFactory(kids=[])
+        user = model_factories.UserFactory()
         user.set_password(user.email)
         user.save()
 
-        access_token = self.login(user.email, user.email)
+        access_token = self.fast_login(user)
+        # access_token = self.login(user.email, user.email)
 
         birthday = datetime(2016, 1, 2, 15, 30).replace(tzinfo=pytz.UTC)
         name = 'John'
@@ -96,7 +98,9 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
                          'Kid with this name already exists')
 
     def test_get_one(self):
-
+        user = model_factories.UserFactory()
+        user.set_password(user.email)
+        user.save()
         user = model_factories.UserFactory(kids=[model_factories.KidFactory() for _ in range(3)])
         user.set_password(user.email)
         user.save()
@@ -105,6 +109,7 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         url = self.get_server_url() + url_for('kids_object', kid_id=str(kid.id))
 
         access_token = self.login(user.email, user.email)
+        # access_token = self.fast_login(user)
 
         response = requests.get(url,
                                 headers={'Authorization': 'JWT ' + access_token})
@@ -120,10 +125,22 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         self.assertEqual(response_data['birthday'],
                          kid.birthday.strftime(TIMESTAMP_FORMAT))
 
-    @unittest.skip('Not implemented')
     def test_get_non_existed(self):
-
-        pass
+        user = model_factories.UserFactory()
+        user.set_password(user.email)
+        user.save()
+        url = self.get_server_url() + url_for('kids_object',
+                                              kid_id=str('qewrtyzxc'))
+        # access_token = self.login(user.email, user.email)
+        access_token = self.fast_login(user)
+        response = requests.get(url,
+                                headers={
+                                    'Authorization': 'JWT ' + access_token})
+        self.assertEqual(response.status_code, 404)
+        response_data = response.json()
+        self.assertIn('message', response_data)
+        self.assertIn('The requested URL was not found on the server.',
+                      response_data['message'])
 
     def test_update(self):
         user = model_factories.UserFactory(
@@ -134,7 +151,8 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         kid = user.kids[1]
         url = self.get_server_url() + url_for('kids_object', kid_id=str(kid.id))
 
-        access_token = self.login(user.email, user.email)
+        # access_token = self.login(user.email, user.email)
+        access_token = self.fast_login(user)
 
         new_name = kid.name + 'SOMENEWDATA'
         birthday = kid.birthday - timedelta(days=3)
@@ -159,9 +177,26 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         # self.assertEqual(response_data['birthday'],
         #                  birthday.strftime('%Y-%m-%dT%H:%M:%S.%f+00:00'))
 
-    @unittest.skip('Not implemented')
     def test_update_non_existed(self):
-        pass
+        user = model_factories.UserFactory()
+        user.set_password(user.email)
+        user.save()
+        url = self.get_server_url() + url_for('kids_object',
+                                              kid_id=str('qewrtyzxc'))
+        # access_token = self.login(user.email, user.email)
+        access_token = self.fast_login(user)
+        new_kid_data = {'name': 'some',
+                        'gender': models.MALE,
+                        'birthday': '2016-08-23'}
+        response = requests.put(
+            url,
+            json=new_kid_data,
+            headers={'Authorization': 'JWT ' + access_token})
+        self.assertEqual(response.status_code, 404)
+        response_data = response.json()
+        self.assertIn('message', response_data)
+        self.assertIn('The requested URL was not found on the server.',
+                      response_data['message'])
 
     def test_delete(self):
         count = 3
@@ -170,9 +205,11 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         user.save()
         user = models.User.objects.get(id=user.id)
         removed_kid = user.kids[1]
-        url = self.get_server_url() + url_for('kids_object', kid_id=str(removed_kid.id))
+        url = self.get_server_url() + url_for('kids_object',
+                                              kid_id=str(removed_kid.id))
 
-        access_token = self.login(user.email, user.email)
+        # access_token = self.login(user.email, user.email)
+        access_token = self.fast_login(user)
 
         response = requests.delete(url, headers={'Authorization': 'JWT ' + access_token})
 
@@ -187,6 +224,18 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         for existed_kid in user.kids:
             self.assertNotEqual(removed_kid.id, existed_kid.id)
 
-    @unittest.skip('Not implemented')
     def test_delete_non_existed(self):
-        pass
+        user = model_factories.UserFactory()
+        user.set_password(user.email)
+        user.save()
+        url = self.get_server_url() + url_for('kids_object',
+                                              kid_id=str('qewrtyzxc'))
+        # access_token = self.login(user.email, user.email)
+        access_token = self.fast_login(user)
+        response = requests.delete(url, headers={
+            'Authorization': 'JWT ' + access_token})
+        self.assertEqual(response.status_code, 404)
+        response_data = response.json()
+        self.assertIn('message', response_data)
+        self.assertIn('The requested URL was not found on the server.',
+                      response_data['message'])

@@ -44,14 +44,21 @@ class KidsListResource(MarshMallowResource):
 class KidResource(MarshMallowResource):
     schema = KidSchema()
 
+    @staticmethod
+    def get_kid_or_404(kid_id):
+        kid = current_identity.get_kid_by_id(kid_id)
+        if kid is None:
+            abort(404)
+        return kid
+
     @jwt_required()
     def get(self, kid_id):
-        return self.object_response(current_identity.get_kid_by_id(kid_id))
+        return self.object_response(self.get_kid_or_404(kid_id))
 
     @jwt_required()
     @use_args(KidSchema(strict=True))
     def put(self, args, kid_id):
-        kid = current_identity.get_kid_by_id(kid_id)
+        kid = self.get_kid_or_404(kid_id)
         kid.name = args['name']
         kid.gender = args['gender']
         kid.birthday = args['birthday']
@@ -60,7 +67,7 @@ class KidResource(MarshMallowResource):
 
     @jwt_required()
     def delete(self, kid_id):
-        kid = current_identity.get_kid_by_id(kid_id)
+        kid = self.get_kid_or_404(kid_id)
         current_identity.update(pull__kids=kid)
         current_identity.save()
         return {'success': True}

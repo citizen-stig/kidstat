@@ -44,7 +44,6 @@ class KidObservations(BaseTestCase):
         kid.observations.append(observation)
         self.user.save()
         self.user.reload()
-
         observation.reload()
         self.assertIsNotNone(observation.id)
 
@@ -76,5 +75,19 @@ class KidObservations(BaseTestCase):
         self.assertEqual(kid.observations[1].timestamp,
                          observation1.timestamp)
 
-    # def test_only_one_observation_per_date(self):
-    #     pass
+    def test_only_one_observation_per_date(self):
+        kid = self.user.kids[0]
+        observation1 = model_factories.ObservationFactory(
+            parameter=self.parameter,
+            timestamp=kid.birthday + timedelta(days=2))
+        observation2 = model_factories.ObservationFactory(
+            parameter=self.parameter,
+            timestamp=kid.birthday + timedelta(days=2))
+
+        kid.add_observation(observation1)
+        with self.assertRaises(ValueError) as cm:
+            kid.add_observation(observation2)
+
+        exc = cm.exception
+        self.assertEqual(str(exc),
+                         'Cannot add 2 observations for the same date')

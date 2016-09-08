@@ -19,24 +19,24 @@ class Sanity(BaseTestCase):
         self.assertEqual(str(parameter), expected_str)
 
 
-class StandardValidation(BaseTestCase):
-
-    @unittest.skip('Not Implemented')
-    def test_age_lower_bound(self):
-        pass
-
-    @unittest.skip('Not Implemented')
-    def test_age_upper_bound(self):
-        pass
-
-    @unittest.skip('Not Implemented')
-    def test_value_lower_bound(self):
-        pass
-
-    @unittest.skip('Not Implemented')
-    def test_percentile_lower_bound(self):
-        pass
-
-    @unittest.skip('Not Implemented')
-    def test_percentile_upper_bound(self):
-        pass
+# class StandardValidation(BaseTestCase):
+#
+#     @unittest.skip('Not Implemented')
+#     def test_age_lower_bound(self):
+#         pass
+#
+#     @unittest.skip('Not Implemented')
+#     def test_age_upper_bound(self):
+#         pass
+#
+#     @unittest.skip('Not Implemented')
+#     def test_value_lower_bound(self):
+#         pass
+#
+#     @unittest.skip('Not Implemented')
+#     def test_percentile_lower_bound(self):
+#         pass
+#
+#     @unittest.skip('Not Implemented')
+#     def test_percentile_upper_bound(self):
+#         pass

@@ -26,6 +26,11 @@ class BaseAPIIntegrationTestCase(LiveServerTestCase):
         response_data = response.json()
         return response_data['access_token']
 
+    @staticmethod
+    def fast_login(user):
+        jwt = current_app.extensions['jwt']
+        return jwt.jwt_encode_callback(user).decode('utf-8')
+
     def verify_response_error(self, response, field_name, message):
         response_data = response.json()
         self.assertIn('errors', response_data)

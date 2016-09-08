@@ -1,7 +1,8 @@
 import unittest
 import os
+import socket
+import sys
 import threading
-from wsgiref.simple_server import make_server
 from wsgiref.simple_server import WSGIRequestHandler, WSGIServer, ServerHandler
 from kidstat.models import db
 from kidstat.app import create_app

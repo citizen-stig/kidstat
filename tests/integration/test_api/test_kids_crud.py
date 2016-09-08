@@ -96,6 +96,7 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
                          'Kid with this name already exists')
 
     def test_get_one(self):
+
         user = model_factories.UserFactory(kids=[model_factories.KidFactory() for _ in range(3)])
         user.set_password(user.email)
         user.save()
@@ -121,6 +122,7 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
     @unittest.skip('Not implemented')
     def test_get_non_existed(self):
+
         pass
 
     def test_update(self):

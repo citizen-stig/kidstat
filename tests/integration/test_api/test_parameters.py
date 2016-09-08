@@ -1,8 +1,8 @@
-# -*- encoding: utf-8 -*-
-from flask import url_for
 import requests
+from flask import url_for
+
+from tests import model_factories
 from .base import BaseAPIIntegrationTestCase
-from tests.helpers import model_factories
 
 
 class Read(BaseAPIIntegrationTestCase):

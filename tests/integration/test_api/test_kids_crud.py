@@ -1,13 +1,13 @@
-# -*- encoding: utf-8 -*-
 import unittest
 from datetime import datetime, timedelta
+
 import pytz
-from flask import url_for
-from flask_restful import abort
 import requests
-from .base import BaseAPIIntegrationTestCase
-from tests.helpers import model_factories
+from flask import url_for
+
 from kidstat import models
+from tests import model_factories
+from .base import BaseAPIIntegrationTestCase, TIMESTAMP_FORMAT
 
 
 class SimpleCRUD(BaseAPIIntegrationTestCase):
@@ -105,7 +105,8 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
         access_token = self.login(user.email, user.email)
 
-        response = requests.get(url, headers={'Authorization': 'JWT ' + access_token})
+        response = requests.get(url,
+                                headers={'Authorization': 'JWT ' + access_token})
 
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
@@ -116,7 +117,7 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         self.assertEqual(response_data['name'], kid.name)
         self.assertEqual(response_data['gender'], kid.gender)
         self.assertEqual(response_data['birthday'],
-                         kid.birthday.strftime('%Y-%m-%dT%H:%M:%S.%f+00:00'))
+                         kid.birthday.strftime(TIMESTAMP_FORMAT))
 
     @unittest.skip('Not implemented')
     def test_get_non_existed(self):

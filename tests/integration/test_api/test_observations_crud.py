@@ -1,10 +1,11 @@
 import unittest
-from datetime import datetime, timedelta
-from flask import url_for
-import requests
-from .base import AuthorizedAPIIntegrationTestCase, TIMESTAMP_FORMAT
-from tests.helpers import model_factories
+from datetime import timedelta
 
+import requests
+from flask import url_for
+
+from tests import model_factories
+from .base import AuthorizedAPIIntegrationTestCase, TIMESTAMP_FORMAT
 
 CLIENT_TIMESTAMP_FORMAT = '%Y-%m-%d'
 
@@ -75,7 +76,6 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
         self.assertEqual(observation.value,
                          observation_data['value'])
 
-
     def test_add_second(self):
         self.assertEqual(len(self.user.kids[0].observations), 0)
         parameter = model_factories.ParameterFactory()
@@ -96,7 +96,6 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
         }
         response = requests.post(self.url, json=data, headers=self.headers)
         self.assertEqual(response.status_code, 200)
-
 
     def test_non_existed_parameter(self):
         observations = self.user.kids[0].observations

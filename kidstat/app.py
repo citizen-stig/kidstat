@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 import os
 import importlib
 from flask import Flask, render_template

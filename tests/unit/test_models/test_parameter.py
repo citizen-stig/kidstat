@@ -1,7 +1,7 @@
-# -*- encoding: utf-8 -*-
 import unittest
-from tests.helpers.testcases import BaseTestCase
-from tests.helpers import model_factories
+
+from tests import model_factories
+from tests.testcases import BaseTestCase
 
 
 class Sanity(BaseTestCase):

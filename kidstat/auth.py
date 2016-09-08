@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 from flask_jwt import _default_jwt_payload_handler
 from kidstat import models
 

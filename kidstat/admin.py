@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 from flask import request, redirect, url_for
 from flask_admin import AdminIndexView, expose
 from flask_admin.contrib.mongoengine import ModelView

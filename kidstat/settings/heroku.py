@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 import os
 from .base import Config as BaseConfig
 from pymongo.uri_parser import parse_uri

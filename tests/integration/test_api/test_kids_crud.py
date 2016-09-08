@@ -18,11 +18,13 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
     def test_get_list(self):
         count = 3
-        user = model_factories.UserFactory(kids=[model_factories.KidFactory() for _ in range(count)])
+        user = model_factories.UserFactory(
+            kids=model_factories.KidFactory.create_batch(count))
         user.set_password(user.email)
         user.save()
         access_token = self.login(user.email, user.email)
-        response = requests.get(self.url, headers={'Authorization': 'JWT ' + access_token})
+        response = requests.get(self.url,
+                                headers={'Authorization': 'JWT ' + access_token})
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
         self.assertIn('data', response_data)
@@ -89,12 +91,9 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         user = models.User.objects.get(id=user.id)
         self.assertEqual(len(user.kids), 1)
         response_data = response.json()
-        print('======')
-        print(response.json())
         self.assertIn('error', response_data)
         self.assertEqual(response_data['error'],
                          'Kid with this name already exists')
-        print('======')
 
     def test_get_one(self):
         user = model_factories.UserFactory(kids=[model_factories.KidFactory() for _ in range(3)])

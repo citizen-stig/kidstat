@@ -1,19 +1,37 @@
-# -*- encoding: utf-8 -*-
-from flask import jsonify, current_app
 from flask_jwt import jwt_required, current_identity
-from flask_restful import Resource, abort
-from flask_security.registerable import register_user
-from marshmallow import fields, validate, Schema
-from webargs.flaskparser import parser, use_args
+from flask_restful import abort
+from marshmallow import fields, Schema, ValidationError, post_load
+import pytz
+from webargs.flaskparser import use_args
 from kidstat import models
 from .base import MarshMallowResource
 
 
-class ObservationSchema(Schema):
+def validate_parameter(parameter_name):
+    parameter = models.Parameter.objects \
+        .filter(name=parameter_name).first()
+    if parameter is None:
+        raise ValidationError('No Such Parameter: {0}'.format(parameter_name))
 
+
+def validate_value(value):
+    if value < 0.0:
+        raise ValidationError('Value cannot be less than 0')
+
+
+class ObservationSchema(Schema):
     timestamp = fields.DateTime(required=True, format='iso8601')
-    parameter = fields.String(required=True)
-    value = fields.Float(required=True)
+    parameter = fields.String(required=True, validate=validate_parameter)
+    value = fields.Float(required=True, validate=validate_value)
+
+    @post_load
+    def annotate_tz_info(self, data):
+        timestamp = data['timestamp']
+        if timestamp.tzinfo is None:
+            data['timestamp'] = timestamp.replace(tzinfo=pytz.UTC)
+        return data
+
+    # TODO: Make object in schema, not in resource!!!!
 
 
 class ObservationsListResource(MarshMallowResource):
@@ -29,17 +47,15 @@ class ObservationsListResource(MarshMallowResource):
     @jwt_required()
     @use_args(ObservationSchema(strict=True))
     def post(self, args, kid_id):
-        parameter = models.Parameter.objects\
-            .filter(name=args['parameter']).first()
-        if parameter is None:
-            error_msg = "Bad parameter name {0}".format(args['parameter'])
-            return jsonify({"error": error_msg}), 422
         kid = current_identity.get_kid_by_id(kid_id)
+        parameter = models.Parameter.objects \
+            .filter(name=args['parameter']).first()
         observation = models.Observation(
             timestamp=args['timestamp'],
             parameter=parameter,
             value=args['value'])
-        kid.observations.append(observation)
+        kid.add_observation(observation)
+        # kid.save()
         current_identity.save()
         return self.object_response(observation)
 
@@ -68,9 +84,6 @@ class ObservationResource(MarshMallowResource):
         observation = self.get_observation_or_404(kid_id, observation_id)
         parameter = models.Parameter.objects\
             .filter(name=args['parameter']).first()
-        if parameter is None:
-            error_msg = "Cannot find parameter {0}".format(args['parameter'])
-            abort(422, errors={"error": error_msg})
         observation.timestamp = args['timestamp']
         observation.value = args['value']
         observation.parameter = parameter
@@ -79,9 +92,21 @@ class ObservationResource(MarshMallowResource):
 
     @jwt_required()
     def delete(self, kid_id, observation_id):
-        observation = self.get_observation_or_404(kid_id, observation_id)
-        kid = current_identity.get_kid_by_id(kid_id)
-        kid.update(pull__observations=observation)
-        current_identity.save()
-        return {'success': True}
+        # observation = self.get_observation_or_404(kid_id, observation_id)
+        # kid = current_identity.get_kid_by_id(kid_id)
 
+        # kid.update(pull__observations=observation)
+
+        a = current_identity.update(pull__kids__observations__id=observation_id)
+        b = models.User.objects(id=current_identity.id).update_one(pull__kids__observations__id=observation_id)
+        current_identity.save()
+        current_identity.reload()
+        print('------')
+        print(current_identity.kids)
+        kid = current_identity.get_kid_by_id(kid_id)
+        print(kid)
+        print(kid.observations)
+        print(a)
+        print(b)
+        print('------')
+        return {'success': True}

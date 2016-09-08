@@ -1,12 +1,8 @@
-# -*- encoding: utf-8 -*-
-from flask import jsonify, current_app
 from flask_jwt import jwt_required, current_identity
-from flask_restful import Resource, abort
-from flask_security.registerable import register_user
+from flask_restful import abort
 from marshmallow import fields, validate, Schema
-from webargs.flaskparser import parser, use_args
+from webargs.flaskparser import use_args
 from kidstat import models
-import mongoengine.errors
 
 from .base import MarshMallowResource
 

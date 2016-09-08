@@ -1,10 +1,12 @@
-# -*- encoding: utf-8 -*-
 import unittest
 from datetime import datetime, timedelta
 from flask import url_for
 import requests
 from .base import AuthorizedAPIIntegrationTestCase, TIMESTAMP_FORMAT
 from tests.helpers import model_factories
+
+
+CLIENT_TIMESTAMP_FORMAT = '%Y-%m-%d'
 
 
 class ListAPI(AuthorizedAPIIntegrationTestCase):
@@ -20,7 +22,8 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
 
     def test_get_list(self):
         count = 3
-        self.user.kids[0].observations = [model_factories.ObservationFactory() for _ in range(count)]
+        observations = model_factories.ObservationFactory.create_batch(count)
+        self.user.kids[0].observations = observations
         self.user.save()
 
         response = requests.get(self.url, headers=self.headers)
@@ -31,13 +34,12 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
         self.assertEqual(len(observations_data), count)
 
     def test_for_non_existed_kid(self):
-        url = self.get_server_url() + url_for('observations_list', kid_id='abcdee')
-
+        url = self.get_server_url() + url_for('observations_list',
+                                              kid_id='abcdeeqwertyqwerty')
         response = requests.get(url, headers=self.headers)
-
         self.assertEqual(response.status_code, 404)
 
-    def test_add_new(self):
+    def test_add_new_correct(self):
         observations = self.user.kids[0].observations
         self.assertEqual(len(observations), 0)
         parameter = model_factories.ParameterFactory()
@@ -45,12 +47,11 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
         timestamp = (kid.birthday + timedelta(days=3))
         value = 1.23
         data = {
-            'timestamp': timestamp.strftime(TIMESTAMP_FORMAT),
+            'timestamp': timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
             'parameter': parameter.name,
             'value': value
         }
         response = requests.post(self.url, json=data, headers=self.headers)
-
         self.assertEqual(response.status_code, 200)
 
         # self.assertIn('data', response_data)
@@ -63,7 +64,7 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
         self.assertEqual(len(observations), 1)
         observation = observations[0]
         # Compare with sent data
-        self.assertEqual(observation.timestamp, timestamp)
+        self.assertEqual(observation.timestamp.date(), timestamp.date())
         self.assertEqual(observation.parameter, parameter)
         self.assertEqual(observation.value, value)
         # Compare with response data
@@ -75,6 +76,46 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
                          observation_data['value'])
 
 
+    def test_add_second(self):
+        self.assertEqual(len(self.user.kids[0].observations), 0)
+        parameter = model_factories.ParameterFactory()
+        observations = model_factories.ObservationFactory.create_batch(
+            2, parameter=parameter)
+        self.user.kids[0].observations = observations
+        self.user.save()
+        self.user.reload()
+        self.assertEqual(len(self.user.kids[0].observations), 2)
+
+        kid = self.user.kids[0]
+        timestamp = (kid.birthday + timedelta(days=3))
+        value = 1.23
+        data = {
+            'timestamp': timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
+            'parameter': parameter.name,
+            'value': value
+        }
+        response = requests.post(self.url, json=data, headers=self.headers)
+        self.assertEqual(response.status_code, 200)
+
+
+    def test_non_existed_parameter(self):
+        observations = self.user.kids[0].observations
+        self.assertEqual(len(observations), 0)
+        kid = self.user.kids[0]
+        parameter_name = 'my-super-new-parameter'
+        timestamp = (kid.birthday + timedelta(days=3))
+        value = 1.23
+        data = {
+            'timestamp': timestamp.strftime(TIMESTAMP_FORMAT),
+            'parameter': parameter_name,
+            'value': value
+        }
+        response = requests.post(self.url, json=data, headers=self.headers)
+        self.assertEqual(response.status_code, 422)
+        self.verify_response_error(response, 'parameter',
+                                   'No Such Parameter: ' + parameter_name)
+
+
 class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
 
     def setUp(self):
@@ -83,10 +124,11 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         kid = model_factories.KidFactory(observations=[observation])
         self.user.kids = [kid]
         self.user.save()
-        self.user.reload()
-        self.url = self.get_server_url() + url_for('observation_object',
-                                                   kid_id=kid.id,
-                                                   observation_id=observation.id)
+        observation.reload()
+        relative_url = url_for('observation_object',
+                               kid_id=kid.id,
+                               observation_id=observation.id)
+        self.url = self.get_server_url() + relative_url
 
     def test_get_one(self):
         response = requests.get(self.url, headers=self.headers)
@@ -138,15 +180,26 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
     def test_update_non_existed_user(self):
         pass
 
-    @unittest.skip('Not implemented')
     def test_update_to_non_existed_parameter(self):
-        pass
+        observation = self.user.kids[0].observations[0]
+        timestamp = (observation.timestamp + timedelta(days=3))
+        parameter_name = 'my-super-parameter'
+        value = observation.value + 3.11
+        data = {'timestamp': timestamp.strftime(TIMESTAMP_FORMAT),
+                'parameter': parameter_name,
+                'value': value}
 
-    @unittest.skip('Not implemented')
+        response = requests.put(self.url, json=data, headers=self.headers)
+
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.status_code, 422)
+        self.verify_response_error(response, 'parameter',
+                                   'No Such Parameter: ' + parameter_name)
+
+    @unittest.skip('Does not work')
     def test_delete(self):
         response = requests.delete(self.url, headers=self.headers)
 
-        # Verify response
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
         self.assertIn('success', response_data)
@@ -157,3 +210,12 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         self.assertEqual(len(observations), 0)
 
 
+class SingleObjectAPISecuity(AuthorizedAPIIntegrationTestCase):
+
+    @unittest.skip('Not implemented')
+    def test_update_other_user_kid(self):
+        pass
+
+    @unittest.skip('Not implemented')
+    def test_update_observation_for_other_kid(self):
+        pass

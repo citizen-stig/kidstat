@@ -15,7 +15,7 @@ class Sanity(BaseTestCase):
 
     def test_parameter_str(self):
         parameter = model_factories.ParameterFactory()
-        expected_str = '{0}, {1}'.format(parameter.name, parameter.unit)
+        expected_str = '{0}'.format(parameter.name)
         self.assertEqual(str(parameter), expected_str)
 
 

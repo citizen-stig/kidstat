@@ -24,7 +24,9 @@ module.exports = React.createClass({
     },
     render: function () {
         return <div className="pull-right">
-            <Button onClick={this.openModal}>Add Observation</Button>
+            <Button onClick={this.openModal}>
+                <i className="fa fa-plus"/> Add Observation
+            </Button>
             <Modal title="Add Observation" ref="modal">
                 <ObservationForm submitAction={this.addObservation}/>
             </Modal>

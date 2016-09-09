@@ -4,6 +4,8 @@ var Image = ReactBootstrap.Image;
 var Grid = ReactBootstrap.Grid;
 var Row = ReactBootstrap.Row;
 var Col = ReactBootstrap.Col;
+var ButtonGroup = ReactBootstrap.ButtonGroup;
+var Button = ReactBootstrap.Button;
 
 var Actions = require('../../actions');
 var KidsStore = require('../../stores/kids-store.jsx');
@@ -43,32 +45,28 @@ module.exports = React.createClass({
             this.updateObservationsState(observations);
         }
     },
-    getLastOrNotAvailable: function (values) {
+    getFirstOrNotAvailable: function (values) {
         if (values.length > 0) {
-            return values[values.length - 1]
+            return values[0]
         } else {
             return this.getEmptyObservation();
         }
     },
     updateObservationsState: function (observations) {
-        console.log('Update observations state');
-        console.log(observations);
         var kid_observations = observations[this.props.kid.id];
-        var heights = [];
-        var weights = [];
+        var height = this.getEmptyObservation();
+        var weight = this.getEmptyObservation();
         for (var i = 0; i < kid_observations.length; i++) {
+            if(height.value !== "N/A" && weight.value !== "N/A"){
+                break;
+            }
             var parameter = kid_observations[i]["parameter"].toLowerCase();
             if (parameter == "height") {
-                heights.push(kid_observations[i])
+                height = kid_observations[i]
             } else if (parameter == "weight") {
-                weights.push(kid_observations[i])
+                weight = kid_observations[i];
             }
         }
-        var height = this.getLastOrNotAvailable(heights);
-        var weight = this.getLastOrNotAvailable(weights);
-        console.log('New observations');
-        console.log(height);
-        console.log(weight);
         this.setState({weight: weight, height: height})
     },
     deleteKid: function () {
@@ -95,25 +93,31 @@ module.exports = React.createClass({
                     <h1>{this.props.kid.name}</h1>
                     <p>Age: {this.age()} days</p>
                 </Col>
-                <Col xs={12} md={4}>
+                <Col xs={12} md={3}>
                     <p>
-                        <strong>Weight:</strong> {this.state.weight.value}(N/A)
+                        <strong>Weight:</strong> {this.state.weight.value} (N/A)
+                        {this.state.weight.timestamp}
                     </p>
                     <p>
-                        <strong>Height:</strong> {this.state.height.value}(N/A)
+                        <strong>Height:</strong> {this.state.height.value} (N/A)
+                        {this.state.height.timestamp}
                     </p>
                 </Col>
-                <Col xs={12} md={3}>
-                    <div className="pull-right">
-                        <a onClick={this.openModal} href="#">
-                            <i className="fa fa-pencil"/>
-                        </a>
-                        <a onClick={this.deleteKid} href="#">
-                            <i className="fa fa-trash"/>
-                        </a>
+                <Col xs={12} md={4}>
+                    <div className="kid-control-box">
+                        <div className="pull-right">
+                            <ButtonGroup>
+                                <Button onClick={this.openModal}>
+                                    <i className="fa fa-pencil"/> Edit
+                                </Button>
+                                <Button onClick={this.deleteKid}>
+                                    <i className="fa fa-trash"/> Remove
+                                </Button>
+                            </ButtonGroup>
+                        </div>
+                        <div className="clearfix"></div>
+                        <AddObservation kid={this.props.kid}/>
                     </div>
-                    <div className="clearfix"></div>
-                    <AddObservation kid={this.props.kid}/>
                 </Col>
             </Row>
             <Modal title="Edit Kid" ref="modal">

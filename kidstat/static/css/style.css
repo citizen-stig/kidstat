@@ -16,3 +16,11 @@
   top: 100px;
   z-index: 100;
 }
+
+.kid-control-box {
+    padding-right: 15px;
+}
+
+.kid-control-box button {
+    margin-top: 10px;
+}

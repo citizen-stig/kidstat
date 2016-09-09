@@ -43,32 +43,28 @@ module.exports = React.createClass({
             this.updateObservationsState(observations);
         }
     },
-    getLastOrNotAvailable: function (values) {
+    getFirstOrNotAvailable: function (values) {
         if (values.length > 0) {
-            return values[values.length - 1]
+            return values[0]
         } else {
             return this.getEmptyObservation();
         }
     },
     updateObservationsState: function (observations) {
-        console.log('Update observations state');
-        console.log(observations);
         var kid_observations = observations[this.props.kid.id];
-        var heights = [];
-        var weights = [];
+        var height = this.getEmptyObservation();
+        var weight = this.getEmptyObservation();
         for (var i = 0; i < kid_observations.length; i++) {
+            if(height.value !== "N/A" && weight.value !== "N/A"){
+                break;
+            }
             var parameter = kid_observations[i]["parameter"].toLowerCase();
             if (parameter == "height") {
-                heights.push(kid_observations[i])
+                height = kid_observations[i]
             } else if (parameter == "weight") {
-                weights.push(kid_observations[i])
+                weight = kid_observations[i];
             }
         }
-        var height = this.getLastOrNotAvailable(heights);
-        var weight = this.getLastOrNotAvailable(weights);
-        console.log('New observations');
-        console.log(height);
-        console.log(weight);
         this.setState({weight: weight, height: height})
     },
     deleteKid: function () {
@@ -97,10 +93,10 @@ module.exports = React.createClass({
                 </Col>
                 <Col xs={12} md={4}>
                     <p>
-                        <strong>Weight:</strong> {this.state.weight.value}(N/A)
+                        <strong>Weight:</strong> {this.state.weight.value} (N/A)
                     </p>
                     <p>
-                        <strong>Height:</strong> {this.state.height.value}(N/A)
+                        <strong>Height:</strong> {this.state.height.value} (N/A)
                     </p>
                 </Col>
                 <Col xs={12} md={3}>

@@ -41496,17 +41496,28 @@
 	    init: function () {
 	        this.observations = {};
 	    },
-	    getObservationsUrl(kid) {
+	    sortObservationsForKid: function (kid) {
+	        var observations = this.observations[kid.id];
+	        // Sort by timestamp in reversed order
+	        observations.sort(function (a, b) {
+	            if (a.timestamp > b.timestamp) {
+	                return -1;
+	            } else if (a.timestamp < b.timestamp) {
+	                return 1;
+	            } else {
+	                return 0;
+	            }
+	        });
+	    },
+	    getObservationsUrl: function (kid) {
 	        return "kids/" + kid['id'] + "/observations";
 	    },
 	    getObservations: function (kid) {
 	        var url = this.getObservationsUrl(kid);
 	        this.triggerLoading();
 	        return Api.authorizedGet(url).then(function (data) {
-	            console.log('=======');
-	            console.log(data);
-	            console.log('=======');
 	            this.observations[kid.id] = data.data;
+	            this.sortObservationsForKid(kid);
 	            this.triggerObservationReceived();
 	        }.bind(this));
 	    },
@@ -41514,8 +41525,14 @@
 	        this.triggerLoading();
 	        var url = this.getObservationsUrl(kid);
 	        return Api.authorizedPost(url, observation).then(function (new_observation) {
-	            console.log('Observation has been added!!!');
-	            console.log(new_observation);
+	            console.log('New observation has been added');
+	            console.log('');
+	            if (kid.id in this.observations) {
+	                this.observations[kid.id].push(new_observation);
+	                this.sortObservationsForKid(kid);
+	            } else {
+	                this.observations[kid.id] = [new_observation];
+	            }
 	            this.triggerObservationReceived();
 	        }.bind(this));
 	    },
@@ -41626,7 +41643,7 @@
 	        kid: React.PropTypes.object.isRequired
 	    },
 
-	    getEmptyObservation() {
+	    getEmptyObservation: function () {
 	        return { value: "N/A" };
 	    },
 	    getInitialState: function () {
@@ -41650,32 +41667,28 @@
 	            this.updateObservationsState(observations);
 	        }
 	    },
-	    getLastOrNotAvailable: function (values) {
+	    getFirstOrNotAvailable: function (values) {
 	        if (values.length > 0) {
-	            return values[values.length - 1];
+	            return values[0];
 	        } else {
 	            return this.getEmptyObservation();
 	        }
 	    },
 	    updateObservationsState: function (observations) {
-	        console.log('Update observations state');
-	        console.log(observations);
 	        var kid_observations = observations[this.props.kid.id];
-	        var heights = [];
-	        var weights = [];
+	        var height = this.getEmptyObservation();
+	        var weight = this.getEmptyObservation();
 	        for (var i = 0; i < kid_observations.length; i++) {
+	            if (height.value !== "N/A" && weight.value !== "N/A") {
+	                break;
+	            }
 	            var parameter = kid_observations[i]["parameter"].toLowerCase();
 	            if (parameter == "height") {
-	                heights.push(kid_observations[i]);
+	                height = kid_observations[i];
 	            } else if (parameter == "weight") {
-	                weights.push(kid_observations[i]);
+	                weight = kid_observations[i];
 	            }
 	        }
-	        var height = this.getLastOrNotAvailable(heights);
-	        var weight = this.getLastOrNotAvailable(weights);
-	        console.log('New observations');
-	        console.log(height);
-	        console.log(weight);
 	        this.setState({ weight: weight, height: height });
 	    },
 	    deleteKid: function () {
@@ -41733,7 +41746,7 @@
 	                        ),
 	                        ' ',
 	                        this.state.weight.value,
-	                        '(N/A)'
+	                        ' (N/A)'
 	                    ),
 	                    React.createElement(
 	                        'p',
@@ -41745,7 +41758,7 @@
 	                        ),
 	                        ' ',
 	                        this.state.height.value,
-	                        '(N/A)'
+	                        ' (N/A)'
 	                    )
 	                ),
 	                React.createElement(
@@ -42063,7 +42076,7 @@
 	var Button = ReactBootstrap.Button;
 
 	var RegularInput = __webpack_require__(444);
-	var ButtonChoiceInput = __webpack_require__(447);
+	var ChoicesInput = __webpack_require__(447);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -42093,7 +42106,7 @@
 	            { horizontal: true },
 	            React.createElement(RegularInput, { name: 'Name', ref: 'name',
 	                value: this.props.kid.name }),
-	            React.createElement(ButtonChoiceInput, { name: 'Gender',
+	            React.createElement(ChoicesInput, { name: 'Gender',
 	                value: this.props.kid.gender,
 	                ref: 'gender',
 	                choices: genderChoices }),

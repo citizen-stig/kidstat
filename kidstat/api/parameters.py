@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 from flask import jsonify, current_app
 from flask_jwt import jwt_required, current_identity
 from flask_restful import Resource, abort

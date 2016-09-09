@@ -1,9 +1,8 @@
-# -*- encoding: utf-8 -*-
 from .base import Config as BaseConfig
 
 
 class Config(BaseConfig):
-    DEBUG = True
+    DEBUG = False
     TESTING = True
     MONGODB_SETTINGS = {
         'db': 'test_kidstat',
@@ -13,4 +12,8 @@ class Config(BaseConfig):
     }
     SECRET_KEY = 'testingkey'
     WTF_CSRF_ENABLED = False
+    # JWT_VERIFY = False
+    JWT_VERIFY_EXPIRATION = False
+    # JWT_ALGORITHM = 'none'
     LIVESERVER_PORT = 5151
+    SECURITY_PASSWORD_HASH = 'plaintext'

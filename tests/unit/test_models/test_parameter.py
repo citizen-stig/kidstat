@@ -1,7 +1,7 @@
-# -*- encoding: utf-8 -*-
 import unittest
-from tests.helpers.testcases import BaseTestCase
-from tests.helpers import model_factories
+
+from tests import model_factories
+from tests.testcases import BaseTestCase
 
 
 class Sanity(BaseTestCase):
@@ -15,28 +15,28 @@ class Sanity(BaseTestCase):
 
     def test_parameter_str(self):
         parameter = model_factories.ParameterFactory()
-        expected_str = '{0}, {1}'.format(parameter.name, parameter.unit)
+        expected_str = '{0}'.format(parameter.name)
         self.assertEqual(str(parameter), expected_str)
 
 
-class StandardValidation(BaseTestCase):
-
-    @unittest.skip('Not Implemented')
-    def test_age_lower_bound(self):
-        pass
-
-    @unittest.skip('Not Implemented')
-    def test_age_upper_bound(self):
-        pass
-
-    @unittest.skip('Not Implemented')
-    def test_value_lower_bound(self):
-        pass
-
-    @unittest.skip('Not Implemented')
-    def test_percentile_lower_bound(self):
-        pass
-
-    @unittest.skip('Not Implemented')
-    def test_percentile_upper_bound(self):
-        pass
+# class StandardValidation(BaseTestCase):
+#
+#     @unittest.skip('Not Implemented')
+#     def test_age_lower_bound(self):
+#         pass
+#
+#     @unittest.skip('Not Implemented')
+#     def test_age_upper_bound(self):
+#         pass
+#
+#     @unittest.skip('Not Implemented')
+#     def test_value_lower_bound(self):
+#         pass
+#
+#     @unittest.skip('Not Implemented')
+#     def test_percentile_lower_bound(self):
+#         pass
+#
+#     @unittest.skip('Not Implemented')
+#     def test_percentile_upper_bound(self):
+#         pass

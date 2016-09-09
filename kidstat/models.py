@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 from bson import ObjectId
 from flask_mongoengine import MongoEngine
 from flask_security import UserMixin, RoleMixin, utils, MongoEngineUserDatastore
@@ -33,14 +32,13 @@ class Standard(db.Document):
 
 
 class Observation(db.EmbeddedDocument):
-    # TODO: observation duplicate checking
     id = db.ObjectIdField(primary_key=True, default=ObjectId)
     timestamp = db.DateTimeField(required=True)
     parameter = db.ReferenceField(Parameter, required=True)
     value = db.FloatField(required=True)
 
     def __str__(self):
-        return '{0}: {1}'.format(self.timestamp, self.value)
+        return '{0}: {1}'.format(self.timestamp.date(), self.value)
 
     def get_standards(self, kid):
         age = (self.timestamp - kid.birthday).days
@@ -54,13 +52,24 @@ class Kid(db.EmbeddedDocument):
     name = db.StringField(required=True)
     birthday = db.DateTimeField(required=True)
     gender = db.StringField(choices=[(x, x) for x in (MALE, FEMALE)])
-    observations = db.EmbeddedDocumentListField(Observation)
+    observations = db.SortedListField(db.EmbeddedDocumentField(Observation),
+                                      ordering="timestamp", reverse=True)
 
     def __str__(self):
         return self.name
 
     def get_observation_by_id(self, observation_id):
-        return self.observations.filter(id=observation_id).first()
+        try:
+            return next(x for x in self.observations
+                        if str(x.id) == str(observation_id))
+        except StopIteration:
+            return None
+
+    def add_observation(self, observation):
+        dates = {x.timestamp.date() for x in self.observations}
+        if observation.timestamp.date() in dates:
+            raise ValueError('Cannot add 2 observations for the same date')
+        self.observations.append(observation)
 
 
 class Role(db.Document, RoleMixin):

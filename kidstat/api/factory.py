@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 from flask_restful import Api
 
 from . import auth, parameters, kids, observations

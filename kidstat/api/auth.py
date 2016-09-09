@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 from flask import current_app
 from flask_restful import Resource, abort
 from flask_jwt import jwt_required

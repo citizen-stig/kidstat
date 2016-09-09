@@ -1,12 +1,8 @@
-# -*- encoding: utf-8 -*-
-from flask import jsonify, current_app
 from flask_jwt import jwt_required, current_identity
-from flask_restful import Resource, abort
-from flask_security.registerable import register_user
+from flask_restful import abort
 from marshmallow import fields, validate, Schema
-from webargs.flaskparser import parser, use_args
+from webargs.flaskparser import use_args
 from kidstat import models
-import mongoengine.errors
 
 from .base import MarshMallowResource
 
@@ -31,15 +27,13 @@ class KidsListResource(MarshMallowResource):
     @jwt_required()
     @use_args(KidSchema(strict=True))
     def post(self, args):
-        # TODO: might be issues with multiple threads
         existed_kid = current_identity.get_kid_by_name(args['name'])
         if existed_kid is None:
             kid = models.Kid(
                 name=args['name'],
                 birthday=args['birthday'],
                 gender=args['gender'])
-            current_identity.kids.append(kid)
-            current_identity.save()
+            current_identity.update(push__kids=kid)
             return self.object_response(kid)
         return abort(409, error="Kid with this name already exists",
                      success=False)
@@ -48,14 +42,21 @@ class KidsListResource(MarshMallowResource):
 class KidResource(MarshMallowResource):
     schema = KidSchema()
 
+    @staticmethod
+    def get_kid_or_404(kid_id):
+        kid = current_identity.get_kid_by_id(kid_id)
+        if kid is None:
+            abort(404)
+        return kid
+
     @jwt_required()
     def get(self, kid_id):
-        return self.object_response(current_identity.get_kid_by_id(kid_id))
+        return self.object_response(self.get_kid_or_404(kid_id))
 
     @jwt_required()
     @use_args(KidSchema(strict=True))
     def put(self, args, kid_id):
-        kid = current_identity.get_kid_by_id(kid_id)
+        kid = self.get_kid_or_404(kid_id)
         kid.name = args['name']
         kid.gender = args['gender']
         kid.birthday = args['birthday']
@@ -64,7 +65,7 @@ class KidResource(MarshMallowResource):
 
     @jwt_required()
     def delete(self, kid_id):
-        kid = current_identity.get_kid_by_id(kid_id)
+        kid = self.get_kid_or_404(kid_id)
         current_identity.update(pull__kids=kid)
         current_identity.save()
         return {'success': True}

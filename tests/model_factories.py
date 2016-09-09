@@ -1,16 +1,12 @@
-# -*- encoding: utf-8 -*-
 from datetime import datetime, timedelta
 import pytz
-from flask import current_app
 import factory
 import factory.fuzzy
 from factory.mongoengine import MongoEngineFactory
 from kidstat import models
-from kidstat.app import setup_security
 
 
 class EmbeddedDocumentFactory(factory.Factory):
-
     class Meta:
         abstract = True
 
@@ -20,7 +16,6 @@ class EmbeddedDocumentFactory(factory.Factory):
 
 
 class ParameterFactory(MongoEngineFactory):
-
     class Meta:
         model = models.Parameter
 
@@ -30,7 +25,6 @@ class ParameterFactory(MongoEngineFactory):
 
 
 class StandardFactory(MongoEngineFactory):
-
     class Meta:
         model = models.Standard
 
@@ -42,32 +36,37 @@ class StandardFactory(MongoEngineFactory):
 
 
 class ObservationFactory(EmbeddedDocumentFactory):
-
     class Meta:
         model = models.Observation
 
     timestamp = factory.fuzzy.FuzzyDateTime(
-        start_dt=datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days=29),
-        end_dt=datetime.utcnow().replace(tzinfo=pytz.UTC))
+        start_dt=datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(
+            days=29),
+        end_dt=datetime.utcnow().replace(tzinfo=pytz.UTC),
+        force_hour=0,
+        force_minute=0,
+        force_second=0,
+        force_microsecond=0)
     parameter = factory.SubFactory(ParameterFactory)
     value = factory.fuzzy.FuzzyFloat(low=1.3, high=20.4)
 
 
 class KidFactory(EmbeddedDocumentFactory):
-
     class Meta:
         model = models.Kid
 
     name = factory.Sequence(lambda n: 'Kid%d' % n)
     birthday = factory.fuzzy.FuzzyDateTime(
-        start_dt=datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days=30),
-        end_dt=datetime.utcnow().replace(tzinfo=pytz.UTC))
+        start_dt=datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days=60),
+        end_dt=datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days=31),
+        force_hour=0,
+        force_minute=0,
+        force_second=0,
+        force_microsecond=0)
     gender = factory.Iterator([models.MALE, models.FEMALE])
-    observations = factory.LazyAttribute(lambda o: [ObservationFactory() for _ in range(3)])
 
 
 class RoleFactory(MongoEngineFactory):
-
     class Meta:
         model = models.Role
 
@@ -76,17 +75,15 @@ class RoleFactory(MongoEngineFactory):
 
 
 class BaseUserFactory(MongoEngineFactory):
-
     class Meta:
         model = models.User
-
     email = factory.Sequence(lambda n: 'user%d@example.com' % n)
-    # password = factory.LazyAttribute(lambda o: )
+    # Works only if password in plain text
+    password = factory.LazyAttribute(lambda o: o.email)
 
 
 class UserFactory(BaseUserFactory):
-
     first_name = factory.Sequence(lambda n: 'User%d' % n)
     last_name = factory.Sequence(lambda n: 'Last%d' % n)
-    roles = factory.LazyAttribute(lambda o: [models.user_datastore.find_or_create_role('user')])
-    kids = factory.LazyAttribute(lambda o: [KidFactory()])
+    roles = factory.LazyAttribute(
+        lambda o: [models.user_datastore.find_or_create_role('user')])

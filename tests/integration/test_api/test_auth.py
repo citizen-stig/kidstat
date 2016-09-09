@@ -1,9 +1,9 @@
-# -*- encoding: utf-8 -*-
-from flask import url_for, current_app
 import requests
-from .base import BaseAPIIntegrationTestCase
-from tests.helpers import model_factories
+from flask import url_for, current_app
+
 from kidstat import models
+from tests import model_factories
+from .base import BaseAPIIntegrationTestCase
 
 
 class Login(BaseAPIIntegrationTestCase):

@@ -1,7 +1,7 @@
-# -*- encoding: utf-8 -*-
 from datetime import timedelta
-from tests.helpers.testcases import BaseTestCase
-from tests.helpers import model_factories
+
+from tests import model_factories
+from tests.testcases import BaseTestCase
 
 
 class Sanity(BaseTestCase):
@@ -20,7 +20,7 @@ class Sanity(BaseTestCase):
         self.user.reload()
 
     def test_str(self):
-        expected_str = '{0}: {1}'.format(self.observation.timestamp,
+        expected_str = '{0}: {1}'.format(self.observation.timestamp.date(),
                                          self.observation.value)
         self.assertEqual(str(self.observation), expected_str)
 

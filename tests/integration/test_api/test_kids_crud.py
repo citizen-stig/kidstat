@@ -1,4 +1,3 @@
-import unittest
 from datetime import datetime, timedelta
 
 import pytz
@@ -7,117 +6,106 @@ from flask import url_for
 
 from kidstat import models
 from tests import model_factories
-from .base import BaseAPIIntegrationTestCase, TIMESTAMP_FORMAT, CLIENT_TIMESTAMP_FORMAT
+from .base import AuthorizedAPIIntegrationTestCase, SERVER_TIMESTAMP_FORMAT,\
+    CLIENT_TIMESTAMP_FORMAT
 
 
-class CRUD(BaseAPIIntegrationTestCase):
+class CRUD(AuthorizedAPIIntegrationTestCase):
 
-    def setUp(self):
-        super().setUp()
-        self.url = self.get_server_url() + url_for('kids_list')
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.url = cls.get_server_url() + url_for('kids_list')
 
     def test_get_list(self):
         count = 3
-        user = model_factories.UserFactory(
-            kids=model_factories.KidFactory.create_batch(count))
-        access_token = self.get_access_token(user)
-        response = requests.get(self.url,
-                                headers={'Authorization': 'JWT ' + access_token})
+        self.user.kids = model_factories.KidFactory.create_batch(count)
+        self.user.save()
+
+        response = requests.get(self.url, headers=self.headers)
+
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
         self.assertIn('data', response_data)
         kids_list = response_data['data']
-        self.assertEqual(len(user.kids), len(kids_list))
+        self.assertEqual(len(self.user.kids), len(kids_list))
+        for idx, kid in enumerate(kids_list):
+            db_kid = self.user.kids[idx]
+            self.assertEqual(len(kid), 4)
+            self.assertEqual(str(kid['id']), str(db_kid.id))
+            self.assertEqual(kid['name'], db_kid.name)
+            self.assertEqual(kid['gender'], db_kid.gender)
+            self.assertEqual(kid['birthday'],
+                             db_kid.birthday.strftime(SERVER_TIMESTAMP_FORMAT))
 
     def test_add_new(self):
-        user = model_factories.UserFactory()
-        access_token = self.get_access_token(user)
-
-        birthday = datetime(2016, 1, 2, 15, 30).replace(tzinfo=pytz.UTC)
+        birthday = datetime(2016, 1, 2).replace(tzinfo=pytz.UTC)
         name = 'John'
         new_kid_data = {'name': name,
                         'gender': models.MALE,
-                        'birthday': birthday.strftime('%Y-%m-%dT%H:%M:%SZ')}
+                        'birthday': birthday.strftime(CLIENT_TIMESTAMP_FORMAT)}
 
         response = requests.post(self.url, json=new_kid_data,
-                                 headers={'Authorization': 'JWT ' + access_token})
+                                 headers=self.headers)
+
         self.assertEqual(response.status_code, 200)
-        response_data = response.json()
-        kid_data = response_data
-        self.assertEqual(kid_data['name'], name)
-        self.assertEqual(kid_data['gender'], models.MALE)
-        # # TODO: Fix this
-        # # self.assertEqual(response_data['birthday'],
-        # #                  birthday.strftime('%Y-%m-%dT%H:%M:%S+00:00'))
-        #
-        user = models.User.objects.get(id=user.id)
-        self.assertEqual(len(user.kids), 1)
 
-        new_kid = user.kids[0]
-
+        # Check db
+        self.user.reload()
+        self.assertEqual(self.user.kids.count(), 1)
+        new_kid = self.user.kids[0]
         self.assertEqual(new_kid.name, name)
         self.assertEqual(new_kid.gender, models.MALE)
         self.assertEqual(new_kid.birthday, birthday)
+        # Check response
+        response_data = response.json()
+        kid_data = response_data
+        self.assertEqual(len(kid_data), 4)
+        self.assertEqual(kid_data['id'], str(new_kid.id))
+        self.assertEqual(kid_data['name'], name)
+        self.assertEqual(kid_data['gender'], models.MALE)
+        self.assertEqual(response_data['birthday'],
+                         birthday.strftime(SERVER_TIMESTAMP_FORMAT))
 
     def test_add_second_same_name(self):
-        user = model_factories.UserFactory()
-
-        access_token = self.get_access_token(user)
-
-        birthday = datetime(2016, 1, 2, 15, 30).replace(tzinfo=pytz.UTC)
+        birthday = datetime(2016, 1, 2).replace(tzinfo=pytz.UTC)
         name = 'John'
         new_kid_data = {'name': name,
                         'gender': models.MALE,
-                        'birthday': birthday.strftime('%Y-%m-%dT%H:%M:%SZ')}
+                        'birthday': birthday.strftime(CLIENT_TIMESTAMP_FORMAT)}
 
         response = requests.post(self.url, json=new_kid_data,
-                                 headers={
-                                     'Authorization': 'JWT ' + access_token})
+                                 headers=self.headers)
         self.assertEqual(response.status_code, 200)
-        user = models.User.objects.get(id=user.id)
-        self.assertEqual(len(user.kids), 1)
-
         response = requests.post(self.url, json=new_kid_data,
-                                 headers={
-                                     'Authorization': 'JWT ' + access_token})
+                                 headers=self.headers)
         self.assertEqual(response.status_code, 409)
-        user = models.User.objects.get(id=user.id)
-        self.assertEqual(len(user.kids), 1)
+        self.user.reload()
+        self.assertEqual(self.user.kids.count(), 1)
         response_data = response.json()
         self.assertIn('error', response_data)
         self.assertEqual(response_data['error'],
                          'Kid with this name already exists')
 
     def test_get_one(self):
-        user = model_factories.UserFactory(
-            kids=model_factories.KidFactory.create_batch(2))
-        kid = user.kids[1]
+        self.user.kids = model_factories.KidFactory.create_batch(2)
+        self.user.save()
+        kid = self.user.kids[1]
         url = self.get_server_url() + url_for('kids_object', kid_id=str(kid.id))
-
-        access_token = self.login(user.email, user.email)
-
-        response = requests.get(url,
-                                headers={'Authorization': 'JWT ' + access_token})
-
+        response = requests.get(url, headers=self.headers)
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
 
-        for field in ('name', 'birthday', 'gender'):
-            self.assertIn(field, response_data)
-
+        self.assertEqual(len(response_data), 4)
+        self.assertEqual(response_data['id'], str(kid.id))
         self.assertEqual(response_data['name'], kid.name)
         self.assertEqual(response_data['gender'], kid.gender)
         self.assertEqual(response_data['birthday'],
-                         kid.birthday.strftime(TIMESTAMP_FORMAT))
+                         kid.birthday.strftime(SERVER_TIMESTAMP_FORMAT))
 
     def test_get_non_existed(self):
-        user = model_factories.UserFactory()
-        url = self.get_server_url() + url_for('kids_object',
-                                              kid_id=str('qewrtyzxc'))
-        access_token = self.get_access_token(user)
-        response = requests.get(url,
-                                headers={
-                                    'Authorization': 'JWT ' + access_token})
+        url = self.get_server_url() + url_for('kids_object', kid_id='qewrtyzxc')
+        response = requests.get(url, headers=self.headers)
         self.assertEqual(response.status_code, 404)
         response_data = response.json()
         self.assertIn('message', response_data)
@@ -125,48 +113,34 @@ class CRUD(BaseAPIIntegrationTestCase):
                       response_data['message'])
 
     def test_update(self):
-        user = model_factories.UserFactory(
-            kids=model_factories.KidFactory.create_batch(2))
-        kid = user.kids[1]
+        self.user.kids = model_factories.KidFactory.build_batch(2)
+        self.user.save()
+        kid = self.user.kids[1]
         url = self.get_server_url() + url_for('kids_object', kid_id=str(kid.id))
 
-        access_token = self.get_access_token(user)
-
-        new_name = kid.name + 'SOMENEWDATA'
+        new_name = kid.name + 'SOME_NEW_DATA'
         birthday = kid.birthday - timedelta(days=3)
         gender = models.MALE if kid.gender == models.FEMALE else models.FEMALE
         new_kid_data = {'name': new_name,
                         'gender': gender,
-                        'birthday': birthday.strftime('%Y-%m-%dT%H:%M:%SZ')}
-        response = requests.put(
-            url,
-            json=new_kid_data,
-            headers={'Authorization': 'JWT ' + access_token})
-
+                        'birthday': birthday.strftime(CLIENT_TIMESTAMP_FORMAT)}
+        response = requests.put(url, json=new_kid_data, headers=self.headers)
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
 
-        for field in ('name', 'birthday', 'gender'):
-            self.assertIn(field, response_data)
-
+        self.assertEqual(len(response_data), 4)
+        self.assertEqual(response_data['id'], str(kid.id))
         self.assertEqual(response_data['name'], new_name)
         self.assertEqual(response_data['gender'], gender)
-        # TODO: clear birthday output
-        # self.assertEqual(response_data['birthday'],
-        #                  birthday.strftime('%Y-%m-%dT%H:%M:%S.%f+00:00'))
+        self.assertEqual(response_data['birthday'],
+                         birthday.strftime(SERVER_TIMESTAMP_FORMAT))
 
     def test_update_non_existed(self):
-        user = model_factories.UserFactory()
-        url = self.get_server_url() + url_for('kids_object',
-                                              kid_id=str('qewrtyzxc'))
-        access_token = self.get_access_token(user)
+        url = self.get_server_url() + url_for('kids_object', kid_id='qewrtyzxc')
         new_kid_data = {'name': 'some',
                         'gender': models.MALE,
                         'birthday': '2016-08-23'}
-        response = requests.put(
-            url,
-            json=new_kid_data,
-            headers={'Authorization': 'JWT ' + access_token})
+        response = requests.put(url, json=new_kid_data, headers=self.headers)
         self.assertEqual(response.status_code, 404)
         response_data = response.json()
         self.assertIn('message', response_data)
@@ -175,34 +149,40 @@ class CRUD(BaseAPIIntegrationTestCase):
 
     def test_delete(self):
         count = 3
-        user = model_factories.UserFactory(
-            kids=model_factories.KidFactory.create_batch(count))
-        removed_kid = user.kids[1]
+        self.user.kids = model_factories.KidFactory.build_batch(count)
+        self.user.save()
+        removed_kid = self.user.kids[1]
         url = self.get_server_url() + url_for('kids_object',
                                               kid_id=str(removed_kid.id))
 
-        access_token = self.get_access_token(user)
-
-        response = requests.delete(url, headers={'Authorization': 'JWT ' + access_token})
+        response = requests.delete(url, headers=self.headers)
 
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
         self.assertIn('success', response_data)
         self.assertTrue(response_data['success'])
 
-        user = models.User.objects.get(id=user.id)
-        self.assertEqual(len(user.kids), count - 1)
-
-        for existed_kid in user.kids:
+        self.user.reload()
+        self.assertEqual(self.user.kids.count(), count - 1)
+        for existed_kid in self.user.kids:
             self.assertNotEqual(removed_kid.id, existed_kid.id)
 
     def test_delete_non_existed(self):
-        user = model_factories.UserFactory()
+        url = self.get_server_url() + url_for('kids_object', kid_id='qewrtyzxc')
+        response = requests.delete(url, headers=self.headers)
+        self.assertEqual(response.status_code, 404)
+        response_data = response.json()
+        self.assertIn('message', response_data)
+        self.assertIn('The requested URL was not found on the server.',
+                      response_data['message'])
+
+    def test_delete_other_user_kid(self):
+        other_user = model_factories.UserFactory(
+            kids=model_factories.KidFactory.build_batch(2))
+        other_kid = other_user.kids[0]
         url = self.get_server_url() + url_for('kids_object',
-                                              kid_id=str('qewrtyzxc'))
-        access_token = self.get_access_token(user)
-        response = requests.delete(url, headers={
-            'Authorization': 'JWT ' + access_token})
+                                              kid_id=str(other_kid.id))
+        response = requests.delete(url, headers=self.headers)
         self.assertEqual(response.status_code, 404)
         response_data = response.json()
         self.assertIn('message', response_data)

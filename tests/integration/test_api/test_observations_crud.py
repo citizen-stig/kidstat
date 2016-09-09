@@ -5,7 +5,7 @@ import requests
 from flask import url_for
 
 from tests import model_factories
-from .base import AuthorizedAPIIntegrationTestCase, TIMESTAMP_FORMAT
+from .base import AuthorizedAPIIntegrationTestCase, SERVER_TIMESTAMP_FORMAT
 
 CLIENT_TIMESTAMP_FORMAT = '%Y-%m-%d'
 
@@ -69,7 +69,7 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
         self.assertEqual(observation.parameter, parameter)
         self.assertEqual(observation.value, value)
         # Compare with response data
-        self.assertEqual(observation.timestamp.strftime(TIMESTAMP_FORMAT),
+        self.assertEqual(observation.timestamp.strftime(SERVER_TIMESTAMP_FORMAT),
                          observation_data['timestamp'])
         self.assertEqual(str(observation.parameter),
                          observation_data['parameter'])
@@ -105,7 +105,7 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
         timestamp = (kid.birthday + timedelta(days=3))
         value = 1.23
         data = {
-            'timestamp': timestamp.strftime(TIMESTAMP_FORMAT),
+            'timestamp': timestamp.strftime(SERVER_TIMESTAMP_FORMAT),
             'parameter': parameter_name,
             'value': value
         }
@@ -138,7 +138,7 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
             self.assertIn(field_name, response_data)
         observation = self.user.kids[0].observations[0]
         self.assertEqual(response_data['timestamp'],
-                         observation.timestamp.strftime(TIMESTAMP_FORMAT))
+                         observation.timestamp.strftime(SERVER_TIMESTAMP_FORMAT))
         self.assertEqual(response_data['value'], observation.value)
         self.assertEqual(response_data['parameter'], str(observation.parameter))
 
@@ -147,7 +147,7 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         parameter = model_factories.ParameterFactory()
         timestamp = (observation.timestamp + timedelta(days=3))
         value = observation.value + 3.11
-        data = {'timestamp': timestamp.strftime(TIMESTAMP_FORMAT),
+        data = {'timestamp': timestamp.strftime(SERVER_TIMESTAMP_FORMAT),
                 'parameter': parameter.name,
                 'value': value}
 
@@ -159,7 +159,7 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         for field_name in ('timestamp', 'value', 'parameter'):
             self.assertIn(field_name, response_data)
         self.assertEqual(response_data['timestamp'],
-                         timestamp.strftime(TIMESTAMP_FORMAT))
+                         timestamp.strftime(SERVER_TIMESTAMP_FORMAT))
         self.assertEqual(response_data['value'], value)
         self.assertEqual(response_data['parameter'], str(parameter))
 
@@ -184,7 +184,7 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         timestamp = (observation.timestamp + timedelta(days=3))
         parameter_name = 'my-super-parameter'
         value = observation.value + 3.11
-        data = {'timestamp': timestamp.strftime(TIMESTAMP_FORMAT),
+        data = {'timestamp': timestamp.strftime(SERVER_TIMESTAMP_FORMAT),
                 'parameter': parameter_name,
                 'value': value}
 

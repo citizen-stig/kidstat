@@ -5,7 +5,7 @@ from kidstat.app import create_app, setup_api, setup_security
 from tests import model_factories
 from tests.testcases import LiveServerTestCase
 
-TIMESTAMP_FORMAT = '%Y-%m-%dT%H:%M:%S+00:00'
+SERVER_TIMESTAMP_FORMAT = '%Y-%m-%dT%H:%M:%S+00:00'
 CLIENT_TIMESTAMP_FORMAT = '%Y-%m-%d'
 
 

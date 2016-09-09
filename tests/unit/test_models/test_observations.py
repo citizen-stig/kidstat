@@ -1,5 +1,7 @@
 from datetime import timedelta
 
+from kidstat.models import Categories
+
 from tests import model_factories
 from tests.testcases import BaseTestCase
 
@@ -10,7 +12,7 @@ class Sanity(BaseTestCase):
         super().setUp()
         self.parameter = model_factories.ParameterFactory()
         self.age = 3
-        self.kid = model_factories.KidFactory(observations=[])
+        self.kid = model_factories.KidFactory()
         self.observation = model_factories.ObservationFactory(
             parameter=self.parameter,
             timestamp=self.kid.birthday + timedelta(days=self.age))
@@ -24,16 +26,25 @@ class Sanity(BaseTestCase):
                                          self.observation.value)
         self.assertEqual(str(self.observation), expected_str)
 
-    def test_get_standards(self):
-        count = 5
-        # Expected
-        model_factories.StandardFactory.create_batch(count, parameter=self.parameter,
-                                                     age=self.age,
-                                                     gender=self.kid.gender)
-        # Not Expected
-        model_factories.StandardFactory.create_batch(count,
-                                                     age=self.age,
-                                                     gender=self.kid.gender)
+    def test_get_avg_category(self):
+        model_factories.StandardFactory(
+            parameter=self.parameter,
+            age=self.age,
+            gender=self.kid.gender,
+            percentile=20,
+            value=self.observation.value - 1)
+        model_factories.StandardFactory(
+            parameter=self.parameter,
+            age=self.age,
+            gender=self.kid.gender,
+            percentile=50,
+            value=self.observation.value)
+        model_factories.StandardFactory(
+            parameter=self.parameter,
+            age=self.age,
+            gender=self.kid.gender,
+            percentile=90,
+            value=self.observation.value + 5)
 
-        standards = self.observation.get_standards(self.kid)
-        self.assertEqual(standards.count(), count)
+        category = self.observation.get_category()
+        self.assertEqual(category, Categories.average)

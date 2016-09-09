@@ -164,6 +164,20 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
         response = requests.delete(url, headers=self.headers)
         self.assertAPI404(response)
 
+    # Security
+    def test_update_other_user_kid(self):
+        other_user = model_factories.UserFactory(
+            kids=model_factories.KidFactory.build_batch(2))
+        other_kid = other_user.kids[0]
+        url = self.get_server_url() + url_for('kids_object',
+                                              kid_id=str(other_kid.id))
+        new_kid_data = {'name': other_kid.name + "some new data",
+                        'gender': other_kid.gender,
+                        'birthday': other_kid.birthday.strftime(
+                            CLIENT_TIMESTAMP_FORMAT)}
+        response = requests.put(url, headers=self.headers, json=new_kid_data)
+        self.assertAPI404(response)
+
     def test_delete_other_user_kid(self):
         other_user = model_factories.UserFactory(
             kids=model_factories.KidFactory.build_batch(2))
@@ -172,3 +186,5 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
                                               kid_id=str(other_kid.id))
         response = requests.delete(url, headers=self.headers)
         self.assertAPI404(response)
+
+

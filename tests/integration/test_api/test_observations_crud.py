@@ -115,7 +115,7 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
         timestamp = (kid.birthday + timedelta(days=3))
         value = 1.23
         data = {
-            'timestamp': timestamp.strftime(SERVER_TIMESTAMP_FORMAT),
+            'timestamp': timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
             'parameter': parameter_name,
             'value': value}
         response = requests.post(self.url, json=data, headers=self.headers)
@@ -157,7 +157,7 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         parameter = model_factories.ParameterFactory()
         timestamp = (observation.timestamp + timedelta(days=3))
         value = observation.value + 3.11
-        data = {'timestamp': timestamp.strftime(SERVER_TIMESTAMP_FORMAT),
+        data = {'timestamp': timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
                 'parameter': parameter.name,
                 'value': value}
 
@@ -181,20 +181,42 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         self.assertEqual(observation.value, value)
         self.assertEqual(observation.parameter, parameter)
 
-    @unittest.skip('Not implemented')
     def test_update_non_existed_observation(self):
-        pass
+        kid = self.user.kids[0]
+        url = self.get_server_url() + url_for('observation_object',
+                                              kid_id=str(kid.id),
+                                              observation_id='wombat')
+        parameter = model_factories.ParameterFactory()
+        observation = model_factories.ObservationFactory.build(
+            parameter=parameter)
+        data = {
+            'timestamp': observation.timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
+            'parameter': parameter.name,
+            'value': observation.value}
+        response = requests.put(url, json=data, headers=self.headers)
+        self.assertAPI404(response)
 
-    @unittest.skip('Not implemented')
-    def test_update_non_existed_user(self):
-        pass
+    def test_update_non_existed_kid(self):
+        url = self.get_server_url() + url_for('observation_object',
+                                              kid_id='batman',
+                                              observation_id='wombat')
+        parameter = model_factories.ParameterFactory()
+        observation = model_factories.ObservationFactory.build(
+            parameter=parameter)
+        data = {
+            'timestamp': observation.timestamp.strftime(
+                CLIENT_TIMESTAMP_FORMAT),
+            'parameter': parameter.name,
+            'value': observation.value}
+        response = requests.put(url, json=data, headers=self.headers)
+        self.assertAPI404(response)
 
     def test_update_to_non_existed_parameter(self):
         observation = self.user.kids[0].observations[0]
         timestamp = (observation.timestamp + timedelta(days=3))
         parameter_name = 'my-super-parameter'
         value = observation.value + 3.11
-        data = {'timestamp': timestamp.strftime(SERVER_TIMESTAMP_FORMAT),
+        data = {'timestamp': timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
                 'parameter': parameter_name,
                 'value': value}
 

@@ -7,10 +7,10 @@ from flask import url_for
 
 from kidstat import models
 from tests import model_factories
-from .base import BaseAPIIntegrationTestCase, TIMESTAMP_FORMAT
+from .base import BaseAPIIntegrationTestCase, TIMESTAMP_FORMAT, CLIENT_TIMESTAMP_FORMAT
 
 
-class SimpleCRUD(BaseAPIIntegrationTestCase):
+class CRUD(BaseAPIIntegrationTestCase):
 
     def setUp(self):
         super().setUp()
@@ -20,9 +20,7 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
         count = 3
         user = model_factories.UserFactory(
             kids=model_factories.KidFactory.create_batch(count))
-        user.set_password(user.email)
-        user.save()
-        access_token = self.fast_login(user)
+        access_token = self.get_access_token(user)
         response = requests.get(self.url,
                                 headers={'Authorization': 'JWT ' + access_token})
         self.assertEqual(response.status_code, 200)
@@ -33,11 +31,7 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
     def test_add_new(self):
         user = model_factories.UserFactory()
-        user.set_password(user.email)
-        user.save()
-
-        # access_token = self.login(user.email, user.email)
-        access_token = self.fast_login(user)
+        access_token = self.get_access_token(user)
 
         birthday = datetime(2016, 1, 2, 15, 30).replace(tzinfo=pytz.UTC)
         name = 'John'
@@ -67,11 +61,8 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
     def test_add_second_same_name(self):
         user = model_factories.UserFactory()
-        user.set_password(user.email)
-        user.save()
 
-        access_token = self.fast_login(user)
-        # access_token = self.login(user.email, user.email)
+        access_token = self.get_access_token(user)
 
         birthday = datetime(2016, 1, 2, 15, 30).replace(tzinfo=pytz.UTC)
         name = 'John'
@@ -98,18 +89,12 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
                          'Kid with this name already exists')
 
     def test_get_one(self):
-        user = model_factories.UserFactory()
-        user.set_password(user.email)
-        user.save()
-        user = model_factories.UserFactory(kids=[model_factories.KidFactory() for _ in range(3)])
-        user.set_password(user.email)
-        user.save()
-        user = models.User.objects.get(id=user.id)
+        user = model_factories.UserFactory(
+            kids=model_factories.KidFactory.create_batch(2))
         kid = user.kids[1]
         url = self.get_server_url() + url_for('kids_object', kid_id=str(kid.id))
 
         access_token = self.login(user.email, user.email)
-        # access_token = self.fast_login(user)
 
         response = requests.get(url,
                                 headers={'Authorization': 'JWT ' + access_token})
@@ -127,12 +112,9 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
     def test_get_non_existed(self):
         user = model_factories.UserFactory()
-        user.set_password(user.email)
-        user.save()
         url = self.get_server_url() + url_for('kids_object',
                                               kid_id=str('qewrtyzxc'))
-        # access_token = self.login(user.email, user.email)
-        access_token = self.fast_login(user)
+        access_token = self.get_access_token(user)
         response = requests.get(url,
                                 headers={
                                     'Authorization': 'JWT ' + access_token})
@@ -144,15 +126,11 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
     def test_update(self):
         user = model_factories.UserFactory(
-            kids=[model_factories.KidFactory() for _ in range(3)])
-        user.set_password(user.email)
-        user.save()
-        user = models.User.objects.get(id=user.id)
+            kids=model_factories.KidFactory.create_batch(2))
         kid = user.kids[1]
         url = self.get_server_url() + url_for('kids_object', kid_id=str(kid.id))
 
-        # access_token = self.login(user.email, user.email)
-        access_token = self.fast_login(user)
+        access_token = self.get_access_token(user)
 
         new_name = kid.name + 'SOMENEWDATA'
         birthday = kid.birthday - timedelta(days=3)
@@ -179,12 +157,9 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
     def test_update_non_existed(self):
         user = model_factories.UserFactory()
-        user.set_password(user.email)
-        user.save()
         url = self.get_server_url() + url_for('kids_object',
                                               kid_id=str('qewrtyzxc'))
-        # access_token = self.login(user.email, user.email)
-        access_token = self.fast_login(user)
+        access_token = self.get_access_token(user)
         new_kid_data = {'name': 'some',
                         'gender': models.MALE,
                         'birthday': '2016-08-23'}
@@ -200,16 +175,13 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
     def test_delete(self):
         count = 3
-        user = model_factories.UserFactory(kids=[model_factories.KidFactory() for _ in range(count)])
-        user.set_password(user.email)
-        user.save()
-        user = models.User.objects.get(id=user.id)
+        user = model_factories.UserFactory(
+            kids=model_factories.KidFactory.create_batch(count))
         removed_kid = user.kids[1]
         url = self.get_server_url() + url_for('kids_object',
                                               kid_id=str(removed_kid.id))
 
-        # access_token = self.login(user.email, user.email)
-        access_token = self.fast_login(user)
+        access_token = self.get_access_token(user)
 
         response = requests.delete(url, headers={'Authorization': 'JWT ' + access_token})
 
@@ -226,12 +198,9 @@ class SimpleCRUD(BaseAPIIntegrationTestCase):
 
     def test_delete_non_existed(self):
         user = model_factories.UserFactory()
-        user.set_password(user.email)
-        user.save()
         url = self.get_server_url() + url_for('kids_object',
                                               kid_id=str('qewrtyzxc'))
-        # access_token = self.login(user.email, user.email)
-        access_token = self.fast_login(user)
+        access_token = self.get_access_token(user)
         response = requests.delete(url, headers={
             'Authorization': 'JWT ' + access_token})
         self.assertEqual(response.status_code, 404)

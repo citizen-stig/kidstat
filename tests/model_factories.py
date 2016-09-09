@@ -78,6 +78,8 @@ class BaseUserFactory(MongoEngineFactory):
     class Meta:
         model = models.User
     email = factory.Sequence(lambda n: 'user%d@example.com' % n)
+    # Works only if password in plain text
+    password = factory.LazyAttribute(lambda o: o.email)
 
 
 class UserFactory(BaseUserFactory):

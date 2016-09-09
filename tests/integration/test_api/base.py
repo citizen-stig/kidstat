@@ -27,7 +27,7 @@ class BaseAPIIntegrationTestCase(LiveServerTestCase):
         return response_data['access_token']
 
     @staticmethod
-    def fast_login(user):
+    def get_access_token(user):
         jwt = current_app.extensions['jwt']
         return jwt.jwt_encode_callback(user).decode('utf-8')
 
@@ -46,8 +46,6 @@ class AuthorizedAPIIntegrationTestCase(BaseAPIIntegrationTestCase):
 
     def setUp(self):
         super().setUp()
-        self.user = model_factories.UserFactory(kids=[])
-        self.user.set_password(self.user.email)
-        self.user.save()
-        self.access_token = self.login(self.user.email, self.user.email)
+        self.user = model_factories.UserFactory()
+        self.access_token = self.get_access_token(self.user)
         self.headers = {'Authorization': 'JWT ' + self.access_token}

@@ -5,17 +5,14 @@ import requests
 from flask import url_for
 
 from tests import model_factories
-from .base import AuthorizedAPIIntegrationTestCase, SERVER_TIMESTAMP_FORMAT
-
-CLIENT_TIMESTAMP_FORMAT = '%Y-%m-%d'
+from .base import AuthorizedAPIIntegrationTestCase, SERVER_TIMESTAMP_FORMAT, CLIENT_TIMESTAMP_FORMAT
 
 
 class ListAPI(AuthorizedAPIIntegrationTestCase):
 
     def setUp(self):
         super().setUp()
-        self.user.kids = [model_factories.KidFactory(observations=[])]
-        self.user.save()
+        self.user.update(push__kids=model_factories.KidFactory())
         self.user.reload()
         kid = self.user.kids[0]
         self.url = self.get_server_url() + url_for('observations_list',

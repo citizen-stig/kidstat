@@ -104,7 +104,7 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
                          kid.birthday.strftime(SERVER_TIMESTAMP_FORMAT))
 
     def test_get_non_existed(self):
-        url = self.get_server_url() + url_for('kids_object', kid_id='qewrtyzxc')
+        url = self.get_server_url() + url_for('kids_object', kid_id='wombat')
         response = requests.get(url, headers=self.headers)
         self.assertEqual(response.status_code, 404)
         response_data = response.json()
@@ -136,7 +136,7 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
                          birthday.strftime(SERVER_TIMESTAMP_FORMAT))
 
     def test_update_non_existed(self):
-        url = self.get_server_url() + url_for('kids_object', kid_id='qewrtyzxc')
+        url = self.get_server_url() + url_for('kids_object', kid_id='wombat')
         new_kid_data = {'name': 'some',
                         'gender': models.MALE,
                         'birthday': '2016-08-23'}
@@ -168,7 +168,7 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
             self.assertNotEqual(removed_kid.id, existed_kid.id)
 
     def test_delete_non_existed(self):
-        url = self.get_server_url() + url_for('kids_object', kid_id='qewrtyzxc')
+        url = self.get_server_url() + url_for('kids_object', kid_id='wombat')
         response = requests.delete(url, headers=self.headers)
         self.assertEqual(response.status_code, 404)
         response_data = response.json()

@@ -33,9 +33,7 @@ class KidsListResource(MarshMallowResource):
                 name=args['name'],
                 birthday=args['birthday'],
                 gender=args['gender'])
-            # TODO: might be issues with multiple threads
-            current_identity.kids.append(kid)
-            current_identity.save()
+            current_identity.update(push__kids=kid)
             return self.object_response(kid)
         return abort(409, error="Kid with this name already exists",
                      success=False)

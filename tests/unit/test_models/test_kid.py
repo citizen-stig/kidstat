@@ -38,13 +38,15 @@ class KidObservations(BaseTestCase):
 
     def test_get_observation_by_id(self):
         kid = self.user.kids[0]
+        self.assertEqual(len(kid.observations), 0)
         observation = model_factories.ObservationFactory(
             parameter=self.parameter,
             timestamp=kid.birthday + timedelta(days=1))
         kid.observations.append(observation)
-        self.user.save()
-        self.user.reload()
-        observation.reload()
+        kid.save()
+        kid.reload()
+        self.assertEqual(len(kid.observations), 1)
+        observation = kid.observations[0]
         self.assertIsNotNone(observation.id)
 
         actual_observation = kid.get_observation_by_id(observation.id)

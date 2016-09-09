@@ -1,4 +1,3 @@
-import unittest
 from datetime import timedelta
 
 import requests
@@ -223,7 +222,6 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         response = requests.put(self.url, json=data, headers=self.headers)
 
         self.assertEqual(response.status_code, 422)
-        self.assertEqual(response.status_code, 422)
         self.verify_response_error(response, 'parameter',
                                    'No Such Parameter: ' + parameter_name)
 
@@ -239,11 +237,35 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         observations = self.user.kids[0].observations
         self.assertEqual(len(observations), 0)
 
+    # Security
+    def test_update_other_user_kid_observation(self):
+        observation = model_factories.ObservationFactory()
+        kid = model_factories.KidFactory.build(observations=[observation])
+        other_user = model_factories.UserFactory(kids=[kid])
+        other_user.save()
 
-#     @unittest.skip('Not implemented')
-#     def test_update_other_user_kid_observation(self):
-#         pass
-#
-#     @unittest.skip('Not implemented')
-#     def test_update_observation_for_other_kid(self):
-#         pass
+        relative_url = url_for('observation_object',
+                               kid_id=kid.id,
+                               observation_id=observation.id)
+        url = self.get_server_url() + relative_url
+        data = {
+            'timestamp': observation.timestamp.strftime(
+                CLIENT_TIMESTAMP_FORMAT),
+            'parameter': observation.parameter.name,
+            'value': observation.value + 3.14}
+
+        response = requests.put(url, json=data, headers=self.headers)
+        self.assertAPI404(response)
+
+    def test_delete_other_user_kid_observation(self):
+        observation = model_factories.ObservationFactory()
+        kid = model_factories.KidFactory.build(observations=[observation])
+        other_user = model_factories.UserFactory(kids=[kid])
+        other_user.save()
+
+        relative_url = url_for('observation_object',
+                               kid_id=kid.id,
+                               observation_id=observation.id)
+        url = self.get_server_url() + relative_url
+        response = requests.delete(url, headers=self.headers)
+        self.assertAPI404(response)

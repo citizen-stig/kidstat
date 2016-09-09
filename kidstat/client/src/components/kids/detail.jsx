@@ -39,8 +39,6 @@ module.exports = React.createClass({
         }
     },
     handleObservationActions: function (event, observations) {
-        console.log('Observation action handler in detail.jsx');
-        console.log(event);
         if (event === 'change') {
             this.updateObservationsState(observations);
         }
@@ -68,6 +66,8 @@ module.exports = React.createClass({
             }
         }
         this.setState({weight: weight, height: height})
+        console.log('Observations have been added to state');
+        console.log(this.state)
     },
     deleteKid: function () {
         Actions.deleteKid(this.props.kid);
@@ -95,12 +95,12 @@ module.exports = React.createClass({
                 </Col>
                 <Col xs={12} md={3}>
                     <p>
-                        <strong>Weight:</strong> {this.state.weight.value} (N/A)
-                        {this.state.weight.timestamp}
+                        <strong>Weight:</strong> {this.state.weight.value} (N/A)<br/>
+                        {this.state.weight.timestamp ? this.state.weight.timestamp.toLocaleDateString() : ''}
                     </p>
                     <p>
-                        <strong>Height:</strong> {this.state.height.value} (N/A)
-                        {this.state.height.timestamp}
+                        <strong>Height:</strong> {this.state.height.value} (N/A)<br/>
+                        {this.state.height.timestamp ? this.state.height.timestamp.toLocaleDateString() : ''}
                     </p>
                 </Col>
                 <Col xs={12} md={4}>

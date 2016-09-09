@@ -13,6 +13,10 @@ module.exports = Reflux.createStore({
     init: function () {
         this.observations = {};
     },
+    parseObservation: function(observation){
+        observation.timestamp = new Date(observation.timestamp);
+        return observation;
+    },
     sortObservationsForKid: function (kid) {
         var observations = this.observations[kid.id];
         // Sort by timestamp in reversed order
@@ -31,7 +35,11 @@ module.exports = Reflux.createStore({
         this.triggerLoading();
         return Api.authorizedGet(url).then(
             function (data) {
-                this.observations[kid.id] = data.data;
+                this.observations[kid.id] = [];
+                for(var i = 0; i < data.data.length; i++){
+                    var observation = this.parseObservation(data.data[i]);
+                    this.observations[kid.id].push(observation);
+                }
                 this.sortObservationsForKid(kid);
                 this.triggerObservationReceived();
             }.bind(this)
@@ -42,13 +50,12 @@ module.exports = Reflux.createStore({
         var url = this.getObservationsUrl(kid);
         return Api.authorizedPost(url, observation).then(
             function (new_observation) {
-                console.log('New observation has been added')
-                console.log('')
+                var observation = this.parseObservation(new_observation);
                 if(kid.id in this.observations) {
-                    this.observations[kid.id].push(new_observation);
+                    this.observations[kid.id].push(observation);
                     this.sortObservationsForKid(kid);
                 } else {
-                    this.observations[kid.id] = [new_observation];
+                    this.observations[kid.id] = [observation];
                 }
                 this.triggerObservationReceived();
             }.bind(this)

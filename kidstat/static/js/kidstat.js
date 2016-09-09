@@ -41496,6 +41496,10 @@
 	    init: function () {
 	        this.observations = {};
 	    },
+	    parseObservation: function (observation) {
+	        observation.timestamp = new Date(observation.timestamp);
+	        return observation;
+	    },
 	    sortObservationsForKid: function (kid) {
 	        var observations = this.observations[kid.id];
 	        // Sort by timestamp in reversed order
@@ -41516,7 +41520,11 @@
 	        var url = this.getObservationsUrl(kid);
 	        this.triggerLoading();
 	        return Api.authorizedGet(url).then(function (data) {
-	            this.observations[kid.id] = data.data;
+	            this.observations[kid.id] = [];
+	            for (var i = 0; i < data.data.length; i++) {
+	                var observation = this.parseObservation(data.data[i]);
+	                this.observations[kid.id].push(observation);
+	            }
 	            this.sortObservationsForKid(kid);
 	            this.triggerObservationReceived();
 	        }.bind(this));
@@ -41525,13 +41533,12 @@
 	        this.triggerLoading();
 	        var url = this.getObservationsUrl(kid);
 	        return Api.authorizedPost(url, observation).then(function (new_observation) {
-	            console.log('New observation has been added');
-	            console.log('');
+	            var observation = this.parseObservation(new_observation);
 	            if (kid.id in this.observations) {
-	                this.observations[kid.id].push(new_observation);
+	                this.observations[kid.id].push(observation);
 	                this.sortObservationsForKid(kid);
 	            } else {
-	                this.observations[kid.id] = [new_observation];
+	                this.observations[kid.id] = [observation];
 	            }
 	            this.triggerObservationReceived();
 	        }.bind(this));
@@ -41627,6 +41634,8 @@
 	var Grid = ReactBootstrap.Grid;
 	var Row = ReactBootstrap.Row;
 	var Col = ReactBootstrap.Col;
+	var ButtonGroup = ReactBootstrap.ButtonGroup;
+	var Button = ReactBootstrap.Button;
 
 	var Actions = __webpack_require__(177);
 	var KidsStore = __webpack_require__(437);
@@ -41661,8 +41670,6 @@
 	        }
 	    },
 	    handleObservationActions: function (event, observations) {
-	        console.log('Observation action handler in detail.jsx');
-	        console.log(event);
 	        if (event === 'change') {
 	            this.updateObservationsState(observations);
 	        }
@@ -41690,6 +41697,8 @@
 	            }
 	        }
 	        this.setState({ weight: weight, height: height });
+	        console.log('Observations have been added to state');
+	        console.log(this.state);
 	    },
 	    deleteKid: function () {
 	        Actions.deleteKid(this.props.kid);
@@ -41735,7 +41744,7 @@
 	                ),
 	                React.createElement(
 	                    Col,
-	                    { xs: 12, md: 4 },
+	                    { xs: 12, md: 3 },
 	                    React.createElement(
 	                        'p',
 	                        null,
@@ -41746,7 +41755,9 @@
 	                        ),
 	                        ' ',
 	                        this.state.weight.value,
-	                        ' (N/A)'
+	                        ' (N/A)',
+	                        React.createElement('br', null),
+	                        this.state.weight.timestamp ? this.state.weight.timestamp.toLocaleDateString() : ''
 	                    ),
 	                    React.createElement(
 	                        'p',
@@ -41758,28 +41769,40 @@
 	                        ),
 	                        ' ',
 	                        this.state.height.value,
-	                        ' (N/A)'
+	                        ' (N/A)',
+	                        React.createElement('br', null),
+	                        this.state.height.timestamp ? this.state.height.timestamp.toLocaleDateString() : ''
 	                    )
 	                ),
 	                React.createElement(
 	                    Col,
-	                    { xs: 12, md: 3 },
+	                    { xs: 12, md: 4 },
 	                    React.createElement(
 	                        'div',
-	                        { className: 'pull-right' },
+	                        { className: 'kid-control-box' },
 	                        React.createElement(
-	                            'a',
-	                            { onClick: this.openModal, href: '#' },
-	                            React.createElement('i', { className: 'fa fa-pencil' })
+	                            'div',
+	                            { className: 'pull-right' },
+	                            React.createElement(
+	                                ButtonGroup,
+	                                null,
+	                                React.createElement(
+	                                    Button,
+	                                    { onClick: this.openModal },
+	                                    React.createElement('i', { className: 'fa fa-pencil' }),
+	                                    ' Edit'
+	                                ),
+	                                React.createElement(
+	                                    Button,
+	                                    { onClick: this.deleteKid },
+	                                    React.createElement('i', { className: 'fa fa-trash' }),
+	                                    ' Remove'
+	                                )
+	                            )
 	                        ),
-	                        React.createElement(
-	                            'a',
-	                            { onClick: this.deleteKid, href: '#' },
-	                            React.createElement('i', { className: 'fa fa-trash' })
-	                        )
-	                    ),
-	                    React.createElement('div', { className: 'clearfix' }),
-	                    React.createElement(AddObservation, { kid: this.props.kid })
+	                        React.createElement('div', { className: 'clearfix' }),
+	                        React.createElement(AddObservation, { kid: this.props.kid })
+	                    )
 	                )
 	            ),
 	            React.createElement(
@@ -41829,7 +41852,8 @@
 	            React.createElement(
 	                Button,
 	                { onClick: this.openModal },
-	                'Add Observation'
+	                React.createElement('i', { className: 'fa fa-plus' }),
+	                ' Add Observation'
 	            ),
 	            React.createElement(
 	                Modal,

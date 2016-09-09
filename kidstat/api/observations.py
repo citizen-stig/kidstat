@@ -92,21 +92,14 @@ class ObservationResource(MarshMallowResource):
 
     @jwt_required()
     def delete(self, kid_id, observation_id):
-        # observation = self.get_observation_or_404(kid_id, observation_id)
-        # kid = current_identity.get_kid_by_id(kid_id)
-
-        # kid.update(pull__observations=observation)
-
-        a = current_identity.update(pull__kids__observations__id=observation_id)
-        b = models.User.objects(id=current_identity.id).update_one(pull__kids__observations__id=observation_id)
-        current_identity.save()
-        current_identity.reload()
-        print('------')
-        print(current_identity.kids)
         kid = current_identity.get_kid_by_id(kid_id)
-        print(kid)
-        print(kid.observations)
-        print(a)
-        print(b)
-        print('------')
-        return {'success': True}
+        if kid:
+            observation = kid.get_observation_by_id(observation_id)
+            if observation:
+                kid.observations.remove(observation)
+                kid.save()
+                return {'success': True}
+        abort(404)
+
+
+from mongoengine.base.datastructures import BaseList

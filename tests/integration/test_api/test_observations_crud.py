@@ -227,7 +227,6 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         self.verify_response_error(response, 'parameter',
                                    'No Such Parameter: ' + parameter_name)
 
-    @unittest.skip('Does not work')
     def test_delete(self):
         response = requests.delete(self.url, headers=self.headers)
 
@@ -242,7 +241,7 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
 
 
 #     @unittest.skip('Not implemented')
-#     def test_update_other_user_kid(self):
+#     def test_update_other_user_kid_observation(self):
 #         pass
 #
 #     @unittest.skip('Not implemented')

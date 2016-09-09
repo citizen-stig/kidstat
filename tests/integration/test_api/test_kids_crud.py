@@ -106,11 +106,7 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
     def test_get_non_existed(self):
         url = self.get_server_url() + url_for('kids_object', kid_id='wombat')
         response = requests.get(url, headers=self.headers)
-        self.assertEqual(response.status_code, 404)
-        response_data = response.json()
-        self.assertIn('message', response_data)
-        self.assertIn('The requested URL was not found on the server.',
-                      response_data['message'])
+        self.assertAPI404(response)
 
     def test_update(self):
         self.user.kids = model_factories.KidFactory.build_batch(2)
@@ -141,11 +137,7 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
                         'gender': models.MALE,
                         'birthday': '2016-08-23'}
         response = requests.put(url, json=new_kid_data, headers=self.headers)
-        self.assertEqual(response.status_code, 404)
-        response_data = response.json()
-        self.assertIn('message', response_data)
-        self.assertIn('The requested URL was not found on the server.',
-                      response_data['message'])
+        self.assertAPI404(response)
 
     def test_delete(self):
         count = 3
@@ -170,11 +162,7 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
     def test_delete_non_existed(self):
         url = self.get_server_url() + url_for('kids_object', kid_id='wombat')
         response = requests.delete(url, headers=self.headers)
-        self.assertEqual(response.status_code, 404)
-        response_data = response.json()
-        self.assertIn('message', response_data)
-        self.assertIn('The requested URL was not found on the server.',
-                      response_data['message'])
+        self.assertAPI404(response)
 
     def test_delete_other_user_kid(self):
         other_user = model_factories.UserFactory(
@@ -183,8 +171,4 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
         url = self.get_server_url() + url_for('kids_object',
                                               kid_id=str(other_kid.id))
         response = requests.delete(url, headers=self.headers)
-        self.assertEqual(response.status_code, 404)
-        response_data = response.json()
-        self.assertIn('message', response_data)
-        self.assertIn('The requested URL was not found on the server.',
-                      response_data['message'])
+        self.assertAPI404(response)

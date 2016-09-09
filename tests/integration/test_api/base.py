@@ -41,6 +41,13 @@ class BaseAPIIntegrationTestCase(LiveServerTestCase):
         self.assertEqual(len(field_error), 1)
         self.assertEqual(field_error[0], message)
 
+    def assertAPI404(self, response):
+        self.assertEqual(response.status_code, 404)
+        response_data = response.json()
+        self.assertIn('message', response_data)
+        self.assertIn('The requested URL was not found on the server.',
+                      response_data['message'])
+
 
 class AuthorizedAPIIntegrationTestCase(BaseAPIIntegrationTestCase):
 

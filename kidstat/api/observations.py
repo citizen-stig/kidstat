@@ -20,6 +20,7 @@ def validate_value(value):
 
 
 class ObservationSchema(Schema):
+    id = fields.String(dump_only=True)
     timestamp = fields.DateTime(required=True, format='iso8601')
     parameter = fields.String(required=True, validate=validate_parameter)
     value = fields.Float(required=True, validate=validate_value)
@@ -42,7 +43,7 @@ class ObservationsListResource(MarshMallowResource):
         kid = current_identity.get_kid_by_id(kid_id)
         if kid:
             return self.list_response(kid.observations)
-        abort(404, errors={"error": "Kid with id {0} not found".format(kid_id)})
+        abort(404)
 
     @jwt_required()
     @use_args(ObservationSchema(strict=True))

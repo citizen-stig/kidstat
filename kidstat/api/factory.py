@@ -45,4 +45,8 @@ def setup_api(app):
         observations.ObservationResource,
         '/kids/<string:kid_id>/observations/<string:observation_id>',
         endpoint='observation_object')
+    api.add_resource(
+        observations.SampleObservationResource,
+        '/try',
+        endpoint='observation_sample')
     return api

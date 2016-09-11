@@ -1,10 +1,13 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import requests
 from flask import url_for
 
+from kidstat import models
+
 from tests import model_factories
-from .base import AuthorizedAPIIntegrationTestCase, SERVER_TIMESTAMP_FORMAT, CLIENT_TIMESTAMP_FORMAT
+from .base import AuthorizedAPIIntegrationTestCase, BaseAPIIntegrationTestCase, SERVER_TIMESTAMP_FORMAT,\
+    CLIENT_TIMESTAMP_FORMAT
 
 
 class ListAPI(AuthorizedAPIIntegrationTestCase):
@@ -269,3 +272,39 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         url = self.get_server_url() + relative_url
         response = requests.delete(url, headers=self.headers)
         self.assertAPI404(response)
+
+
+class SampleAPITestCase(BaseAPIIntegrationTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.url = cls.get_server_url() + url_for('observation_sample')
+
+    def test_regular(self):
+        parameter = model_factories.ParameterFactory()
+        age = 3
+        value = 1.33
+        standard = model_factories.StandardFactory(age=age,
+                                                   percentile=50,
+                                                   parameter=parameter,
+                                                   value=value)
+        expected_category = models.Categories.average
+
+        birthday = datetime(2016, 9, 6)
+        timestamp = birthday + timedelta(days=age)
+        data = {'value': 1.33,
+                'gender': standard.gender,
+                'parameter': parameter.name,
+                'timestamp': timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
+                'birthday': birthday.strftime(CLIENT_TIMESTAMP_FORMAT)}
+
+        response = requests.post(self.url, json=data)
+
+        self.assertEqual(response.status_code, 200)
+
+        response_data = response.json()
+
+        self.assertEqual(len(response_data), 2)
+        self.assertIn('category', response_data)
+        self.assertEqual(response_data['category'], expected_category.pretty)

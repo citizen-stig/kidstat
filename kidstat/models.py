@@ -26,6 +26,11 @@ class Categories(IntEnum):
 
     @staticmethod
     def get_for_percentile(percentile):
+        """
+        Finds correct category for given percentile
+        :param float percentile:
+        :return: Categories matched category
+        """
         if percentile > 100:
             raise ValueError('Percentile should be less or equal 100')
         return next(x for x in sorted(Categories) if x >= percentile)

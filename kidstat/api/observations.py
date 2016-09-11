@@ -1,6 +1,7 @@
+from flask import jsonify
 from flask_jwt import jwt_required, current_identity
-from flask_restful import abort
-from marshmallow import fields, Schema, ValidationError, post_load
+from flask_restful import abort, Resource
+from marshmallow import fields, Schema, ValidationError, post_load, validate
 import pytz
 from webargs.flaskparser import use_args
 from kidstat import models
@@ -25,14 +26,21 @@ class ObservationSchema(Schema):
     parameter = fields.String(required=True, validate=validate_parameter)
     value = fields.Float(required=True, validate=validate_value)
 
-    @post_load
-    def annotate_tz_info(self, data):
-        timestamp = data['timestamp']
-        if timestamp.tzinfo is None:
-            data['timestamp'] = timestamp.replace(tzinfo=pytz.UTC)
-        return data
+    # @post_load
+    # def annotate_tz_info(self, data):
+    #     timestamp = data['timestamp']
+    #     if timestamp.tzinfo is None:
+    #         data['timestamp'] = timestamp.replace(tzinfo=pytz.UTC)
+    #     return data
 
     # TODO: Make object in schema, not in resource!!!!
+
+
+class SampleObservationSchema(ObservationSchema):
+    gender = fields.String(required=True,
+                           validate=validate.OneOf(
+                               choices=(models.MALE, models.FEMALE)))
+    birthday = fields.DateTime(required=True, format='iso8601')
 
 
 class ObservationsListResource(MarshMallowResource):
@@ -102,4 +110,19 @@ class ObservationResource(MarshMallowResource):
         abort(404)
 
 
-from mongoengine.base.datastructures import BaseList
+class SampleObservationResource(Resource):
+
+    @use_args(SampleObservationSchema(strict=True))
+    def post(self, args):
+        kid = models.Kid(birthday=args['birthday'],
+                         gender=args['gender'])
+        parameter = models.Parameter.objects \
+            .filter(name=args['parameter']).first()
+        observation = models.Observation(parameter=parameter,
+                                         timestamp=args['timestamp'],
+                                         value=args['value'])
+        observation._instance = kid
+        category = observation.get_category()
+
+        return jsonify({"success": True,
+                        'category': category.pretty})

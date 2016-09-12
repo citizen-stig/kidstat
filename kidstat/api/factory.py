@@ -1,6 +1,6 @@
 from flask_restful import Api
 
-from . import auth, parameters, kids, observations
+from .resources import auth, kids, observations, parameters
 
 
 def setup_api(app):

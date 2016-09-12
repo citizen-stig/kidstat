@@ -3,10 +3,11 @@ from flask_restful import Resource, abort
 from flask_jwt import jwt_required
 from flask_security.registerable import register_user
 import facebook
-from marshmallow import fields, Schema
+import mongoengine.errors
 from webargs.flaskparser import use_args
 from kidstat import models
-import mongoengine.errors
+
+from ..schemas.auth import RegistrationSchema, FacebookAuthSchema
 
 
 class CheckTokenResource(Resource):
@@ -14,13 +15,6 @@ class CheckTokenResource(Resource):
     @jwt_required()
     def get(self):
         return {"success": True}
-
-
-class RegistrationSchema(Schema):
-    email = fields.Email(required=True)
-    password = fields.String(required=True)
-    first_name = fields.String(required=True)
-    last_name = fields.String(required=True)
 
 
 class RegistrationResource(Resource):
@@ -36,12 +30,6 @@ class RegistrationResource(Resource):
         except (mongoengine.errors.OperationError,
                 mongoengine.errors.ValidationError) as exc:
             return abort(422, errors=str(exc))
-
-
-class FacebookAuthSchema(Schema):
-    access_token = fields.String(load_from='accessToken',
-                                 dump_to='access_token',
-                                 required=True)
 
 
 class FacebookAuth(Resource):

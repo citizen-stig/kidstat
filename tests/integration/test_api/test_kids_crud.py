@@ -39,7 +39,7 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
                              db_kid.birthday.strftime(SERVER_TIMESTAMP_FORMAT))
 
     def test_add_new(self):
-        birthday = datetime(2016, 1, 2).replace(tzinfo=pytz.UTC)
+        birthday = datetime(2016, 1, 2)
         name = 'John'
         new_kid_data = {'name': name,
                         'gender': models.MALE,

@@ -1,20 +1,10 @@
 from flask_jwt import jwt_required, current_identity
 from flask_restful import abort
-from marshmallow import fields, validate, Schema
 from webargs.flaskparser import use_args
 from kidstat import models
 
 from .base import MarshMallowResource
-
-
-class KidSchema(Schema):
-    id = fields.String(dump_only=True)
-    name_field = fields.String(attribute='name', dump_to='name',
-                               load_from='name', required=True)
-    gender = fields.String(required=True,
-                           validate=validate.OneOf(
-                               choices=(models.MALE, models.FEMALE)))
-    birthday = fields.DateTime(required=True, format='iso8601')
+from ..schemas.kids import KidSchema
 
 
 class KidsListResource(MarshMallowResource):

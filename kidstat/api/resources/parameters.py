@@ -1,16 +1,7 @@
-from flask import jsonify, current_app
-from flask_jwt import jwt_required, current_identity
-from flask_restful import Resource, abort
-from flask_security.registerable import register_user
 from marshmallow import fields, validate, Schema
-from webargs.flaskparser import parser, use_args
 from kidstat import models
 from .base import MarshMallowResource
-
-class ParameterSchema(Schema):
-    name = fields.String(attribute='name', dump_to='name', required=True)
-    unit = fields.String(required=True)
-    description = fields.String(required=True)
+from ..schemas.parameters import ParameterSchema
 
 
 class ParametersListResource(MarshMallowResource):

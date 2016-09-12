@@ -97,7 +97,7 @@ class Registration(BaseAPIIntegrationTestCase):
         data = {'email': 'test@example.com',
                 'first_name': 'John',
                 'last_name': 'Dow',
-                'password': 'qwerty'}
+                'password': 'myLongPassword'}
 
         response = requests.post(self.url, json=data)
 

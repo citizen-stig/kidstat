@@ -13,8 +13,7 @@ def get_mongodb_settings():
         'port': port,
         'db': parsed['database'],
         'username': parsed['username'],
-        'password': parsed['password'],
-        'tz_aware': True}
+        'password': parsed['password']}
 
 
 class Config(BaseConfig):

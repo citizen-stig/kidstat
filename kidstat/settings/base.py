@@ -8,7 +8,6 @@ class Config(object):
         'db': 'kidstat',
         'host': 'localhost',
         'port': 27017,
-        'tz_aware': True
     }
     SECURITY_PASSWORD_HASH = 'pbkdf2_sha512'
     SECURITY_PASSWORD_SALT = 'justsalt'

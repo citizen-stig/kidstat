@@ -1,46 +1,10 @@
 from flask import jsonify
 from flask_jwt import jwt_required, current_identity
 from flask_restful import abort, Resource
-from marshmallow import fields, Schema, ValidationError, post_load, validate
-import pytz
 from webargs.flaskparser import use_args
 from kidstat import models
 from .base import MarshMallowResource
-
-
-def validate_parameter(parameter_name):
-    parameter = models.Parameter.objects \
-        .filter(name=parameter_name).first()
-    if parameter is None:
-        raise ValidationError('No Such Parameter: {0}'.format(parameter_name))
-
-
-def validate_value(value):
-    if value < 0.0:
-        raise ValidationError('Value cannot be less than 0')
-
-
-class ObservationSchema(Schema):
-    id = fields.String(dump_only=True)
-    timestamp = fields.DateTime(required=True, format='iso8601')
-    parameter = fields.String(required=True, validate=validate_parameter)
-    value = fields.Float(required=True, validate=validate_value)
-
-    # @post_load
-    # def annotate_tz_info(self, data):
-    #     timestamp = data['timestamp']
-    #     if timestamp.tzinfo is None:
-    #         data['timestamp'] = timestamp.replace(tzinfo=pytz.UTC)
-    #     return data
-
-    # TODO: Make object in schema, not in resource!!!!
-
-
-class SampleObservationSchema(ObservationSchema):
-    gender = fields.String(required=True,
-                           validate=validate.OneOf(
-                               choices=(models.MALE, models.FEMALE)))
-    birthday = fields.DateTime(required=True, format='iso8601')
+from ..schemas.observations import ObservationSchema, SampleObservationSchema
 
 
 class ObservationsListResource(MarshMallowResource):
@@ -64,8 +28,7 @@ class ObservationsListResource(MarshMallowResource):
             parameter=parameter,
             value=args['value'])
         kid.add_observation(observation)
-        # kid.save()
-        current_identity.save()
+        kid.save()
         return self.object_response(observation)
 
 

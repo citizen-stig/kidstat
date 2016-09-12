@@ -8,7 +8,6 @@ class Config(BaseConfig):
         'db': 'test_kidstat',
         'host': 'localhost',
         'port': 27017,
-        'tz_aware': True
     }
     SECRET_KEY = 'testingkey'
     WTF_CSRF_ENABLED = False

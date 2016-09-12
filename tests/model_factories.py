@@ -1,9 +1,20 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 import pytz
 import factory
 import factory.fuzzy
 from factory.mongoengine import MongoEngineFactory
 from kidstat import models
+
+
+class FuzzyDateTimeInPast(factory.fuzzy.FuzzyDate):
+
+    def __init__(self, start_days=30, end_days=0):
+        today = date.today()
+        super().__init__(start_date=today - timedelta(days=start_days),
+                         end_date=today - timedelta(days=end_days))
+
+    def fuzz(self):
+        return datetime.combine(super().fuzz(), datetime.min.time())
 
 
 class EmbeddedDocumentFactory(factory.Factory):
@@ -39,14 +50,7 @@ class ObservationFactory(EmbeddedDocumentFactory):
     class Meta:
         model = models.Observation
 
-    timestamp = factory.fuzzy.FuzzyDateTime(
-        start_dt=datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(
-            days=29),
-        end_dt=datetime.utcnow().replace(tzinfo=pytz.UTC),
-        force_hour=0,
-        force_minute=0,
-        force_second=0,
-        force_microsecond=0)
+    timestamp = FuzzyDateTimeInPast(end_days=29)
     parameter = factory.SubFactory(ParameterFactory)
     value = factory.fuzzy.FuzzyFloat(low=1.3, high=20.4)
 
@@ -56,13 +60,7 @@ class KidFactory(EmbeddedDocumentFactory):
         model = models.Kid
 
     name = factory.Sequence(lambda n: 'Kid%d' % n)
-    birthday = factory.fuzzy.FuzzyDateTime(
-        start_dt=datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days=60),
-        end_dt=datetime.utcnow().replace(tzinfo=pytz.UTC) - timedelta(days=31),
-        force_hour=0,
-        force_minute=0,
-        force_second=0,
-        force_microsecond=0)
+    birthday = FuzzyDateTimeInPast(start_days=60, end_days=31)
     gender = factory.Iterator([models.MALE, models.FEMALE])
 
 

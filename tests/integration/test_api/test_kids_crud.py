@@ -5,9 +5,9 @@ import requests
 from flask import url_for
 
 from kidstat import models
+from kidstat.api.schemas.base import DT_FORMAT
 from tests import model_factories
-from .base import AuthorizedAPIIntegrationTestCase, SERVER_TIMESTAMP_FORMAT,\
-    CLIENT_TIMESTAMP_FORMAT
+from .base import AuthorizedAPIIntegrationTestCase
 
 
 class CRUD(AuthorizedAPIIntegrationTestCase):
@@ -36,14 +36,14 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
             self.assertEqual(kid['name'], db_kid.name)
             self.assertEqual(kid['gender'], db_kid.gender)
             self.assertEqual(kid['birthday'],
-                             db_kid.birthday.strftime(SERVER_TIMESTAMP_FORMAT))
+                             db_kid.birthday.strftime(DT_FORMAT))
 
     def test_add_new(self):
         birthday = datetime(2016, 1, 2)
         name = 'John'
         new_kid_data = {'name': name,
                         'gender': models.MALE,
-                        'birthday': birthday.strftime(CLIENT_TIMESTAMP_FORMAT)}
+                        'birthday': birthday.strftime(DT_FORMAT)}
 
         response = requests.post(self.url, json=new_kid_data,
                                  headers=self.headers)
@@ -65,14 +65,14 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
         self.assertEqual(kid_data['name'], name)
         self.assertEqual(kid_data['gender'], models.MALE)
         self.assertEqual(response_data['birthday'],
-                         birthday.strftime(SERVER_TIMESTAMP_FORMAT))
+                         birthday.strftime(DT_FORMAT))
 
     def test_add_second_same_name(self):
         birthday = datetime(2016, 1, 2).replace(tzinfo=pytz.UTC)
         name = 'John'
         new_kid_data = {'name': name,
                         'gender': models.MALE,
-                        'birthday': birthday.strftime(CLIENT_TIMESTAMP_FORMAT)}
+                        'birthday': birthday.strftime(DT_FORMAT)}
 
         response = requests.post(self.url, json=new_kid_data,
                                  headers=self.headers)
@@ -101,7 +101,7 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
         self.assertEqual(response_data['name'], kid.name)
         self.assertEqual(response_data['gender'], kid.gender)
         self.assertEqual(response_data['birthday'],
-                         kid.birthday.strftime(SERVER_TIMESTAMP_FORMAT))
+                         kid.birthday.strftime(DT_FORMAT))
 
     def test_get_non_existed(self):
         url = self.get_server_url() + url_for('kids_object', kid_id='wombat')
@@ -119,7 +119,7 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
         gender = models.MALE if kid.gender == models.FEMALE else models.FEMALE
         new_kid_data = {'name': new_name,
                         'gender': gender,
-                        'birthday': birthday.strftime(CLIENT_TIMESTAMP_FORMAT)}
+                        'birthday': birthday.strftime(DT_FORMAT)}
         response = requests.put(url, json=new_kid_data, headers=self.headers)
         self.assertEqual(response.status_code, 200)
         response_data = response.json()
@@ -129,7 +129,7 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
         self.assertEqual(response_data['name'], new_name)
         self.assertEqual(response_data['gender'], gender)
         self.assertEqual(response_data['birthday'],
-                         birthday.strftime(SERVER_TIMESTAMP_FORMAT))
+                         birthday.strftime(DT_FORMAT))
 
     def test_update_non_existed(self):
         url = self.get_server_url() + url_for('kids_object', kid_id='wombat')
@@ -174,7 +174,7 @@ class CRUD(AuthorizedAPIIntegrationTestCase):
         new_kid_data = {'name': other_kid.name + "some new data",
                         'gender': other_kid.gender,
                         'birthday': other_kid.birthday.strftime(
-                            CLIENT_TIMESTAMP_FORMAT)}
+                            DT_FORMAT)}
         response = requests.put(url, headers=self.headers, json=new_kid_data)
         self.assertAPI404(response)
 

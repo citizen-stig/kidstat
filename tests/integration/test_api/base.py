@@ -5,9 +5,6 @@ from kidstat.app import create_app, setup_api, setup_security
 from tests import model_factories
 from tests.testcases import LiveServerTestCase
 
-SERVER_TIMESTAMP_FORMAT = '%Y-%m-%dT%H:%M:%S+00:00'
-CLIENT_TIMESTAMP_FORMAT = '%Y-%m-%d'
-
 
 class BaseAPIIntegrationTestCase(LiveServerTestCase):
 
@@ -19,7 +16,8 @@ class BaseAPIIntegrationTestCase(LiveServerTestCase):
         return app
 
     def login(self, email, password):
-        login_url = self.get_server_url() + current_app.config.get('JWT_AUTH_URL_RULE')
+        auth_relative_url = current_app.config.get('JWT_AUTH_URL_RULE')
+        login_url = self.get_server_url() + auth_relative_url
         response = requests.post(login_url,
                                  json={'email': email, 'password': password})
         self.assertEqual(response.status_code, 200)

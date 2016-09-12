@@ -4,10 +4,10 @@ import requests
 from flask import url_for
 
 from kidstat import models
+from kidstat.api.schemas.base import DT_FORMAT
 
 from tests import model_factories
-from .base import AuthorizedAPIIntegrationTestCase, BaseAPIIntegrationTestCase, SERVER_TIMESTAMP_FORMAT,\
-    CLIENT_TIMESTAMP_FORMAT
+from .base import AuthorizedAPIIntegrationTestCase, BaseAPIIntegrationTestCase
 
 
 class ListAPI(AuthorizedAPIIntegrationTestCase):
@@ -44,7 +44,7 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
             self.assertEqual(observation['parameter'],
                              db_observation.parameter.name)
             db_observation_timestamp = db_observation.timestamp.strftime(
-                SERVER_TIMESTAMP_FORMAT)
+                DT_FORMAT)
             self.assertEqual(observation['timestamp'], db_observation_timestamp)
 
     def test_for_non_existed_kid(self):
@@ -61,7 +61,7 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
         timestamp = (kid.birthday + timedelta(days=3))
         value = 1.23
         data = {
-            'timestamp': timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
+            'timestamp': timestamp.strftime(DT_FORMAT),
             'parameter': parameter.name,
             'value': value
         }
@@ -79,7 +79,7 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
         self.assertEqual(observation.value, value)
         # Compare with response data
         self.assertEqual(
-            observation.timestamp.strftime(SERVER_TIMESTAMP_FORMAT),
+            observation.timestamp.strftime(DT_FORMAT),
             observation_data['timestamp'])
         self.assertEqual(str(observation.parameter),
                          observation_data['parameter'])
@@ -101,7 +101,7 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
         timestamp = (kid.birthday + timedelta(days=3))
         value = 1.23
         data = {
-            'timestamp': timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
+            'timestamp': timestamp.strftime(DT_FORMAT),
             'parameter': parameter.name,
             'value': value}
         response = requests.post(self.url, json=data, headers=self.headers)
@@ -117,7 +117,7 @@ class ListAPI(AuthorizedAPIIntegrationTestCase):
         timestamp = (kid.birthday + timedelta(days=3))
         value = 1.23
         data = {
-            'timestamp': timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
+            'timestamp': timestamp.strftime(DT_FORMAT),
             'parameter': parameter_name,
             'value': value}
         response = requests.post(self.url, json=data, headers=self.headers)
@@ -150,7 +150,7 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         observation = self.user.kids[0].observations[0]
         self.assertEqual(
             response_data['timestamp'],
-            observation.timestamp.strftime(SERVER_TIMESTAMP_FORMAT))
+            observation.timestamp.strftime(DT_FORMAT))
         self.assertEqual(response_data['value'], observation.value)
         self.assertEqual(response_data['parameter'], str(observation.parameter))
 
@@ -159,7 +159,7 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         parameter = model_factories.ParameterFactory()
         timestamp = (observation.timestamp + timedelta(days=3))
         value = observation.value + 3.11
-        data = {'timestamp': timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
+        data = {'timestamp': timestamp.strftime(DT_FORMAT),
                 'parameter': parameter.name,
                 'value': value}
 
@@ -171,7 +171,7 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         for field_name in ('timestamp', 'value', 'parameter'):
             self.assertIn(field_name, response_data)
         self.assertEqual(response_data['timestamp'],
-                         timestamp.strftime(SERVER_TIMESTAMP_FORMAT))
+                         timestamp.strftime(DT_FORMAT))
         self.assertEqual(response_data['value'], value)
         self.assertEqual(response_data['parameter'], str(parameter))
 
@@ -192,7 +192,7 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         observation = model_factories.ObservationFactory.build(
             parameter=parameter)
         data = {
-            'timestamp': observation.timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
+            'timestamp': observation.timestamp.strftime(DT_FORMAT),
             'parameter': parameter.name,
             'value': observation.value}
         response = requests.put(url, json=data, headers=self.headers)
@@ -207,7 +207,7 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
             parameter=parameter)
         data = {
             'timestamp': observation.timestamp.strftime(
-                CLIENT_TIMESTAMP_FORMAT),
+                DT_FORMAT),
             'parameter': parameter.name,
             'value': observation.value}
         response = requests.put(url, json=data, headers=self.headers)
@@ -218,7 +218,7 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         timestamp = (observation.timestamp + timedelta(days=3))
         parameter_name = 'my-super-parameter'
         value = observation.value + 3.11
-        data = {'timestamp': timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
+        data = {'timestamp': timestamp.strftime(DT_FORMAT),
                 'parameter': parameter_name,
                 'value': value}
 
@@ -253,7 +253,7 @@ class SingleObjectAPI(AuthorizedAPIIntegrationTestCase):
         url = self.get_server_url() + relative_url
         data = {
             'timestamp': observation.timestamp.strftime(
-                CLIENT_TIMESTAMP_FORMAT),
+                DT_FORMAT),
             'parameter': observation.parameter.name,
             'value': observation.value + 3.14}
 
@@ -296,8 +296,8 @@ class SampleAPITestCase(BaseAPIIntegrationTestCase):
         data = {'value': 1.33,
                 'gender': standard.gender,
                 'parameter': parameter.name,
-                'timestamp': timestamp.strftime(CLIENT_TIMESTAMP_FORMAT),
-                'birthday': birthday.strftime(CLIENT_TIMESTAMP_FORMAT)}
+                'timestamp': timestamp.strftime(DT_FORMAT),
+                'birthday': birthday.strftime(DT_FORMAT)}
 
         response = requests.post(self.url, json=data)
 

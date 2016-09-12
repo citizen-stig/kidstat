@@ -41343,6 +41343,7 @@
 	var React = __webpack_require__(1);
 	var ReactBootstrap = __webpack_require__(179);
 	var Reflux = __webpack_require__(173);
+	var Alert = ReactBootstrap.Alert;
 	var Col = ReactBootstrap.Col;
 
 	var ObservationStore = __webpack_require__(437);
@@ -41359,6 +41360,18 @@
 	        if (event == 'sampleCategoryReceived') {
 	            this.setState({ category: category });
 	        }
+	    },
+	    renderCategory: function () {
+	        return React.createElement(
+	            Alert,
+	            { bsStyle: 'success' },
+	            'Category for this observation is ',
+	            React.createElement(
+	                'strong',
+	                null,
+	                this.state.category
+	            )
+	        );
 	    },
 	    render: function () {
 	        return React.createElement(
@@ -41382,7 +41395,7 @@
 	                    null,
 	                    'Check category of latest observation'
 	                ),
-	                this.state.category ? this.state.category : ''
+	                this.state.category ? this.renderCategory() : ''
 	            )
 	        );
 	    }
@@ -41490,7 +41503,7 @@
 	var Button = ReactBootstrap.Button;
 	var ControlLabel = ReactBootstrap.ControlLabel;
 
-	var RegularInput = __webpack_require__(439);
+	var RegularInput = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../forms/input.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	var Actions = __webpack_require__(177);
 
 	module.exports = React.createClass({
@@ -41630,67 +41643,7 @@
 	});
 
 /***/ },
-/* 439 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(34);
-	var ReactBootstrap = __webpack_require__(179);
-	var Col = ReactBootstrap.Col;
-	var FormGroup = ReactBootstrap.FormGroup;
-	var FormControl = ReactBootstrap.FormControl;
-	var ControlLabel = ReactBootstrap.ControlLabel;
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    propTypes: {
-	        placeholder: React.PropTypes.string,
-	        name: React.PropTypes.string.isRequired,
-	        labelCol: React.PropTypes.number,
-	        inputCol: React.PropTypes.number,
-	        type: React.PropTypes.string,
-	        value: React.PropTypes.string
-	    },
-	    getDefaultProps: function () {
-	        return {
-	            placeholder: '',
-	            labelCol: 3,
-	            inputCol: 9,
-	            type: 'text'
-	        };
-	    },
-	    getInitialState: function () {
-	        return { value: this.props.value, error: '' };
-	    },
-	    changeValue: function () {
-	        this.setState({ value: ReactDOM.findDOMNode(this.refs.input).value });
-	    },
-	    render: function () {
-	        return React.createElement(
-	            FormGroup,
-	            { controlId: "FormControls" + this.props.name },
-	            React.createElement(
-	                Col,
-	                { componentClass: ControlLabel, sm: this.props.labelCol },
-	                this.props.name
-	            ),
-	            React.createElement(
-	                Col,
-	                { sm: this.props.inputCol },
-	                React.createElement(FormControl, {
-	                    ref: 'input',
-	                    type: this.props.type,
-	                    value: this.state.value,
-	                    placeholder: this.props.placeholder,
-	                    onChange: this.changeValue }),
-	                React.createElement(FormControl.Feedback, null)
-	            )
-	        );
-	    }
-	});
-
-/***/ },
+/* 439 */,
 /* 440 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -42151,7 +42104,7 @@
 	var Button = ReactBootstrap.Button;
 	var ControlLabel = ReactBootstrap.ControlLabel;
 
-	var RegularInput = __webpack_require__(439);
+	var RegularInput = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../forms/input.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -42312,7 +42265,7 @@
 	var FormGroup = ReactBootstrap.FormGroup;
 	var Button = ReactBootstrap.Button;
 
-	var RegularInput = __webpack_require__(439);
+	var RegularInput = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../forms/input.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	var ChoicesInput = __webpack_require__(449);
 
 	module.exports = React.createClass({

@@ -6,10 +6,11 @@ var Actions = require('../actions.jsx');
 module.exports = Reflux.createStore({
     listenables: [Actions],
     events: {
-        change: 'change',
-        sampleCategoryReceived: 'sampleCategoryReceived',
         loading: 'loading',
-        addError: 'add-error'
+        change: 'change',
+        error: 'error',
+        sampleCategoryReceived: 'sampleCategoryReceived',
+        sampleCategoryError: 'sampleCategoryError'
     },
     init: function () {
         this.observations = {};
@@ -65,15 +66,15 @@ module.exports = Reflux.createStore({
     },
     requestSampleObservation: function(sample){
         this.triggerLoading();
-        console.log('Store requesting');
-        console.log(sample);
         return Api.post('try', JSON.stringify(sample)).then(
             function(response) {
-                console.log(response);
                 this.sampleCategory = response['category'];
                 this.triggerObservationSampleReceived();
-            }.bind(this)
-        )
+            }.bind(this)).catch(function(error){
+                error.response.json().then(function(data){
+                    this.trigger(this.events.sampleCategoryError, data['errors'])
+                }.bind(this))
+            }.bind(this))
     },
     triggerLoading: function () {
         this.trigger(this.events.loading);

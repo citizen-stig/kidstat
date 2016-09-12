@@ -41346,6 +41346,7 @@
 	var Alert = ReactBootstrap.Alert;
 	var Col = ReactBootstrap.Col;
 
+	var Actions = __webpack_require__(177);
 	var ObservationStore = __webpack_require__(437);
 	var SampleObservationForm = __webpack_require__(438);
 
@@ -41354,12 +41355,18 @@
 
 	    mixins: [Reflux.listenTo(ObservationStore, "handleObservationStore")],
 	    getInitialState: function () {
-	        return { category: null };
+	        return { category: null, errors: null };
 	    },
-	    handleObservationStore: function (event, category) {
-	        if (event == 'sampleCategoryReceived') {
-	            this.setState({ category: category });
+	    handleObservationStore: function (event, data) {
+	        if (event == ObservationStore.events.sampleCategoryReceived) {
+	            this.setState({ category: data });
+	        } else if (event = ObservationStore.events.sampleCategoryError) {
+	            this.setState({ errors: data });
 	        }
+	    },
+	    submitObservationSample: function (observation) {
+	        this.setState({ errors: null });
+	        Actions.requestSampleObservation(observation);
 	    },
 	    renderCategory: function () {
 	        return React.createElement(
@@ -41373,6 +41380,28 @@
 	            )
 	        );
 	    },
+	    renderErrors: function () {
+	        console.log("Errors rendering");
+	        console.log(this.state.errors);
+	        return Object.keys(this.state.errors).map(function (field) {
+	            console.log(this.state.errors);
+	            console.log(field);
+	            console.log(this.state.errors[field]);
+	            return this.state.errors[field].map(function (error) {
+	                return React.createElement(
+	                    Alert,
+	                    null,
+	                    React.createElement(
+	                        'strong',
+	                        null,
+	                        field
+	                    ),
+	                    ': ',
+	                    error
+	                );
+	            }.bind(this));
+	        }.bind(this));
+	    },
 	    render: function () {
 	        return React.createElement(
 	            'div',
@@ -41385,7 +41414,9 @@
 	            React.createElement(
 	                Col,
 	                { xs: 8 },
-	                React.createElement(SampleObservationForm, null)
+	                this.state.errors ? this.renderErrors() : '',
+	                React.createElement(SampleObservationForm, {
+	                    submitAction: this.submitObservationSample })
 	            ),
 	            React.createElement(
 	                Col,
@@ -41412,10 +41443,11 @@
 	module.exports = Reflux.createStore({
 	    listenables: [Actions],
 	    events: {
-	        change: 'change',
-	        sampleCategoryReceived: 'sampleCategoryReceived',
 	        loading: 'loading',
-	        addError: 'add-error'
+	        change: 'change',
+	        error: 'error',
+	        sampleCategoryReceived: 'sampleCategoryReceived',
+	        sampleCategoryError: 'sampleCategoryError'
 	    },
 	    init: function () {
 	        this.observations = {};
@@ -41476,6 +41508,12 @@
 	            console.log(response);
 	            this.sampleCategory = response['category'];
 	            this.triggerObservationSampleReceived();
+	        }.bind(this)).catch(function (error) {
+	            console.log('!!!!!!! ERROR');
+	            console.log(error);
+	            console.log(error.response.json().then(function (data) {
+	                this.trigger(this.events.sampleCategoryError, data['errors']);
+	            }.bind(this)));
 	        }.bind(this));
 	    },
 	    triggerLoading: function () {
@@ -41503,8 +41541,7 @@
 	var Button = ReactBootstrap.Button;
 	var ControlLabel = ReactBootstrap.ControlLabel;
 
-	var RegularInput = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../forms/input.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-	var Actions = __webpack_require__(177);
+	var RegularInput = __webpack_require__(439);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41518,7 +41555,10 @@
 	                parameter: '',
 	                value: '' },
 	            parameters: ['height', 'weight'],
-	            genders: ['male', 'female']
+	            genders: ['male', 'female'],
+	            submitAction: function (observation) {
+	                console.log(observation);
+	            }
 	        };
 	    },
 	    componentDidMount: function () {
@@ -41534,7 +41574,7 @@
 	            value: this.refs.observationValue.state.value };
 	        console.log("Submit Form");
 	        console.log(observation);
-	        Actions.requestSampleObservation(observation);
+	        this.props.submitAction(observation);
 	    },
 	    changeSelectValue: function (ref) {
 	        ref.setState({ value: ReactDOM.findDOMNode(ref).value });
@@ -41643,7 +41683,67 @@
 	});
 
 /***/ },
-/* 439 */,
+/* 439 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
+	var ReactBootstrap = __webpack_require__(179);
+	var Col = ReactBootstrap.Col;
+	var FormGroup = ReactBootstrap.FormGroup;
+	var FormControl = ReactBootstrap.FormControl;
+	var ControlLabel = ReactBootstrap.ControlLabel;
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    propTypes: {
+	        placeholder: React.PropTypes.string,
+	        name: React.PropTypes.string.isRequired,
+	        labelCol: React.PropTypes.number,
+	        inputCol: React.PropTypes.number,
+	        type: React.PropTypes.string,
+	        value: React.PropTypes.string
+	    },
+	    getDefaultProps: function () {
+	        return {
+	            placeholder: '',
+	            labelCol: 3,
+	            inputCol: 9,
+	            type: 'text'
+	        };
+	    },
+	    getInitialState: function () {
+	        return { value: this.props.value, error: '' };
+	    },
+	    changeValue: function () {
+	        this.setState({ value: ReactDOM.findDOMNode(this.refs.input).value });
+	    },
+	    render: function () {
+	        return React.createElement(
+	            FormGroup,
+	            { controlId: "FormControls" + this.props.name },
+	            React.createElement(
+	                Col,
+	                { componentClass: ControlLabel, sm: this.props.labelCol },
+	                this.props.name
+	            ),
+	            React.createElement(
+	                Col,
+	                { sm: this.props.inputCol },
+	                React.createElement(FormControl, {
+	                    ref: 'input',
+	                    type: this.props.type,
+	                    value: this.state.value,
+	                    placeholder: this.props.placeholder,
+	                    onChange: this.changeValue }),
+	                React.createElement(FormControl.Feedback, null)
+	            )
+	        );
+	    }
+	});
+
+/***/ },
 /* 440 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -42104,7 +42204,7 @@
 	var Button = ReactBootstrap.Button;
 	var ControlLabel = ReactBootstrap.ControlLabel;
 
-	var RegularInput = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../forms/input.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var RegularInput = __webpack_require__(439);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -42265,7 +42365,7 @@
 	var FormGroup = ReactBootstrap.FormGroup;
 	var Button = ReactBootstrap.Button;
 
-	var RegularInput = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../forms/input.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var RegularInput = __webpack_require__(439);
 	var ChoicesInput = __webpack_require__(449);
 
 	module.exports = React.createClass({

@@ -10,7 +10,7 @@ var ControlLabel = ReactBootstrap.ControlLabel;
 
 
 var RegularInput = require('../forms/input.jsx');
-var Actions = require('../../actions.jsx');
+
 
 
 module.exports = React.createClass({
@@ -23,7 +23,8 @@ module.exports = React.createClass({
                 parameter: '',
                 value: ''},
             parameters: ['height', 'weight'],
-            genders: ['male', 'female']
+            genders: ['male', 'female'],
+            submitAction: function(observation){console.log(observation)}
         }
     },
     componentDidMount: function(){
@@ -38,8 +39,9 @@ module.exports = React.createClass({
             parameter: this.refs.parameter.state.value,
             value: this.refs.observationValue.state.value};
         console.log("Submit Form");
-        console.log(observation)
-        Actions.requestSampleObservation(observation);
+        console.log(observation);
+        this.props.submitAction(observation);
+
     },
     changeSelectValue: function(ref){
         ref.setState({value: ReactDOM.findDOMNode(ref).value});

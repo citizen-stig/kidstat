@@ -1,10 +1,8 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var Kidstat = require('./components/kidstat.jsx');
-var options = {};
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Kidstat from './components/kidstat.jsx';
 
 
-var element = React.createElement(Kidstat, options);
+var element = React.createElement(Kidstat, {});
 
-ReactDOM.render(element,
-    document.querySelector('.main-container'));
+ReactDOM.render(element, document.querySelector('.main-container'));

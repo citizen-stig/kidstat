@@ -1,15 +1,11 @@
-var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
-var Row = ReactBootstrap.Row;
+import React, {Component, PropTypes} from 'react';
+import ReactBootstrap, {Row} from 'react-bootstrap'
 
-var KidsList = require('./kids/list.jsx');
-var AddKid = require('./kids/add.jsx');
 
-module.exports = React.createClass({
-    render: function () {
-        return <Row>
-            <KidsList/>
-            <AddKid/>
-        </Row>
+export default class Dashboard extends Component {
+    render() {
+        return (
+            <Row>Hi From ES6</Row>
+        );
     }
-});
+}

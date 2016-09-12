@@ -31,7 +31,7 @@ var config = {
     },
     module: {
         loaders: [
-            {test: /\.jsx?/, include: APP_DIR, loader: 'babel?cacheDirectory'}
+            {test: /\.jsx?/, include: APP_DIR, loader: 'babel'}
         ]
     },
     output: {

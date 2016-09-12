@@ -16,7 +16,7 @@ module.exports = React.createClass({
     handleObservationStore: function(event, data){
         if (event == ObservationStore.events.sampleCategoryReceived){
             this.setState({category: data})
-        } else if (event = ObservationStore.events.sampleCategoryError) {
+        } else if (event == ObservationStore.events.sampleCategoryError) {
             this.setState({errors: data})
         }
     },

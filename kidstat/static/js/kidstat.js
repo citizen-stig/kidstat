@@ -21415,8 +21415,8 @@
 	var Header = __webpack_require__(178);
 	var PublicIndex = __webpack_require__(432);
 	var Actions = __webpack_require__(177);
-	var Loader = __webpack_require__(436);
-	var Dashboard = __webpack_require__(439);
+	var Loader = __webpack_require__(440);
+	var Dashboard = __webpack_require__(442);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -21572,6 +21572,8 @@
 	        localStorage.removeItem(tokenName);
 	    },
 	    post: function (url, body) {
+	        console.log("Just POST!!!");
+	        console.log(body);
 	        return fetch(rootUrl + url, {
 	            method: 'post',
 	            headers: {
@@ -22064,7 +22066,7 @@
 
 	var Reflux = __webpack_require__(173);
 
-	module.exports = Reflux.createActions(['CheckAuthorization', 'Login', 'FacebookLogin', 'Signup', 'Logout', 'getKids', 'addNewKid', 'updateKid', 'deleteKid', 'getObservations', 'addObservation', 'deleteObservation']);
+	module.exports = Reflux.createActions(['CheckAuthorization', 'Login', 'FacebookLogin', 'Signup', 'Logout', 'getKids', 'addNewKid', 'updateKid', 'deleteKid', 'getObservations', 'addObservation', 'deleteObservation', 'requestSampleObservation']);
 
 /***/ },
 /* 178 */
@@ -40970,6 +40972,7 @@
 	var Actions = __webpack_require__(177);
 	var LoginForm = __webpack_require__(434);
 	var SignupForm = __webpack_require__(435);
+	var SampleObservation = __webpack_require__(436);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -40985,24 +40988,14 @@
 	                Row,
 	                { className: 'show-grid' },
 	                React.createElement(
+	                    'h1',
+	                    { className: 'text-center' },
+	                    'Welcome to the Kidstat!'
+	                ),
+	                React.createElement(
 	                    Col,
 	                    { xs: 12, md: 7 },
-	                    React.createElement(
-	                        'div',
-	                        { className: 'text-center' },
-	                        React.createElement(
-	                            'h1',
-	                            null,
-	                            'Welcome to the Kidstat!'
-	                        ),
-	                        React.createElement('img', { className: 'img-responsive',
-	                            src: '/static/images/monkey-98455_1280.png' }),
-	                        React.createElement(
-	                            'p',
-	                            null,
-	                            'This a web site, where you can track how your baby grows!'
-	                        )
-	                    )
+	                    React.createElement(SampleObservation, null)
 	                ),
 	                React.createElement(
 	                    Col,
@@ -41348,9 +41341,363 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var ReactBootstrap = __webpack_require__(179);
+	var Reflux = __webpack_require__(173);
+	var Col = ReactBootstrap.Col;
+
+	var ObservationStore = __webpack_require__(437);
+	var SampleObservationForm = __webpack_require__(438);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    mixins: [Reflux.listenTo(ObservationStore, "handleObservationStore")],
+	    getInitialState: function () {
+	        return { category: null };
+	    },
+	    handleObservationStore: function (event, category) {
+	        if (event == 'sampleCategoryReceived') {
+	            this.setState({ category: category });
+	        }
+	    },
+	    render: function () {
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'h2',
+	                null,
+	                'Try Now!'
+	            ),
+	            React.createElement(
+	                Col,
+	                { xs: 8 },
+	                React.createElement(SampleObservationForm, null)
+	            ),
+	            React.createElement(
+	                Col,
+	                { xs: 4 },
+	                React.createElement(
+	                    'p',
+	                    null,
+	                    'Check category of latest observation'
+	                ),
+	                this.state.category ? this.state.category : ''
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 437 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Reflux = __webpack_require__(173);
+	var Api = __webpack_require__(175);
+	var Actions = __webpack_require__(177);
+
+	module.exports = Reflux.createStore({
+	    listenables: [Actions],
+	    events: {
+	        change: 'change',
+	        sampleCategoryReceived: 'sampleCategoryReceived',
+	        loading: 'loading',
+	        addError: 'add-error'
+	    },
+	    init: function () {
+	        this.observations = {};
+	        this.sampleCategory = null;
+	    },
+	    parseObservation: function (observation) {
+	        observation.timestamp = new Date(observation.timestamp);
+	        return observation;
+	    },
+	    sortObservationsForKid: function (kid) {
+	        var observations = this.observations[kid.id];
+	        // Sort by timestamp in reversed order
+	        observations.sort(function (a, b) {
+	            if (a.timestamp > b.timestamp) {
+	                return -1;
+	            } else if (a.timestamp < b.timestamp) {
+	                return 1;
+	            } else {
+	                return 0;
+	            }
+	        });
+	    },
+	    getObservationsUrl: function (kid) {
+	        return "kids/" + kid['id'] + "/observations";
+	    },
+	    getObservations: function (kid) {
+	        var url = this.getObservationsUrl(kid);
+	        this.triggerLoading();
+	        return Api.authorizedGet(url).then(function (data) {
+	            this.observations[kid.id] = [];
+	            for (var i = 0; i < data.data.length; i++) {
+	                var observation = this.parseObservation(data.data[i]);
+	                this.observations[kid.id].push(observation);
+	            }
+	            this.sortObservationsForKid(kid);
+	            this.triggerObservationReceived();
+	        }.bind(this));
+	    },
+	    addObservation: function (kid, observation) {
+	        this.triggerLoading();
+	        var url = this.getObservationsUrl(kid);
+	        return Api.authorizedPost(url, observation).then(function (new_observation) {
+	            var observation = this.parseObservation(new_observation);
+	            if (kid.id in this.observations) {
+	                this.observations[kid.id].push(observation);
+	                this.sortObservationsForKid(kid);
+	            } else {
+	                this.observations[kid.id] = [observation];
+	            }
+	            this.triggerObservationReceived();
+	        }.bind(this));
+	    },
+	    requestSampleObservation: function (sample) {
+	        this.triggerLoading();
+	        console.log('Store requesting');
+	        console.log(sample);
+	        return Api.post('try', JSON.stringify(sample)).then(function (response) {
+	            console.log(response);
+	            this.sampleCategory = response['category'];
+	            this.triggerObservationSampleReceived();
+	        }.bind(this));
+	    },
+	    triggerLoading: function () {
+	        this.trigger(this.events.loading);
+	    },
+	    triggerObservationReceived: function () {
+	        this.trigger(this.events.change, this.observations);
+	    },
+	    triggerObservationSampleReceived: function () {
+	        this.trigger(this.events.sampleCategoryReceived, this.sampleCategory);
+	    }
+	});
+
+/***/ },
+/* 438 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
+	var ReactBootstrap = __webpack_require__(179);
+	var Form = ReactBootstrap.Form;
+	var Col = ReactBootstrap.Col;
+	var FormGroup = ReactBootstrap.FormGroup;
+	var FormControl = ReactBootstrap.FormControl;
+	var Button = ReactBootstrap.Button;
+	var ControlLabel = ReactBootstrap.ControlLabel;
+
+	var RegularInput = __webpack_require__(439);
+	var Actions = __webpack_require__(177);
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    getDefaultProps: function () {
+	        return {
+	            buttonText: "Add Observation",
+	            observation: {
+	                birthday: '',
+	                timestamp: new Date().toISOString().split("T")[0],
+	                parameter: '',
+	                value: '' },
+	            parameters: ['height', 'weight'],
+	            genders: ['male', 'female']
+	        };
+	    },
+	    componentDidMount: function () {
+	        this.refs.parameter.setState({ value: this.props.parameters[0] });
+	        this.refs.gender.setState({ value: this.props.genders[0] });
+	    },
+	    submit: function () {
+	        var observation = {
+	            gender: this.refs.gender.state.value,
+	            birthday: this.refs.birthday.state.value,
+	            timestamp: this.refs.timestamp.state.value,
+	            parameter: this.refs.parameter.state.value,
+	            value: this.refs.observationValue.state.value };
+	        console.log("Submit Form");
+	        console.log(observation);
+	        Actions.requestSampleObservation(observation);
+	    },
+	    changeSelectValue: function (ref) {
+	        ref.setState({ value: ReactDOM.findDOMNode(ref).value });
+	    },
+	    changeParameterValue: function () {
+	        this.changeSelectValue(this.refs.parameter);
+	    },
+	    changeGenderValue: function () {
+	        this.changeSelectValue(this.refs.gender);
+	    },
+	    renderParametersOptions: function () {
+	        return this.props.parameters.map(function (parameter) {
+	            return React.createElement(
+	                'option',
+	                { value: parameter, key: parameter },
+	                parameter
+	            );
+	        });
+	    },
+	    render: function () {
+	        return React.createElement(
+	            Form,
+	            { horizontal: true },
+	            React.createElement(
+	                FormGroup,
+	                { controlId: 'formControlsSelect' },
+	                React.createElement(
+	                    Col,
+	                    { componentClass: ControlLabel, sm: 3 },
+	                    'Gender'
+	                ),
+	                React.createElement(
+	                    Col,
+	                    { sm: 9 },
+	                    React.createElement(
+	                        FormControl,
+	                        { componentClass: 'select',
+	                            ref: 'gender',
+	                            value: this.props.observation.gender,
+	                            placeholder: 'gender',
+	                            onChange: this.changeGenderValue },
+	                        React.createElement(
+	                            'option',
+	                            { value: 'male' },
+	                            'Boy'
+	                        ),
+	                        React.createElement(
+	                            'option',
+	                            { value: 'female' },
+	                            'Girl'
+	                        )
+	                    )
+	                )
+	            ),
+	            React.createElement(RegularInput, { name: 'Birthday',
+	                value: this.props.observation.birthday,
+	                ref: 'birthday',
+	                type: 'date' }),
+	            React.createElement(RegularInput, { name: 'Timestamp',
+	                value: this.props.observation.timestamp,
+	                ref: 'timestamp',
+	                type: 'date' }),
+	            React.createElement(RegularInput, { name: 'Value',
+	                value: this.props.observation.value,
+	                ref: 'observationValue',
+	                type: 'number' }),
+	            React.createElement(
+	                FormGroup,
+	                { controlId: 'formControlsSelect' },
+	                React.createElement(
+	                    Col,
+	                    { componentClass: ControlLabel, sm: 3 },
+	                    'Parameter'
+	                ),
+	                React.createElement(
+	                    Col,
+	                    { sm: 9 },
+	                    React.createElement(
+	                        FormControl,
+	                        { componentClass: 'select',
+	                            ref: 'parameter',
+	                            value: this.props.observation.parameter.value,
+	                            placeholder: 'parameter',
+	                            onChange: this.changeParameterValue },
+	                        this.renderParametersOptions()
+	                    )
+	                )
+	            ),
+	            React.createElement(
+	                FormGroup,
+	                null,
+	                React.createElement(
+	                    Col,
+	                    { smOffset: 3, sm: 9 },
+	                    React.createElement(
+	                        Button,
+	                        { type: 'button',
+	                            onClick: this.submit,
+	                            ref: 'submitButton' },
+	                        this.props.buttonText
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 439 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
+	var ReactBootstrap = __webpack_require__(179);
+	var Col = ReactBootstrap.Col;
+	var FormGroup = ReactBootstrap.FormGroup;
+	var FormControl = ReactBootstrap.FormControl;
+	var ControlLabel = ReactBootstrap.ControlLabel;
+
+	module.exports = React.createClass({
+	    displayName: 'exports',
+
+	    propTypes: {
+	        placeholder: React.PropTypes.string,
+	        name: React.PropTypes.string.isRequired,
+	        labelCol: React.PropTypes.number,
+	        inputCol: React.PropTypes.number,
+	        type: React.PropTypes.string,
+	        value: React.PropTypes.string
+	    },
+	    getDefaultProps: function () {
+	        return {
+	            placeholder: '',
+	            labelCol: 3,
+	            inputCol: 9,
+	            type: 'text'
+	        };
+	    },
+	    getInitialState: function () {
+	        return { value: this.props.value, error: '' };
+	    },
+	    changeValue: function () {
+	        this.setState({ value: ReactDOM.findDOMNode(this.refs.input).value });
+	    },
+	    render: function () {
+	        return React.createElement(
+	            FormGroup,
+	            { controlId: "FormControls" + this.props.name },
+	            React.createElement(
+	                Col,
+	                { componentClass: ControlLabel, sm: this.props.labelCol },
+	                this.props.name
+	            ),
+	            React.createElement(
+	                Col,
+	                { sm: this.props.inputCol },
+	                React.createElement(FormControl, {
+	                    ref: 'input',
+	                    type: this.props.type,
+	                    value: this.state.value,
+	                    placeholder: this.props.placeholder,
+	                    onChange: this.changeValue }),
+	                React.createElement(FormControl.Feedback, null)
+	            )
+	        );
+	    }
+	});
+
+/***/ },
+/* 440 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
 	var AuthStore = __webpack_require__(174);
-	var KidsStore = __webpack_require__(437);
-	var ObservationsStore = __webpack_require__(438);
+	var KidsStore = __webpack_require__(441);
+	var ObservationsStore = __webpack_require__(437);
 	var Reflux = __webpack_require__(173);
 
 	module.exports = React.createClass({
@@ -41389,7 +41736,7 @@
 	});
 
 /***/ },
-/* 437 */
+/* 441 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Reflux = __webpack_require__(173);
@@ -41479,80 +41826,7 @@
 	});
 
 /***/ },
-/* 438 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Reflux = __webpack_require__(173);
-	var Api = __webpack_require__(175);
-	var Actions = __webpack_require__(177);
-
-	module.exports = Reflux.createStore({
-	    listenables: [Actions],
-	    events: {
-	        change: 'change',
-	        loading: 'loading',
-	        addError: 'add-error'
-	    },
-	    init: function () {
-	        this.observations = {};
-	    },
-	    parseObservation: function (observation) {
-	        observation.timestamp = new Date(observation.timestamp);
-	        return observation;
-	    },
-	    sortObservationsForKid: function (kid) {
-	        var observations = this.observations[kid.id];
-	        // Sort by timestamp in reversed order
-	        observations.sort(function (a, b) {
-	            if (a.timestamp > b.timestamp) {
-	                return -1;
-	            } else if (a.timestamp < b.timestamp) {
-	                return 1;
-	            } else {
-	                return 0;
-	            }
-	        });
-	    },
-	    getObservationsUrl: function (kid) {
-	        return "kids/" + kid['id'] + "/observations";
-	    },
-	    getObservations: function (kid) {
-	        var url = this.getObservationsUrl(kid);
-	        this.triggerLoading();
-	        return Api.authorizedGet(url).then(function (data) {
-	            this.observations[kid.id] = [];
-	            for (var i = 0; i < data.data.length; i++) {
-	                var observation = this.parseObservation(data.data[i]);
-	                this.observations[kid.id].push(observation);
-	            }
-	            this.sortObservationsForKid(kid);
-	            this.triggerObservationReceived();
-	        }.bind(this));
-	    },
-	    addObservation: function (kid, observation) {
-	        this.triggerLoading();
-	        var url = this.getObservationsUrl(kid);
-	        return Api.authorizedPost(url, observation).then(function (new_observation) {
-	            var observation = this.parseObservation(new_observation);
-	            if (kid.id in this.observations) {
-	                this.observations[kid.id].push(observation);
-	                this.sortObservationsForKid(kid);
-	            } else {
-	                this.observations[kid.id] = [observation];
-	            }
-	            this.triggerObservationReceived();
-	        }.bind(this));
-	    },
-	    triggerLoading: function () {
-	        this.trigger(this.events.loading);
-	    },
-	    triggerObservationReceived: function () {
-	        this.trigger(this.events.change, this.observations);
-	    }
-	});
-
-/***/ },
-/* 439 */
+/* 442 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41561,8 +41835,8 @@
 	var Row = ReactBootstrap.Row;
 	var Col = ReactBootstrap.Col;
 
-	var KidsList = __webpack_require__(440);
-	var AddKid = __webpack_require__(448);
+	var KidsList = __webpack_require__(443);
+	var AddKid = __webpack_require__(450);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41578,7 +41852,7 @@
 	});
 
 /***/ },
-/* 440 */
+/* 443 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41587,9 +41861,9 @@
 	var ListGroupItem = ReactBootstrap.ListGroupItem;
 
 	var Actions = __webpack_require__(177);
-	var KidsStore = __webpack_require__(437);
+	var KidsStore = __webpack_require__(441);
 
-	var KidDetail = __webpack_require__(441);
+	var KidDetail = __webpack_require__(444);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41625,7 +41899,7 @@
 	});
 
 /***/ },
-/* 441 */
+/* 444 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41638,11 +41912,11 @@
 	var Button = ReactBootstrap.Button;
 
 	var Actions = __webpack_require__(177);
-	var KidsStore = __webpack_require__(437);
-	var ObservationsStore = __webpack_require__(438);
-	var AddObservation = __webpack_require__(442);
-	var Modal = __webpack_require__(445);
-	var KidForm = __webpack_require__(446);
+	var KidsStore = __webpack_require__(441);
+	var ObservationsStore = __webpack_require__(437);
+	var AddObservation = __webpack_require__(445);
+	var Modal = __webpack_require__(447);
+	var KidForm = __webpack_require__(448);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41817,7 +42091,7 @@
 	});
 
 /***/ },
-/* 442 */
+/* 445 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41826,9 +42100,9 @@
 	var Button = ReactBootstrap.Button;
 
 	var Actions = __webpack_require__(177);
-	var ObservationForm = __webpack_require__(443);
-	var Modal = __webpack_require__(445);
-	var ObservationStore = __webpack_require__(438);
+	var ObservationForm = __webpack_require__(446);
+	var Modal = __webpack_require__(447);
+	var ObservationStore = __webpack_require__(437);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41865,7 +42139,7 @@
 	});
 
 /***/ },
-/* 443 */
+/* 446 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41877,7 +42151,7 @@
 	var Button = ReactBootstrap.Button;
 	var ControlLabel = ReactBootstrap.ControlLabel;
 
-	var RegularInput = __webpack_require__(444);
+	var RegularInput = __webpack_require__(439);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41967,68 +42241,7 @@
 	});
 
 /***/ },
-/* 444 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(34);
-	var ReactBootstrap = __webpack_require__(179);
-	var Col = ReactBootstrap.Col;
-	var FormGroup = ReactBootstrap.FormGroup;
-	var FormControl = ReactBootstrap.FormControl;
-	var ControlLabel = ReactBootstrap.ControlLabel;
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    propTypes: {
-	        placeholder: React.PropTypes.string,
-	        name: React.PropTypes.string.isRequired,
-	        labelCol: React.PropTypes.number,
-	        inputCol: React.PropTypes.number,
-	        type: React.PropTypes.string,
-	        value: React.PropTypes.string
-	    },
-	    getDefaultProps: function () {
-	        return {
-	            placeholder: '',
-	            labelCol: 3,
-	            inputCol: 9,
-	            type: 'text'
-	        };
-	    },
-	    getInitialState: function () {
-	        return { value: this.props.value, error: '' };
-	    },
-	    changeValue: function () {
-	        this.setState({ value: ReactDOM.findDOMNode(this.refs.input).value });
-	    },
-	    render: function () {
-	        return React.createElement(
-	            FormGroup,
-	            { controlId: "FormControls" + this.props.name },
-	            React.createElement(
-	                Col,
-	                { componentClass: ControlLabel, sm: this.props.labelCol },
-	                this.props.name
-	            ),
-	            React.createElement(
-	                Col,
-	                { sm: this.props.inputCol },
-	                React.createElement(FormControl, {
-	                    ref: 'input',
-	                    type: this.props.type,
-	                    value: this.state.value,
-	                    placeholder: this.props.placeholder,
-	                    onChange: this.changeValue }),
-	                React.createElement(FormControl.Feedback, null)
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 445 */
+/* 447 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -42089,7 +42302,7 @@
 	});
 
 /***/ },
-/* 446 */
+/* 448 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -42099,8 +42312,8 @@
 	var FormGroup = ReactBootstrap.FormGroup;
 	var Button = ReactBootstrap.Button;
 
-	var RegularInput = __webpack_require__(444);
-	var ChoicesInput = __webpack_require__(447);
+	var RegularInput = __webpack_require__(439);
+	var ChoicesInput = __webpack_require__(449);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -42158,7 +42371,7 @@
 	});
 
 /***/ },
-/* 447 */
+/* 449 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -42222,7 +42435,7 @@
 	});
 
 /***/ },
-/* 448 */
+/* 450 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -42231,9 +42444,9 @@
 	var Button = ReactBootstrap.Button;
 
 	var Actions = __webpack_require__(177);
-	var KidsStore = __webpack_require__(437);
-	var Modal = __webpack_require__(445);
-	var KidForm = __webpack_require__(446);
+	var KidsStore = __webpack_require__(441);
+	var Modal = __webpack_require__(447);
+	var KidForm = __webpack_require__(448);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',

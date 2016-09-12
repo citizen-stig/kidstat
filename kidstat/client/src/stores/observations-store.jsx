@@ -7,11 +7,13 @@ module.exports = Reflux.createStore({
     listenables: [Actions],
     events: {
         change: 'change',
+        sampleCategoryReceived: 'sampleCategoryReceived',
         loading: 'loading',
         addError: 'add-error'
     },
     init: function () {
         this.observations = {};
+        this.sampleCategory = null;
     },
     parseObservation: function(observation){
         observation.timestamp = new Date(observation.timestamp);
@@ -61,10 +63,25 @@ module.exports = Reflux.createStore({
             }.bind(this)
         )
     },
+    requestSampleObservation: function(sample){
+        this.triggerLoading();
+        console.log('Store requesting');
+        console.log(sample);
+        return Api.post('try', JSON.stringify(sample)).then(
+            function(response) {
+                console.log(response);
+                this.sampleCategory = response['category'];
+                this.triggerObservationSampleReceived();
+            }.bind(this)
+        )
+    },
     triggerLoading: function () {
         this.trigger(this.events.loading);
     },
     triggerObservationReceived: function () {
         this.trigger(this.events.change, this.observations);
+    },
+    triggerObservationSampleReceived: function(){
+        this.trigger(this.events.sampleCategoryReceived, this.sampleCategory)
     }
 });

@@ -85,7 +85,9 @@ class Observation(db.EmbeddedDocument):
             .filter(value__gte=self.value)\
             .order_by('percentile')\
             .first()
-        return standard.get_category()
+        if standard:
+            return standard.get_category()
+        return Categories.very_high
 
 
 class Kid(db.EmbeddedDocument):

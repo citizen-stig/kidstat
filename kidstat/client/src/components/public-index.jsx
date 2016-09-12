@@ -10,6 +10,8 @@ var Tab = ReactBootstrap.Tab;
 var Actions = require('../actions.jsx');
 var LoginForm = require('./auth/login-form.jsx');
 var SignupForm = require('./auth/signup-form.jsx');
+var SampleObservation = require('./obsevations/sample-widget.jsx');
+
 
 module.exports = React.createClass({
     responseFacebook: function (response) {
@@ -18,14 +20,9 @@ module.exports = React.createClass({
     render: function () {
         return <Grid>
             <Row className="show-grid">
+                <h1 className="text-center" >Welcome to the Kidstat!</h1>
                 <Col xs={12} md={7}>
-                    <div className="text-center">
-                        <h1>Welcome to the Kidstat!</h1>
-                        <img className="img-responsive"
-                            src="/static/images/monkey-98455_1280.png"/>
-                        <p>This a web site, where you can track how your baby
-                            grows!</p>
-                    </div>
+                    <SampleObservation/>
                 </Col>
                 <Col xs={12} md={5}>
                     <h2>Login</h2>

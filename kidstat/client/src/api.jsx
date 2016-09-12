@@ -27,6 +27,8 @@ module.exports = {
         localStorage.removeItem(tokenName);
     },
     post: function(url, body){
+        console.log("Just POST!!!");
+        console.log(body);
         return fetch(rootUrl + url, {
             method: 'post',
             headers: {

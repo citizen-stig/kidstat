@@ -12,5 +12,6 @@ module.exports = Reflux.createActions([
     'deleteKid',
     'getObservations',
     'addObservation',
-    'deleteObservation'
+    'deleteObservation',
+    'requestSampleObservation'
 ]);

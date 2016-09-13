@@ -6,4 +6,6 @@ class Config(BaseConfig):
     DEBUG = False
     SECRET_KEY = os.environ['FLASK_SECRET_KEY']
     SECURITY_PASSWORD_SALT = os.environ['FLASK_PASSWORD_SALT']
-    MONGODB_SETTINGS = os.environ['MONGODB_URI']
+    MONGODB_SETTINGS = {
+        'host': os.environ['MONGODB_URI']
+    }

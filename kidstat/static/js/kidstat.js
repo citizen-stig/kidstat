@@ -41464,7 +41464,8 @@
 	                        { sm: 9 },
 	                        _react2.default.createElement(
 	                            _reactBootstrap.FormControl,
-	                            { componentClass: 'select',
+	                            { className: 'min-width-95p',
+	                                componentClass: 'select',
 	                                value: this.state.gender,
 	                                onChange: this.handleGenderChange },
 	                            _react2.default.createElement(
@@ -41491,7 +41492,8 @@
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
 	                        { sm: 9 },
-	                        _react2.default.createElement(_reactBootstrap.FormControl, { onChange: this.handleBirthdayChange,
+	                        _react2.default.createElement(_reactBootstrap.FormControl, { className: 'min-width-95p',
+	                            onChange: this.handleBirthdayChange,
 	                            value: this.state.birthday,
 	                            type: 'date' })
 	                    )
@@ -41507,7 +41509,8 @@
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
 	                        { sm: 9 },
-	                        _react2.default.createElement(_reactBootstrap.FormControl, { value: this.state.timestamp,
+	                        _react2.default.createElement(_reactBootstrap.FormControl, { className: 'min-width-95p',
+	                            value: this.state.timestamp,
 	                            onChange: this.handleTimestampChange,
 	                            type: 'date' })
 	                    )
@@ -41525,7 +41528,8 @@
 	                        { sm: 9 },
 	                        _react2.default.createElement(
 	                            _reactBootstrap.FormControl,
-	                            { componentClass: 'select' },
+	                            { className: 'min-width-95p',
+	                                componentClass: 'select' },
 	                            _react2.default.createElement(
 	                                'option',
 	                                { value: 'height' },
@@ -41553,6 +41557,8 @@
 	                        { sm: 9 },
 	                        _react2.default.createElement(_reactBootstrap.FormControl, { value: this.state.value,
 	                            onChange: this.handleValueChange,
+	                            pattern: '[0-9]*',
+	                            inputmode: 'numeric',
 	                            step: '0.01',
 	                            min: '0',
 	                            type: 'number' })

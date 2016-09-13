@@ -83,7 +83,8 @@ export default class SampleObservationForm extends Component {
                         Gender
                     </Col>
                     <Col sm={9}>
-                        <FormControl componentClass="select"
+                        <FormControl className="min-width-95p"
+                                     componentClass="select"
                                      value={this.state.gender}
                                      onChange={this.handleGenderChange}>
                             <option value="male">Boy</option>
@@ -96,7 +97,8 @@ export default class SampleObservationForm extends Component {
                         Birthday
                     </Col>
                     <Col sm={9}>
-                        <FormControl onChange={this.handleBirthdayChange}
+                        <FormControl className="min-width-95p"
+                                     onChange={this.handleBirthdayChange}
                                      value={this.state.birthday}
                                      type="date"/>
                     </Col>
@@ -106,7 +108,8 @@ export default class SampleObservationForm extends Component {
                         Timestamp
                     </Col>
                     <Col sm={9}>
-                        <FormControl value={this.state.timestamp}
+                        <FormControl className="min-width-95p"
+                                     value={this.state.timestamp}
                                      onChange={this.handleTimestampChange}
                                      type="date"/>
                     </Col>
@@ -116,7 +119,8 @@ export default class SampleObservationForm extends Component {
                         Parameter
                     </Col>
                     <Col sm={9}>
-                        <FormControl componentClass="select">
+                        <FormControl className="min-width-95p"
+                                     componentClass="select">
                             <option value="height">Height</option>
                             <option value="weight">Weight</option>
                         </FormControl>
@@ -130,6 +134,8 @@ export default class SampleObservationForm extends Component {
                     <Col sm={9}>
                         <FormControl value={this.state.value}
                                      onChange={this.handleValueChange}
+                                     pattern="[0-9]*"
+                                     inputmode="numeric"
                                      step="0.01"
                                      min="0"
                                      type="number"/>

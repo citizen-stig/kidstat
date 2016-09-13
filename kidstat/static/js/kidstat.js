@@ -41399,15 +41399,12 @@
 	    }, {
 	        key: 'handleValueChange',
 	        value: function handleValueChange(event) {
-	            var newValue = parseFloat(event.target.value);
-	            if (!isNaN(newValue)) {
-	                this.setState({ value: newValue });
-	            }
+	            this.setState({ value: parseFloat(event.target.value) });
 	        }
 	    }, {
 	        key: 'getValueValidationState',
 	        value: function getValueValidationState() {
-	            if (this.state.value !== '') {
+	            if (this.state.value !== '' && !isNaN(this.state.value)) {
 	                if (this.state.value > 0) {
 	                    return 'success';
 	                } else {
@@ -41558,7 +41555,7 @@
 	                        _react2.default.createElement(_reactBootstrap.FormControl, { value: this.state.value,
 	                            onChange: this.handleValueChange,
 	                            pattern: '[0-9]*',
-	                            inputmode: 'numeric',
+	                            inputMode: 'numeric',
 	                            step: '0.01',
 	                            min: '0',
 	                            type: 'number' })

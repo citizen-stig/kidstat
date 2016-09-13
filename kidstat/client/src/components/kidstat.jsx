@@ -23,7 +23,6 @@ export default class KidStat extends Component {
         AuthStore.listen(this.handleAuthAction);
     }
     handleAuthAction(event) {
-        console.log("Event handled in kidstat");
         if (event == 'authenticated') {
             this.setState({authenticated: true});
         }

@@ -1,26 +1,21 @@
-var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
-var FacebookLogin = require('react-facebook-login');
-var Grid = ReactBootstrap.Grid;
-var Row = ReactBootstrap.Row;
-var Col = ReactBootstrap.Col;
-var Tabs = ReactBootstrap.Tabs;
-var Tab = ReactBootstrap.Tab;
+import React, {Component, PropTypes} from 'react';
+import {Grid, Row, Col, Tabs, Tab} from 'react-bootstrap';
+import FacebookLogin from 'react-facebook-login';
 
-var Actions = require('../actions.jsx');
-var LoginForm = require('./auth/login-form.jsx');
-var SignupForm = require('./auth/signup-form.jsx');
-var SampleObservation = require('./obsevations/sample-widget.jsx');
+import Actions from '../actions.jsx';
 
+import SampleObservation from './obsevations/sample-widget.jsx'
+import LoginForm from './auth/login-form.jsx';
+import SignupForm from './auth/signup-form.jsx';
 
-module.exports = React.createClass({
-    responseFacebook: function (response) {
+export default class KidStat extends Component {
+    responseFacebook(response){
         Actions.FacebookLogin(response['accessToken']);
-    },
-    render: function () {
+    }
+    render() {
         return <Grid>
             <Row className="show-grid">
-                <h1 className="text-center" >Welcome to the Kidstat!</h1>
+                <h1 className="text-center">Welcome to the Kidstat!</h1>
                 <Col xs={12} md={7}>
                     <SampleObservation/>
                 </Col>
@@ -45,5 +40,6 @@ module.exports = React.createClass({
                 </Col>
             </Row>
         </Grid>
+
     }
-});
+}

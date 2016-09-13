@@ -21431,11 +21431,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reflux = __webpack_require__(173);
-
-	var _reflux2 = _interopRequireDefault(_reflux);
-
-	var _actions = __webpack_require__(174);
+	var _actions = __webpack_require__(173);
 
 	var _actions2 = _interopRequireDefault(_actions);
 
@@ -21451,11 +21447,11 @@
 
 	var _publicIndex2 = _interopRequireDefault(_publicIndex);
 
-	var _dashboard = __webpack_require__(440);
+	var _dashboard = __webpack_require__(436);
 
 	var _dashboard2 = _interopRequireDefault(_dashboard);
 
-	var _loading = __webpack_require__(450);
+	var _loading = __webpack_require__(447);
 
 	var _loading2 = _interopRequireDefault(_loading);
 
@@ -21523,19 +21519,19 @@
 
 /***/ },
 /* 173 */
-/***/ function(module, exports) {
-
-	module.exports = Reflux;
-
-/***/ },
-/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Reflux = __webpack_require__(173);
+	var Reflux = __webpack_require__(174);
 
 	module.exports = Reflux.createActions(['CheckAuthorization', 'Login', 'FacebookLogin', 'Signup', 'Logout', 'getKids', 'addNewKid', 'updateKid', 'deleteKid', 'getObservations', 'addObservation', 'deleteObservation', 'requestSampleObservation']);
+
+/***/ },
+/* 174 */
+/***/ function(module, exports) {
+
+	module.exports = Reflux;
 
 /***/ },
 /* 175 */
@@ -21543,9 +21539,9 @@
 
 	'use strict';
 
-	var Reflux = __webpack_require__(173);
+	var Reflux = __webpack_require__(174);
 	var Api = __webpack_require__(176);
-	var Actions = __webpack_require__(174);
+	var Actions = __webpack_require__(173);
 
 	module.exports = Reflux.createStore({
 	    listenables: [Actions],
@@ -22152,10 +22148,10 @@
 	'use strict';
 
 	var React = __webpack_require__(1);
-	var Reflux = __webpack_require__(173);
+	var Reflux = __webpack_require__(174);
 	var ReactBootstrap = __webpack_require__(179);
 	var AuthStore = __webpack_require__(175);
-	var Actions = __webpack_require__(174);
+	var Actions = __webpack_require__(173);
 
 	var Navbar = ReactBootstrap.Navbar;
 	var Nav = ReactBootstrap.Nav;
@@ -41053,25 +41049,9 @@
 
 	var _reactBootstrap = __webpack_require__(179);
 
-	var _reactFacebookLogin = __webpack_require__(433);
-
-	var _reactFacebookLogin2 = _interopRequireDefault(_reactFacebookLogin);
-
-	var _actions = __webpack_require__(174);
-
-	var _actions2 = _interopRequireDefault(_actions);
-
-	var _sampleWidget = __webpack_require__(434);
+	var _sampleWidget = __webpack_require__(433);
 
 	var _sampleWidget2 = _interopRequireDefault(_sampleWidget);
-
-	var _loginForm = __webpack_require__(438);
-
-	var _loginForm2 = _interopRequireDefault(_loginForm);
-
-	var _signupForm = __webpack_require__(439);
-
-	var _signupForm2 = _interopRequireDefault(_signupForm);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -41080,6 +41060,12 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	// import FacebookLogin from 'react-facebook-login';
+
+	// import Actions from '../actions.jsx';
+
+	// import LoginForm from './auth/login-form.jsx';
+	// import SignupForm from './auth/signup-form.jsx';
 
 	var KidStat = function (_Component) {
 	    _inherits(KidStat, _Component);
@@ -41091,11 +41077,6 @@
 	    }
 
 	    _createClass(KidStat, [{
-	        key: 'responseFacebook',
-	        value: function responseFacebook(response) {
-	            _actions2.default.FacebookLogin(response['accessToken']);
-	        }
-	    }, {
 	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement(
@@ -41113,37 +41094,6 @@
 	                        _reactBootstrap.Col,
 	                        { xs: 12, md: 7 },
 	                        _react2.default.createElement(_sampleWidget2.default, null)
-	                    ),
-	                    _react2.default.createElement(
-	                        _reactBootstrap.Col,
-	                        { xs: 12, md: 5 },
-	                        _react2.default.createElement(
-	                            'h2',
-	                            null,
-	                            'Login'
-	                        ),
-	                        _react2.default.createElement(
-	                            _reactBootstrap.Tabs,
-	                            { defaultActiveKey: 'login', id: 'login-signup-tabs' },
-	                            _react2.default.createElement(
-	                                _reactBootstrap.Tab,
-	                                { eventKey: 'login', title: 'Login' },
-	                                _react2.default.createElement(_loginForm2.default, null)
-	                            ),
-	                            _react2.default.createElement(
-	                                _reactBootstrap.Tab,
-	                                { eventKey: 'signup', title: 'Signup' },
-	                                _react2.default.createElement(_signupForm2.default, null)
-	                            )
-	                        ),
-	                        _react2.default.createElement('hr', null),
-	                        _react2.default.createElement(_reactFacebookLogin2.default, {
-	                            appId: '288802541458761',
-	                            autoLoad: false,
-	                            callback: this.responseFacebook,
-	                            textButton: 'Facebook',
-	                            cssClass: 'btn btn-primary',
-	                            icon: 'fa-facebook' })
 	                    )
 	                )
 	            );
@@ -41159,7 +41109,143 @@
 /* 433 */
 /***/ function(module, exports, __webpack_require__) {
 
-	!function(e,t){ true?module.exports=t(__webpack_require__(1)):"function"==typeof define&&define.amd?define(["react"],t):"object"==typeof exports?exports.FacebookLogin=t(require("react")):e.FacebookLogin=t(e.react)}(this,function(e){return function(e){function t(n){if(o[n])return o[n].exports;var r=o[n]={exports:{},id:n,loaded:!1};return e[n].call(r.exports,r,r.exports,t),r.loaded=!0,r.exports}var o={};return t.m=e,t.c=o,t.p="",t(0)}([function(e,t,o){e.exports=o(2)},function(e,t,o){"use strict";function n(e){return e&&e.__esModule?e:{"default":e}}function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function s(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}t.__esModule=!0;var i=function(){function e(e,t){for(var o=0;o<t.length;o++){var n=t[o];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(t,o,n){return o&&e(t.prototype,o),n&&e(t,n),t}}(),a=o(5),c=n(a),p=o(3),l=n(p),u=function(e){function t(o){var n=this;r(this,t),e.call(this,o),this.responseApi=function(e){FB.api("/me",{fields:n.props.fields},function(t){Object.assign(t,e),n.props.callback(t)})},this.checkLoginState=function(e){e.authResponse?n.responseApi(e.authResponse):n.props.callback&&n.props.callback({status:e.status})},this.click=function(){FB.login(n.checkLoginState,{scope:n.props.scope})}}return s(t,e),i(t,null,[{key:"propTypes",value:{callback:a.PropTypes.func.isRequired,appId:a.PropTypes.string.isRequired,xfbml:a.PropTypes.bool,cookie:a.PropTypes.bool,scope:a.PropTypes.string,textButton:a.PropTypes.string,autoLoad:a.PropTypes.bool,size:a.PropTypes.string,fields:a.PropTypes.string,cssClass:a.PropTypes.string,version:a.PropTypes.string,icon:a.PropTypes.string,language:a.PropTypes.string},enumerable:!0},{key:"defaultProps",value:{textButton:"Login with Facebook",scope:"public_profile, email",xfbml:!1,cookie:!1,size:"metro",fields:"name",cssClass:"kep-login-facebook",version:"2.3",language:"en_US"},enumerable:!0}]),t.prototype.componentDidMount=function(){var e=this,t=document.createElement("div");t.id="fb-root",document.body.appendChild(t),window.fbAsyncInit=function(){FB.init({appId:e.props.appId,xfbml:e.props.xfbml,cookie:e.props.cookie,version:"v"+e.props.version}),e.props.autoLoad&&FB.getLoginStatus(e.checkLoginState)},function(t,o,n){var r=t.getElementsByTagName(o)[0],s=r,i=r;t.getElementById(n)||(i=t.createElement(o),i.id=n,i.src="//connect.facebook.net/"+e.props.language+"/all.js",s.parentNode.insertBefore(i,s))}(document,"script","facebook-jssdk")},t.prototype.renderWithFontAwesome=function(){return c["default"].createElement("div",null,c["default"].createElement("link",{rel:"stylesheet",href:"//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"}),c["default"].createElement("button",{className:this.props.cssClass+" "+this.props.size,onClick:this.click},c["default"].createElement("i",{className:"fa "+this.props.icon})," ",this.props.textButton),c["default"].createElement("style",{dangerouslySetInnerHTML:{__html:l["default"]}}))},t.prototype.render=function(){return this.props.icon?this.renderWithFontAwesome():c["default"].createElement("div",null,c["default"].createElement("button",{className:this.props.cssClass+" "+this.props.size,onClick:this.click},this.props.textButton),c["default"].createElement("style",{dangerouslySetInnerHTML:{__html:l["default"]}}))},t}(c["default"].Component);t["default"]=u,e.exports=t["default"]},function(e,t,o){"use strict";function n(e){return e&&e.__esModule?e:{"default":e}}t.__esModule=!0;var r=o(1),s=n(r);t["default"]=s["default"],e.exports=t["default"]},function(e,t,o){t=e.exports=o(4)(),t.push([e.id,".kep-login-facebook{font-family:Helvetica,sans-serif;font-weight:700;-webkit-font-smoothing:antialiased;color:#fff;cursor:pointer;display:inline-block;font-size:calc(.27548vw + 12.71074px);text-decoration:none;text-transform:uppercase;transition:background-color .3s,border-color .3s;background-color:#4c69ba;border:calc(.06887vw + .67769px) solid #4c69ba;padding:calc(.34435vw + 13.38843px) calc(.34435vw + 18.38843px)}.kep-login-facebook.small{padding:calc(.34435vw + 3.38843px) calc(.34435vw + 8.38843px)}.kep-login-facebook.medium{padding:calc(.34435vw + 8.38843px) calc(.34435vw + 13.38843px)}.kep-login-facebook.metro{border-radius:0}.kep-login-facebook .fa{margin-right:calc(.34435vw + 3.38843px)}",""]),t.locals={"kep-login-facebook":"kep-login-facebook",small:"small",medium:"medium",metro:"metro",fa:"fa"}},function(e,t){e.exports=function(){var e=[];return e.toString=function(){for(var e=[],t=0;t<this.length;t++){var o=this[t];o[2]?e.push("@media "+o[2]+"{"+o[1]+"}"):e.push(o[1])}return e.join("")},e.i=function(t,o){"string"==typeof t&&(t=[[null,t,""]]);for(var n={},r=0;r<this.length;r++){var s=this[r][0];"number"==typeof s&&(n[s]=!0)}for(r=0;r<t.length;r++){var i=t[r];"number"==typeof i[0]&&n[i[0]]||(o&&!i[2]?i[2]=o:o&&(i[2]="("+i[2]+") and ("+o+")"),e.push(i))}},e}},function(t,o){t.exports=e}])});
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactBootstrap = __webpack_require__(179);
+
+	var _actions = __webpack_require__(173);
+
+	var _actions2 = _interopRequireDefault(_actions);
+
+	var _observationsStore = __webpack_require__(434);
+
+	var _observationsStore2 = _interopRequireDefault(_observationsStore);
+
+	var _sampleForm = __webpack_require__(435);
+
+	var _sampleForm2 = _interopRequireDefault(_sampleForm);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SampleObservationWidget = function (_Component) {
+	    _inherits(SampleObservationWidget, _Component);
+
+	    function SampleObservationWidget() {
+	        _classCallCheck(this, SampleObservationWidget);
+
+	        var _this = _possibleConstructorReturn(this, (SampleObservationWidget.__proto__ || Object.getPrototypeOf(SampleObservationWidget)).call(this));
+
+	        _this.submitObservationSample = _this.submitObservationSample.bind(_this);
+	        _this.handleObservationStore = _this.handleObservationStore.bind(_this);
+	        _this.state = { category: null, errors: null };
+	        return _this;
+	    }
+
+	    _createClass(SampleObservationWidget, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            _observationsStore2.default.listen(this.handleObservationStore);
+	        }
+	    }, {
+	        key: 'handleObservationStore',
+	        value: function handleObservationStore(event, data) {
+	            if (event == _observationsStore2.default.events.sampleCategoryReceived) {
+	                this.setState({ category: data });
+	            } else if (event == _observationsStore2.default.events.sampleCategoryError) {
+	                this.setState({ errors: data });
+	            }
+	        }
+	    }, {
+	        key: 'renderCategory',
+	        value: function renderCategory() {
+	            return _react2.default.createElement(
+	                _reactBootstrap.Alert,
+	                { bsStyle: 'success' },
+	                'This is ',
+	                _react2.default.createElement(
+	                    'strong',
+	                    null,
+	                    this.state.category
+	                )
+	            );
+	        }
+	    }, {
+	        key: 'renderErrors',
+	        value: function renderErrors() {
+	            return Object.keys(this.state.errors).map(function (field) {
+	                return this.state.errors[field].map(function (error) {
+	                    return _react2.default.createElement(
+	                        _reactBootstrap.Alert,
+	                        { bsStyle: 'error' },
+	                        _react2.default.createElement(
+	                            'strong',
+	                            null,
+	                            field
+	                        ),
+	                        ': ',
+	                        error
+	                    );
+	                }.bind(this));
+	            }.bind(this));
+	        }
+	    }, {
+	        key: 'submitObservationSample',
+	        value: function submitObservationSample(observation) {
+	            this.setState({ errors: null });
+	            _actions2.default.requestSampleObservation(observation);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'h2',
+	                    null,
+	                    'Try Now!'
+	                ),
+	                _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'Some message that should explain form purpose'
+	                ),
+	                _react2.default.createElement(
+	                    _reactBootstrap.Col,
+	                    { xs: 8 },
+	                    this.state.errors ? this.renderErrors() : '',
+	                    _react2.default.createElement(_sampleForm2.default, {
+	                        submitAction: this.submitObservationSample })
+	                ),
+	                _react2.default.createElement(
+	                    _reactBootstrap.Col,
+	                    { xs: 4 },
+	                    this.state.category ? this.renderCategory() : ''
+	                )
+	            );
+	        }
+	    }]);
+
+	    return SampleObservationWidget;
+	}(_react.Component);
+
+	exports.default = SampleObservationWidget;
 
 /***/ },
 /* 434 */
@@ -41167,102 +41253,9 @@
 
 	'use strict';
 
-	var React = __webpack_require__(1);
-	var ReactBootstrap = __webpack_require__(179);
-	var Reflux = __webpack_require__(173);
-	var Alert = ReactBootstrap.Alert;
-	var Col = ReactBootstrap.Col;
-
-	var Actions = __webpack_require__(174);
-	var ObservationStore = __webpack_require__(435);
-	var SampleObservationForm = __webpack_require__(436);
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    mixins: [Reflux.listenTo(ObservationStore, "handleObservationStore")],
-	    getInitialState: function getInitialState() {
-	        return { category: null, errors: null };
-	    },
-	    handleObservationStore: function handleObservationStore(event, data) {
-	        if (event == ObservationStore.events.sampleCategoryReceived) {
-	            this.setState({ category: data });
-	        } else if (event == ObservationStore.events.sampleCategoryError) {
-	            this.setState({ errors: data });
-	        }
-	    },
-	    submitObservationSample: function submitObservationSample(observation) {
-	        this.setState({ errors: null });
-	        Actions.requestSampleObservation(observation);
-	    },
-	    renderCategory: function renderCategory() {
-	        return React.createElement(
-	            Alert,
-	            { bsStyle: 'success' },
-	            'Category for this observation is ',
-	            React.createElement(
-	                'strong',
-	                null,
-	                this.state.category
-	            )
-	        );
-	    },
-	    renderErrors: function renderErrors() {
-	        return Object.keys(this.state.errors).map(function (field) {
-	            return this.state.errors[field].map(function (error) {
-	                return React.createElement(
-	                    Alert,
-	                    { bsStyle: 'error' },
-	                    React.createElement(
-	                        'strong',
-	                        null,
-	                        field
-	                    ),
-	                    ': ',
-	                    error
-	                );
-	            }.bind(this));
-	        }.bind(this));
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	                'h2',
-	                null,
-	                'Try Now!'
-	            ),
-	            React.createElement(
-	                Col,
-	                { xs: 8 },
-	                this.state.errors ? this.renderErrors() : '',
-	                React.createElement(SampleObservationForm, {
-	                    submitAction: this.submitObservationSample })
-	            ),
-	            React.createElement(
-	                Col,
-	                { xs: 4 },
-	                React.createElement(
-	                    'p',
-	                    null,
-	                    'Check category of latest observation'
-	                ),
-	                this.state.category ? this.renderCategory() : ''
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 435 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var Reflux = __webpack_require__(173);
+	var Reflux = __webpack_require__(174);
 	var Api = __webpack_require__(176);
-	var Actions = __webpack_require__(174);
+	var Actions = __webpack_require__(173);
 
 	module.exports = Reflux.createStore({
 	    listenables: [Actions],
@@ -41347,528 +41340,7 @@
 	});
 
 /***/ },
-/* 436 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(34);
-	var ReactBootstrap = __webpack_require__(179);
-	var Form = ReactBootstrap.Form;
-	var Col = ReactBootstrap.Col;
-	var FormGroup = ReactBootstrap.FormGroup;
-	var FormControl = ReactBootstrap.FormControl;
-	var Button = ReactBootstrap.Button;
-	var ControlLabel = ReactBootstrap.ControlLabel;
-
-	var RegularInput = __webpack_require__(437);
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            buttonText: "Add Observation",
-	            observation: {
-	                birthday: '',
-	                timestamp: new Date().toISOString().split("T")[0],
-	                parameter: '',
-	                value: '' },
-	            parameters: ['height', 'weight'],
-	            genders: ['male', 'female'],
-	            submitAction: function submitAction(observation) {
-	                console.log(observation);
-	            }
-	        };
-	    },
-	    componentDidMount: function componentDidMount() {
-	        this.refs.parameter.setState({ value: this.props.parameters[0] });
-	        this.refs.gender.setState({ value: this.props.genders[0] });
-	    },
-	    submit: function submit() {
-	        var observation = {
-	            gender: this.refs.gender.state.value,
-	            birthday: this.refs.birthday.state.value,
-	            timestamp: this.refs.timestamp.state.value,
-	            parameter: this.refs.parameter.state.value,
-	            value: this.refs.observationValue.state.value };
-	        console.log("Submit Form");
-	        console.log(observation);
-	        this.props.submitAction(observation);
-	    },
-	    changeSelectValue: function changeSelectValue(ref) {
-	        ref.setState({ value: ReactDOM.findDOMNode(ref).value });
-	    },
-	    changeParameterValue: function changeParameterValue() {
-	        this.changeSelectValue(this.refs.parameter);
-	    },
-	    changeGenderValue: function changeGenderValue() {
-	        this.changeSelectValue(this.refs.gender);
-	    },
-	    renderParametersOptions: function renderParametersOptions() {
-	        return this.props.parameters.map(function (parameter) {
-	            return React.createElement(
-	                'option',
-	                { value: parameter, key: parameter },
-	                parameter
-	            );
-	        });
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            Form,
-	            { horizontal: true },
-	            React.createElement(
-	                FormGroup,
-	                { controlId: 'formControlsSelect' },
-	                React.createElement(
-	                    Col,
-	                    { componentClass: ControlLabel, sm: 3 },
-	                    'Gender'
-	                ),
-	                React.createElement(
-	                    Col,
-	                    { sm: 9 },
-	                    React.createElement(
-	                        FormControl,
-	                        { componentClass: 'select',
-	                            ref: 'gender',
-	                            value: this.props.observation.gender,
-	                            placeholder: 'gender',
-	                            onChange: this.changeGenderValue },
-	                        React.createElement(
-	                            'option',
-	                            { value: 'male' },
-	                            'Boy'
-	                        ),
-	                        React.createElement(
-	                            'option',
-	                            { value: 'female' },
-	                            'Girl'
-	                        )
-	                    )
-	                )
-	            ),
-	            React.createElement(RegularInput, { name: 'Birthday',
-	                value: this.props.observation.birthday,
-	                ref: 'birthday',
-	                type: 'date' }),
-	            React.createElement(RegularInput, { name: 'Timestamp',
-	                value: this.props.observation.timestamp,
-	                ref: 'timestamp',
-	                type: 'date' }),
-	            React.createElement(RegularInput, { name: 'Value',
-	                value: this.props.observation.value,
-	                ref: 'observationValue',
-	                type: 'number' }),
-	            React.createElement(
-	                FormGroup,
-	                { controlId: 'formControlsSelect' },
-	                React.createElement(
-	                    Col,
-	                    { componentClass: ControlLabel, sm: 3 },
-	                    'Parameter'
-	                ),
-	                React.createElement(
-	                    Col,
-	                    { sm: 9 },
-	                    React.createElement(
-	                        FormControl,
-	                        { componentClass: 'select',
-	                            ref: 'parameter',
-	                            value: this.props.observation.parameter.value,
-	                            placeholder: 'parameter',
-	                            onChange: this.changeParameterValue },
-	                        this.renderParametersOptions()
-	                    )
-	                )
-	            ),
-	            React.createElement(
-	                FormGroup,
-	                null,
-	                React.createElement(
-	                    Col,
-	                    { smOffset: 3, sm: 9 },
-	                    React.createElement(
-	                        Button,
-	                        { type: 'button',
-	                            onClick: this.submit,
-	                            ref: 'submitButton' },
-	                        this.props.buttonText
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 437 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(34);
-	var ReactBootstrap = __webpack_require__(179);
-	var Col = ReactBootstrap.Col;
-	var FormGroup = ReactBootstrap.FormGroup;
-	var FormControl = ReactBootstrap.FormControl;
-	var ControlLabel = ReactBootstrap.ControlLabel;
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    propTypes: {
-	        placeholder: React.PropTypes.string,
-	        name: React.PropTypes.string.isRequired,
-	        labelCol: React.PropTypes.number,
-	        inputCol: React.PropTypes.number,
-	        type: React.PropTypes.string,
-	        value: React.PropTypes.string
-	    },
-	    getDefaultProps: function getDefaultProps() {
-	        return {
-	            placeholder: '',
-	            labelCol: 3,
-	            inputCol: 9,
-	            type: 'text'
-	        };
-	    },
-	    getInitialState: function getInitialState() {
-	        return { value: this.props.value, error: '' };
-	    },
-	    changeValue: function changeValue() {
-	        this.setState({ value: ReactDOM.findDOMNode(this.refs.input).value });
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            FormGroup,
-	            { controlId: "FormControls" + this.props.name },
-	            React.createElement(
-	                Col,
-	                { componentClass: ControlLabel, sm: this.props.labelCol },
-	                this.props.name
-	            ),
-	            React.createElement(
-	                Col,
-	                { sm: this.props.inputCol },
-	                React.createElement(FormControl, {
-	                    ref: 'input',
-	                    type: this.props.type,
-	                    value: this.state.value,
-	                    placeholder: this.props.placeholder,
-	                    onChange: this.changeValue }),
-	                React.createElement(FormControl.Feedback, null)
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 438 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(34);
-	var ReactBootstrap = __webpack_require__(179);
-	var Reflux = __webpack_require__(173);
-	var Form = ReactBootstrap.Form;
-	var Col = ReactBootstrap.Col;
-	var FormGroup = ReactBootstrap.FormGroup;
-	var FormControl = ReactBootstrap.FormControl;
-	var InputGroup = ReactBootstrap.InputGroup;
-	var ControlLabel = ReactBootstrap.ControlLabel;
-	var Button = ReactBootstrap.Button;
-	var HelpBlock = ReactBootstrap.HelpBlock;
-
-	var AuthStore = __webpack_require__(175);
-	var Actions = __webpack_require__(174);
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    mixins: [Reflux.listenTo(AuthStore, "handleAuthAction")],
-	    handleAuthAction: function handleAuthAction(event, message) {
-	        if (event === 'authenticationFailed') {
-	            this.setState({ error: message });
-	        }
-	    },
-	    getInitialState: function getInitialState() {
-	        return { email: '', password: '', error: '' };
-	    },
-	    login: function login(event) {
-	        event.preventDefault();
-	        this.setState({ error: '' });
-	        Actions.Login(this.state.email, this.state.password);
-	    },
-	    handleEmailChange: function handleEmailChange() {
-	        this.setState({ email: ReactDOM.findDOMNode(this.refs.email).value });
-	    },
-	    handlePasswordChange: function handlePasswordChange() {
-	        this.setState({ password: ReactDOM.findDOMNode(this.refs.password).value });
-	    },
-
-	    render: function render() {
-	        var extraStyle = { 'paddingTop': '20px' };
-	        return React.createElement(
-	            Form,
-	            { horizontal: true, style: extraStyle },
-	            React.createElement(
-	                FormGroup,
-	                { controlId: 'formControlsEmail' },
-	                React.createElement(
-	                    Col,
-	                    { componentClass: ControlLabel, sm: 3 },
-	                    'Email'
-	                ),
-	                React.createElement(
-	                    Col,
-	                    { sm: 9 },
-	                    React.createElement(
-	                        InputGroup,
-	                        null,
-	                        React.createElement(
-	                            InputGroup.Addon,
-	                            null,
-	                            '@'
-	                        ),
-	                        React.createElement(FormControl, {
-	                            type: 'email',
-	                            value: this.state.email,
-	                            placeholder: 'Enter email',
-	                            onChange: this.handleEmailChange,
-	                            ref: 'email' })
-	                    )
-	                )
-	            ),
-	            React.createElement(
-	                FormGroup,
-	                { controlId: 'formControlsPassword' },
-	                React.createElement(
-	                    Col,
-	                    { componentClass: ControlLabel, sm: 3 },
-	                    'Password'
-	                ),
-	                React.createElement(
-	                    Col,
-	                    { sm: 9 },
-	                    React.createElement(FormControl, {
-	                        type: 'password',
-	                        value: this.state.password,
-	                        placeholder: 'Enter password',
-	                        onChange: this.handlePasswordChange,
-	                        ref: 'password' }),
-	                    this.state.error ? React.createElement(
-	                        HelpBlock,
-	                        null,
-	                        this.state.error
-	                    ) : ''
-	                )
-	            ),
-	            React.createElement(
-	                FormGroup,
-	                null,
-	                React.createElement(
-	                    Col,
-	                    { smOffset: 3, sm: 9 },
-	                    React.createElement(
-	                        Button,
-	                        { type: 'submit',
-	                            ref: 'submitButton',
-	                            onClick: this.login },
-	                        'Login'
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 439 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(34);
-	var ReactBootstrap = __webpack_require__(179);
-	var Reflux = __webpack_require__(173);
-	var Form = ReactBootstrap.Form;
-	var Col = ReactBootstrap.Col;
-	var FormGroup = ReactBootstrap.FormGroup;
-	var FormControl = ReactBootstrap.FormControl;
-	var InputGroup = ReactBootstrap.InputGroup;
-	var ControlLabel = ReactBootstrap.ControlLabel;
-	var Button = ReactBootstrap.Button;
-	var HelpBlock = ReactBootstrap.HelpBlock;
-
-	var AuthStore = __webpack_require__(175);
-	var Actions = __webpack_require__(174);
-
-	module.exports = React.createClass({
-	    displayName: 'exports',
-
-	    mixins: [Reflux.listenTo(AuthStore, "handleAuthAction")],
-	    handleAuthAction: function handleAuthAction(event, message) {
-	        if (event === 'signupFailed') {
-	            this.setState({ error: message });
-	        }
-	    },
-	    getInitialState: function getInitialState() {
-	        return {
-	            firstName: '',
-	            lastName: '',
-	            email: '',
-	            password: '',
-	            error: ''
-	        };
-	    },
-	    changeInput: function changeInput(field) {
-	        var changedState = {};
-	        changedState[field] = ReactDOM.findDOMNode(this.refs[field]).value;
-	        this.setState(changedState);
-	    },
-	    handleFirstNameChange: function handleFirstNameChange() {
-	        this.changeInput('firstName');
-	    },
-	    handleLastNameChange: function handleLastNameChange() {
-	        this.changeInput('lastName');
-	    },
-	    handleEmailChange: function handleEmailChange() {
-	        this.changeInput('email');
-	    },
-	    handlePasswordChange: function handlePasswordChange() {
-	        this.changeInput('password');
-	    },
-	    signup: function signup(event) {
-	        event.preventDefault();
-	        Actions.Signup(this.state.firstName, this.state.lastName, this.state.email, this.state.password);
-	    },
-	    render: function render() {
-	        var extraStyle = { 'paddingTop': '20px' };
-	        return React.createElement(
-	            Form,
-	            { horizontal: true, style: extraStyle },
-	            React.createElement(
-	                FormGroup,
-	                { controlId: 'formControlsFirstEmail' },
-	                React.createElement(
-	                    Col,
-	                    { componentClass: ControlLabel, sm: 3 },
-	                    'First Name'
-	                ),
-	                React.createElement(
-	                    Col,
-	                    { sm: 9 },
-	                    React.createElement(FormControl, {
-	                        type: 'text',
-	                        value: this.state.firstName,
-	                        placeholder: 'Enter first name',
-	                        onChange: this.handleFirstNameChange,
-	                        ref: 'firstName' }),
-	                    React.createElement(FormControl.Feedback, null)
-	                )
-	            ),
-	            React.createElement(
-	                FormGroup,
-	                { controlId: 'formControlsLastEmail' },
-	                React.createElement(
-	                    Col,
-	                    { componentClass: ControlLabel, sm: 3 },
-	                    'Last Name'
-	                ),
-	                React.createElement(
-	                    Col,
-	                    { sm: 9 },
-	                    React.createElement(FormControl, {
-	                        type: 'text',
-	                        value: this.state.lastName,
-	                        placeholder: 'Enter last name',
-	                        onChange: this.handleLastNameChange,
-	                        ref: 'lastName' }),
-	                    React.createElement(FormControl.Feedback, null)
-	                )
-	            ),
-	            React.createElement(
-	                FormGroup,
-	                { controlId: 'formControlsEmail' },
-	                React.createElement(
-	                    Col,
-	                    { componentClass: ControlLabel, sm: 3 },
-	                    'Email'
-	                ),
-	                React.createElement(
-	                    Col,
-	                    { sm: 9 },
-	                    React.createElement(
-	                        InputGroup,
-	                        null,
-	                        React.createElement(
-	                            InputGroup.Addon,
-	                            null,
-	                            '@'
-	                        ),
-	                        React.createElement(FormControl, {
-	                            type: 'email',
-	                            value: this.state.email,
-	                            placeholder: 'Enter email',
-	                            onChange: this.handleEmailChange,
-	                            ref: 'email' })
-	                    ),
-	                    React.createElement(FormControl.Feedback, null)
-	                )
-	            ),
-	            React.createElement(
-	                FormGroup,
-	                { controlId: 'formControlsPassword' },
-	                React.createElement(
-	                    Col,
-	                    { componentClass: ControlLabel, sm: 3 },
-	                    'Password'
-	                ),
-	                React.createElement(
-	                    Col,
-	                    { sm: 9 },
-	                    React.createElement(FormControl, {
-	                        type: 'password',
-	                        value: this.state.password,
-	                        placeholder: 'Enter password',
-	                        onChange: this.handlePasswordChange,
-	                        ref: 'password' }),
-	                    React.createElement(FormControl.Feedback, null),
-	                    this.state.error ? React.createElement(
-	                        HelpBlock,
-	                        null,
-	                        this.state.error
-	                    ) : ''
-	                )
-	            ),
-	            React.createElement(
-	                FormGroup,
-	                null,
-	                React.createElement(
-	                    Col,
-	                    { smOffset: 3, sm: 9 },
-	                    React.createElement(
-	                        Button,
-	                        { type: 'submit',
-	                            ref: 'submitButton',
-	                            onClick: this.signup },
-	                        'Signup'
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-
-/***/ },
-/* 440 */
+/* 435 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41885,13 +41357,266 @@
 
 	var _reactBootstrap = __webpack_require__(179);
 
-	var _reactBootstrap2 = _interopRequireDefault(_reactBootstrap);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var _list = __webpack_require__(441);
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SampleObservationForm = function (_Component) {
+	    _inherits(SampleObservationForm, _Component);
+
+	    function SampleObservationForm() {
+	        _classCallCheck(this, SampleObservationForm);
+
+	        var _this = _possibleConstructorReturn(this, (SampleObservationForm.__proto__ || Object.getPrototypeOf(SampleObservationForm)).call(this));
+
+	        _this.handleValueChange = _this.handleValueChange.bind(_this);
+	        _this.getValueValidationState = _this.getValueValidationState.bind(_this);
+	        _this.handleTimestampChange = _this.handleTimestampChange.bind(_this);
+	        _this.handleBirthdayChange = _this.handleBirthdayChange.bind(_this);
+	        _this.handleGenderChange = _this.handleGenderChange.bind(_this);
+	        _this.getFormValidationState = _this.getFormValidationState.bind(_this);
+	        _this.onFormSubmit = _this.onFormSubmit.bind(_this);
+	        _this.submit = _this.submit.bind(_this);
+	        _this.state = {
+	            gender: 'male',
+	            birthday: '',
+	            timestamp: new Date().toISOString().split("T")[0],
+	            parameter: 'height',
+	            value: ''
+	        };
+	        return _this;
+	    }
+
+	    _createClass(SampleObservationForm, [{
+	        key: 'getFormValidationState',
+	        value: function getFormValidationState() {
+	            return this.state.birthday && this.state.value && this.state.birthday < this.state.timestamp;
+	        }
+	    }, {
+	        key: 'handleValueChange',
+	        value: function handleValueChange(event) {
+	            var newValue = parseFloat(event.target.value);
+	            if (!isNaN(newValue)) {
+	                this.setState({ value: newValue });
+	            }
+	        }
+	    }, {
+	        key: 'getValueValidationState',
+	        value: function getValueValidationState() {
+	            if (this.state.value !== '') {
+	                if (this.state.value > 0) {
+	                    return 'success';
+	                } else {
+	                    return 'error';
+	                }
+	            } else {
+	                return 'error';
+	            }
+	        }
+	    }, {
+	        key: 'handleTimestampChange',
+	        value: function handleTimestampChange(event) {
+	            this.setState({ timestamp: event.target.value });
+	        }
+	    }, {
+	        key: 'handleBirthdayChange',
+	        value: function handleBirthdayChange(event) {
+	            this.setState({ birthday: event.target.value });
+	        }
+	    }, {
+	        key: 'handleGenderChange',
+	        value: function handleGenderChange(event) {
+	            this.setState({ gender: event.target.value });
+	        }
+	    }, {
+	        key: 'onFormSubmit',
+	        value: function onFormSubmit(event) {
+	            if (this.getFormValidationState()) {
+	                this.submit();
+	            }
+	            event.preventDefault();
+	        }
+	    }, {
+	        key: 'submit',
+	        value: function submit() {
+	            this.props.submitAction(this.state);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                _reactBootstrap.Form,
+	                { horizontal: true, onSubmit: this.onFormSubmit },
+	                _react2.default.createElement(
+	                    _reactBootstrap.FormGroup,
+	                    { controlId: 'formControlsSelect' },
+	                    _react2.default.createElement(
+	                        _reactBootstrap.Col,
+	                        { componentClass: _reactBootstrap.ControlLabel, sm: 3 },
+	                        'Gender'
+	                    ),
+	                    _react2.default.createElement(
+	                        _reactBootstrap.Col,
+	                        { sm: 9 },
+	                        _react2.default.createElement(
+	                            _reactBootstrap.FormControl,
+	                            { componentClass: 'select',
+	                                value: this.state.gender,
+	                                onChange: this.handleGenderChange },
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: 'male' },
+	                                'Boy'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: 'female' },
+	                                'Girl'
+	                            )
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    _reactBootstrap.FormGroup,
+	                    { controlId: 'birthdayControl' },
+	                    _react2.default.createElement(
+	                        _reactBootstrap.Col,
+	                        { componentClass: _reactBootstrap.ControlLabel, sm: 3 },
+	                        'Birthday'
+	                    ),
+	                    _react2.default.createElement(
+	                        _reactBootstrap.Col,
+	                        { sm: 9 },
+	                        _react2.default.createElement(_reactBootstrap.FormControl, { onChange: this.handleBirthdayChange,
+	                            value: this.state.birthday,
+	                            type: 'date' })
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    _reactBootstrap.FormGroup,
+	                    { controlId: 'timestampControl' },
+	                    _react2.default.createElement(
+	                        _reactBootstrap.Col,
+	                        { componentClass: _reactBootstrap.ControlLabel, sm: 3 },
+	                        'Timestamp'
+	                    ),
+	                    _react2.default.createElement(
+	                        _reactBootstrap.Col,
+	                        { sm: 9 },
+	                        _react2.default.createElement(_reactBootstrap.FormControl, { value: this.state.timestamp,
+	                            onChange: this.handleTimestampChange,
+	                            type: 'date' })
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    _reactBootstrap.FormGroup,
+	                    { controlId: 'formControlsSelect' },
+	                    _react2.default.createElement(
+	                        _reactBootstrap.Col,
+	                        { componentClass: _reactBootstrap.ControlLabel, sm: 3 },
+	                        'Parameter'
+	                    ),
+	                    _react2.default.createElement(
+	                        _reactBootstrap.Col,
+	                        { sm: 9 },
+	                        _react2.default.createElement(
+	                            _reactBootstrap.FormControl,
+	                            { componentClass: 'select' },
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: 'height' },
+	                                'Height'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: 'weight' },
+	                                'Weight'
+	                            )
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    _reactBootstrap.FormGroup,
+	                    { validationState: this.getValueValidationState(),
+	                        controlId: 'valueControl' },
+	                    _react2.default.createElement(
+	                        _reactBootstrap.Col,
+	                        { componentClass: _reactBootstrap.ControlLabel, sm: 3 },
+	                        'Value'
+	                    ),
+	                    _react2.default.createElement(
+	                        _reactBootstrap.Col,
+	                        { sm: 9 },
+	                        _react2.default.createElement(_reactBootstrap.FormControl, { value: this.state.value,
+	                            onChange: this.handleValueChange,
+	                            step: '0.01',
+	                            min: '0',
+	                            type: 'number' })
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    _reactBootstrap.FormGroup,
+	                    null,
+	                    _react2.default.createElement(
+	                        _reactBootstrap.Col,
+	                        { smOffset: 3, sm: 9 },
+	                        _react2.default.createElement(
+	                            _reactBootstrap.Button,
+	                            { type: 'button',
+	                                onClick: this.submit,
+	                                disabled: !this.getFormValidationState(),
+	                                ref: 'submitButton' },
+	                            'Check'
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return SampleObservationForm;
+	}(_react.Component);
+
+	exports.default = SampleObservationForm;
+
+
+	SampleObservationForm.propTypes = {
+	    submitAction: _react.PropTypes.func
+	};
+
+	SampleObservationForm.defaultProps = {
+	    submitAction: function submitAction(observation) {
+	        console.log(observation);
+	    }
+	};
+
+/***/ },
+/* 436 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactBootstrap = __webpack_require__(179);
+
+	var _list = __webpack_require__(437);
 
 	var _list2 = _interopRequireDefault(_list);
 
-	var _add = __webpack_require__(449);
+	var _add = __webpack_require__(446);
 
 	var _add2 = _interopRequireDefault(_add);
 
@@ -41930,7 +41655,7 @@
 	exports.default = Dashboard;
 
 /***/ },
-/* 441 */
+/* 437 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41940,10 +41665,10 @@
 	var ListGroup = ReactBootstrap.ListGroup;
 	var ListGroupItem = ReactBootstrap.ListGroupItem;
 
-	var Actions = __webpack_require__(174);
-	var KidsStore = __webpack_require__(442);
+	var Actions = __webpack_require__(173);
+	var KidsStore = __webpack_require__(438);
 
-	var KidDetail = __webpack_require__(443);
+	var KidDetail = __webpack_require__(439);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41979,14 +41704,14 @@
 	});
 
 /***/ },
-/* 442 */
+/* 438 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Reflux = __webpack_require__(173);
+	var Reflux = __webpack_require__(174);
 	var Api = __webpack_require__(176);
-	var Actions = __webpack_require__(174);
+	var Actions = __webpack_require__(173);
 
 	module.exports = Reflux.createStore({
 	    listenables: [Actions],
@@ -42071,7 +41796,7 @@
 	});
 
 /***/ },
-/* 443 */
+/* 439 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42085,12 +41810,12 @@
 	var ButtonGroup = ReactBootstrap.ButtonGroup;
 	var Button = ReactBootstrap.Button;
 
-	var Actions = __webpack_require__(174);
-	var KidsStore = __webpack_require__(442);
-	var ObservationsStore = __webpack_require__(435);
-	var AddObservation = __webpack_require__(444);
-	var Modal = __webpack_require__(446);
-	var KidForm = __webpack_require__(447);
+	var Actions = __webpack_require__(173);
+	var KidsStore = __webpack_require__(438);
+	var ObservationsStore = __webpack_require__(434);
+	var AddObservation = __webpack_require__(440);
+	var Modal = __webpack_require__(443);
+	var KidForm = __webpack_require__(444);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -42265,20 +41990,20 @@
 	});
 
 /***/ },
-/* 444 */
+/* 440 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
 	var ReactBootstrap = __webpack_require__(179);
-	var Reflux = __webpack_require__(173);
+	var Reflux = __webpack_require__(174);
 	var Button = ReactBootstrap.Button;
 
-	var Actions = __webpack_require__(174);
-	var ObservationForm = __webpack_require__(445);
-	var Modal = __webpack_require__(446);
-	var ObservationStore = __webpack_require__(435);
+	var Actions = __webpack_require__(173);
+	var ObservationForm = __webpack_require__(441);
+	var Modal = __webpack_require__(443);
+	var ObservationStore = __webpack_require__(434);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -42315,7 +42040,7 @@
 	});
 
 /***/ },
-/* 445 */
+/* 441 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42329,7 +42054,7 @@
 	var Button = ReactBootstrap.Button;
 	var ControlLabel = ReactBootstrap.ControlLabel;
 
-	var RegularInput = __webpack_require__(437);
+	var RegularInput = __webpack_require__(442);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -42419,7 +42144,53 @@
 	});
 
 /***/ },
-/* 446 */
+/* 442 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _reactBootstrap = __webpack_require__(179);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Input = function (_FormControl) {
+	    _inherits(Input, _FormControl);
+
+	    function Input() {
+	        _classCallCheck(this, Input);
+
+	        var _this = _possibleConstructorReturn(this, (Input.__proto__ || Object.getPrototypeOf(Input)).call(this));
+
+	        _this.onChange = _this.onChange.bind(_this);
+	        return _this;
+	    }
+
+	    _createClass(Input, [{
+	        key: 'onChange',
+	        value: function onChange(event) {
+	            console.log('LaLaLa from import');
+	            console.log(event);
+	            console.log(this.state);
+	        }
+	    }]);
+
+	    return Input;
+	}(_reactBootstrap.FormControl);
+
+	exports.default = Input;
+
+/***/ },
+/* 443 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42482,7 +42253,7 @@
 	});
 
 /***/ },
-/* 447 */
+/* 444 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42494,8 +42265,8 @@
 	var FormGroup = ReactBootstrap.FormGroup;
 	var Button = ReactBootstrap.Button;
 
-	var RegularInput = __webpack_require__(437);
-	var ChoicesInput = __webpack_require__(448);
+	var RegularInput = __webpack_require__(442);
+	var ChoicesInput = __webpack_require__(445);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -42553,7 +42324,7 @@
 	});
 
 /***/ },
-/* 448 */
+/* 445 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42619,20 +42390,20 @@
 	});
 
 /***/ },
-/* 449 */
+/* 446 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
 	var ReactBootstrap = __webpack_require__(179);
-	var Reflux = __webpack_require__(173);
+	var Reflux = __webpack_require__(174);
 	var Button = ReactBootstrap.Button;
 
-	var Actions = __webpack_require__(174);
-	var KidsStore = __webpack_require__(442);
-	var Modal = __webpack_require__(446);
-	var KidForm = __webpack_require__(447);
+	var Actions = __webpack_require__(173);
+	var KidsStore = __webpack_require__(438);
+	var Modal = __webpack_require__(443);
+	var KidForm = __webpack_require__(444);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -42671,16 +42442,16 @@
 	});
 
 /***/ },
-/* 450 */
+/* 447 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
 	var AuthStore = __webpack_require__(175);
-	var KidsStore = __webpack_require__(442);
-	var ObservationsStore = __webpack_require__(435);
-	var Reflux = __webpack_require__(173);
+	var KidsStore = __webpack_require__(438);
+	var ObservationsStore = __webpack_require__(434);
+	var Reflux = __webpack_require__(174);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',

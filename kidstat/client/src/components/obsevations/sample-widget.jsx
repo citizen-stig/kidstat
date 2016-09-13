@@ -1,53 +1,66 @@
-var React = require('react');
-var ReactBootstrap = require('react-bootstrap');
-var Reflux = require('reflux');
-var Alert = ReactBootstrap.Alert;
-var Col = ReactBootstrap.Col;
+import React, {Component, PropTypes} from 'react';
+import {Alert, Col} from 'react-bootstrap';
 
-var Actions = require('../../actions.jsx');
-var ObservationStore = require('../../stores/observations-store.jsx');
-var SampleObservationForm = require('./sample-form.jsx');
+import Actions from '../../actions.jsx';
+import ObservationStore from '../../stores/observations-store.jsx';
 
-module.exports = React.createClass({
-    mixins: [Reflux.listenTo(ObservationStore, "handleObservationStore")],
-    getInitialState: function () {
-        return {category: null, errors: null}
-    },
-    handleObservationStore: function(event, data){
-        if (event == ObservationStore.events.sampleCategoryReceived){
+import SampleObservationForm from './sample-form.jsx';
+
+
+export default class SampleObservationWidget extends Component {
+
+    constructor() {
+        super();
+        this.submitObservationSample = this.submitObservationSample.bind(this);
+        this.handleObservationStore = this.handleObservationStore.bind(this);
+        this.state = {category: null, errors: null}
+    }
+
+    componentDidMount() {
+        ObservationStore.listen(this.handleObservationStore)
+    }
+
+    handleObservationStore(event, data) {
+        if (event == ObservationStore.events.sampleCategoryReceived) {
             this.setState({category: data})
         } else if (event == ObservationStore.events.sampleCategoryError) {
             this.setState({errors: data})
         }
-    },
-    submitObservationSample: function(observation){
-        this.setState({errors: null});
-        Actions.requestSampleObservation(observation);
-    },
-    renderCategory: function(){
+    }
+
+    renderCategory() {
         return <Alert bsStyle="success">
-                Category for this observation is <strong>{this.state.category}</strong>
-            </Alert>
-    },
-    renderErrors: function(){
+            This is <strong>{this.state.category}</strong>
+        </Alert>
+    }
+
+    renderErrors() {
         return Object.keys(this.state.errors).map(function (field) {
             return this.state.errors[field].map(function (error) {
-                return <Alert bsStyle="error"><strong>{field}</strong>: {error}</Alert>
+                return <Alert bsStyle="error">
+                    <strong>{field}</strong>: {error}
+                </Alert>
             }.bind(this))
         }.bind(this))
-    },
-    render: function () {
+    }
+
+    submitObservationSample(observation) {
+        this.setState({errors: null});
+        Actions.requestSampleObservation(observation);
+    }
+
+    render() {
         return <div>
             <h2>Try Now!</h2>
+            <p>Some message that should explain form purpose</p>
             <Col xs={8}>
-                {this.state.errors ? this.renderErrors(): ''}
+                {this.state.errors ? this.renderErrors() : ''}
                 <SampleObservationForm
                     submitAction={this.submitObservationSample}/>
             </Col>
             <Col xs={4}>
-                <p>Check category of latest observation</p>
                 {this.state.category ? this.renderCategory() : ''}
             </Col>
         </div>
     }
-});
+}

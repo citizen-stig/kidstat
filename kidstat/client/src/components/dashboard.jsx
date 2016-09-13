@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import ReactBootstrap, {Row} from 'react-bootstrap'
+import {Row} from 'react-bootstrap'
 
 import KidsList from './kids/list.jsx';
 import AddKid from './kids/add.jsx';

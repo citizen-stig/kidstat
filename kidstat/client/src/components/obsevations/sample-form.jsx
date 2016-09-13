@@ -1,114 +1,159 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var ReactBootstrap = require('react-bootstrap');
-var Form = ReactBootstrap.Form;
-var Col = ReactBootstrap.Col;
-var FormGroup = ReactBootstrap.FormGroup;
-var FormControl = ReactBootstrap.FormControl;
-var Button = ReactBootstrap.Button;
-var ControlLabel = ReactBootstrap.ControlLabel;
+import React, {Component, PropTypes} from 'react';
+import {
+    Form,
+    Col,
+    FormGroup,
+    FormControl,
+    Button,
+    ControlLabel
+} from 'react-bootstrap';
 
 
-var RegularInput = require('../forms/input.jsx');
-
-
-
-module.exports = React.createClass({
-    getDefaultProps: function () {
-        return {
-            buttonText: "Add Observation",
-            observation: {
-                birthday: '',
-                timestamp: new Date().toISOString().split("T")[0],
-                parameter: '',
-                value: ''},
-            parameters: ['height', 'weight'],
-            genders: ['male', 'female'],
-            submitAction: function(observation){console.log(observation)}
+export default class SampleObservationForm extends Component {
+    constructor() {
+        super();
+        this.handleValueChange = this.handleValueChange.bind(this);
+        this.getValueValidationState = this.getValueValidationState.bind(this);
+        this.handleTimestampChange = this.handleTimestampChange.bind(this);
+        this.handleBirthdayChange = this.handleBirthdayChange.bind(this);
+        this.handleGenderChange = this.handleGenderChange.bind(this);
+        this.getFormValidationState = this.getFormValidationState.bind(this);
+        this.onFormSubmit = this.onFormSubmit.bind(this);
+        this.submit = this.submit.bind(this);
+        this.state = {
+            gender: 'male',
+            birthday: '',
+            timestamp: new Date().toISOString().split("T")[0],
+            parameter: 'height',
+            value: ''
         }
-    },
-    componentDidMount: function(){
-        this.refs.parameter.setState({value: this.props.parameters[0]});
-        this.refs.gender.setState({value: this.props.genders[0]});
-    },
-    submit: function () {
-        var observation = {
-            gender: this.refs.gender.state.value,
-            birthday: this.refs.birthday.state.value,
-            timestamp: this.refs.timestamp.state.value,
-            parameter: this.refs.parameter.state.value,
-            value: this.refs.observationValue.state.value};
-        console.log("Submit Form");
-        console.log(observation);
-        this.props.submitAction(observation);
+    }
 
-    },
-    changeSelectValue: function(ref){
-        ref.setState({value: ReactDOM.findDOMNode(ref).value});
-    },
-    changeParameterValue: function(){
-        this.changeSelectValue(this.refs.parameter);
-    },
-    changeGenderValue: function(){
-        this.changeSelectValue(this.refs.gender);
-    },
-    renderParametersOptions: function(){
-        return this.props.parameters.map(function(parameter){
-            return <option value={parameter} key={parameter}>{parameter}</option>
-        })
-    },
-    render: function () {
+    getFormValidationState() {
+        return (this.state.birthday && this.state.value && (this.state.birthday < this.state.timestamp))
+    }
+
+    handleValueChange(event) {
+        var newValue = parseFloat(event.target.value);
+        if (!isNaN(newValue)) {
+            this.setState({value: newValue});
+        }
+    }
+
+    getValueValidationState() {
+        if (this.state.value !== '') {
+            if (this.state.value > 0) {
+                return 'success';
+            } else {
+                return 'error';
+            }
+        } else {
+            return 'error'
+        }
+    }
+
+    handleTimestampChange(event) {
+        this.setState({timestamp: event.target.value})
+    }
+
+    handleBirthdayChange(event) {
+        this.setState({birthday: event.target.value})
+    }
+
+    handleGenderChange(event) {
+        this.setState({gender: event.target.value})
+    }
+
+    onFormSubmit(event) {
+        if (this.getFormValidationState()) {
+            this.submit()
+        }
+        event.preventDefault();
+    }
+
+    submit() {
+        this.props.submitAction(this.state);
+    }
+
+    render() {
         return (
-            <Form horizontal>
+            <Form horizontal onSubmit={this.onFormSubmit}>
                 <FormGroup controlId="formControlsSelect">
                     <Col componentClass={ControlLabel} sm={3}>
                         Gender
                     </Col>
                     <Col sm={9}>
                         <FormControl componentClass="select"
-                                     ref="gender"
-                                     value={this.props.observation.gender}
-                                     placeholder="gender"
-                                     onChange={this.changeGenderValue}>
+                                     value={this.state.gender}
+                                     onChange={this.handleGenderChange}>
                             <option value="male">Boy</option>
                             <option value="female">Girl</option>
                         </FormControl>
                     </Col>
                 </FormGroup>
-                <RegularInput name="Birthday"
-                              value={this.props.observation.birthday}
-                              ref="birthday"
-                              type="date"/>
-                <RegularInput name="Timestamp"
-                              value={this.props.observation.timestamp}
-                              ref="timestamp"
-                              type="date"/>
-                <RegularInput name="Value"
-                              value={this.props.observation.value}
-                              ref="observationValue"
-                              type="number"/>
+                <FormGroup controlId="birthdayControl">
+                    <Col componentClass={ControlLabel} sm={3}>
+                        Birthday
+                    </Col>
+                    <Col sm={9}>
+                        <FormControl onChange={this.handleBirthdayChange}
+                                     value={this.state.birthday}
+                                     type="date"/>
+                    </Col>
+                </FormGroup>
+                <FormGroup controlId="timestampControl">
+                    <Col componentClass={ControlLabel} sm={3}>
+                        Timestamp
+                    </Col>
+                    <Col sm={9}>
+                        <FormControl value={this.state.timestamp}
+                                     onChange={this.handleTimestampChange}
+                                     type="date"/>
+                    </Col>
+                </FormGroup>
                 <FormGroup controlId="formControlsSelect">
                     <Col componentClass={ControlLabel} sm={3}>
                         Parameter
                     </Col>
                     <Col sm={9}>
-                        <FormControl componentClass="select"
-                                     ref="parameter"
-                                     value={this.props.observation.parameter.value}
-                                     placeholder="parameter"
-                                     onChange={this.changeParameterValue}>
-                            {this.renderParametersOptions()}
+                        <FormControl componentClass="select">
+                            <option value="height">Height</option>
+                            <option value="weight">Weight</option>
                         </FormControl>
+                    </Col>
+                </FormGroup>
+                <FormGroup validationState={this.getValueValidationState()}
+                           controlId="valueControl">
+                    <Col componentClass={ControlLabel} sm={3}>
+                        Value
+                    </Col>
+                    <Col sm={9}>
+                        <FormControl value={this.state.value}
+                                     onChange={this.handleValueChange}
+                                     step="0.01"
+                                     min="0"
+                                     type="number"/>
                     </Col>
                 </FormGroup>
                 <FormGroup>
                     <Col smOffset={3} sm={9}>
                         <Button type="button"
                                 onClick={this.submit}
-                                ref="submitButton">{this.props.buttonText}</Button>
+                                disabled={!this.getFormValidationState()}
+                                ref="submitButton">Check</Button>
                     </Col>
                 </FormGroup>
             </Form>
         );
     }
-});
+}
+
+SampleObservationForm.propTypes = {
+    submitAction: PropTypes.func
+};
+
+SampleObservationForm.defaultProps = {
+    submitAction: function (observation) {
+        console.log(observation)
+    }
+};

@@ -1,5 +1,4 @@
 import React, {Component, PropTypes} from 'react';
-import Reflux from 'reflux';
 
 import Actions from '../actions.jsx';
 import AuthStore from '../stores/auth-store.jsx'

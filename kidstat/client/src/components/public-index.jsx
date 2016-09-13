@@ -12,7 +12,7 @@ export default class KidStat extends Component {
     render() {
         return <Grid>
             <Row className="show-grid">
-                <h1 className="text-center">Welcome to the Kidstat!</h1>
+                <h1 className="text-center">Welcome to the KidStat!</h1>
                 <Col xs={12} md={7}>
                     <SampleObservation/>
                 </Col>

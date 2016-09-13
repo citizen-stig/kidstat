@@ -21447,11 +21447,11 @@
 
 	var _publicIndex2 = _interopRequireDefault(_publicIndex);
 
-	var _dashboard = __webpack_require__(436);
+	var _dashboard = __webpack_require__(437);
 
 	var _dashboard2 = _interopRequireDefault(_dashboard);
 
-	var _loading = __webpack_require__(447);
+	var _loading = __webpack_require__(448);
 
 	var _loading2 = _interopRequireDefault(_loading);
 
@@ -22188,7 +22188,7 @@
 	        }
 	        return React.createElement(
 	            Navbar,
-	            null,
+	            { className: !this.state.authenticated ? "hidden-xs" : "" },
 	            React.createElement(
 	                Navbar.Header,
 	                null,
@@ -41088,7 +41088,7 @@
 	                    _react2.default.createElement(
 	                        'h1',
 	                        { className: 'text-center' },
-	                        'Welcome to the Kidstat!'
+	                        'Welcome to the KidStat!'
 	                    ),
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
@@ -41135,6 +41135,10 @@
 
 	var _sampleForm2 = _interopRequireDefault(_sampleForm);
 
+	var _categoryAlert = __webpack_require__(436);
+
+	var _categoryAlert2 = _interopRequireDefault(_categoryAlert);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -41172,20 +41176,6 @@
 	            }
 	        }
 	    }, {
-	        key: 'renderCategory',
-	        value: function renderCategory() {
-	            return _react2.default.createElement(
-	                _reactBootstrap.Alert,
-	                { bsStyle: 'success' },
-	                'This is ',
-	                _react2.default.createElement(
-	                    'strong',
-	                    null,
-	                    this.state.category
-	                )
-	            );
-	        }
-	    }, {
 	        key: 'renderErrors',
 	        value: function renderErrors() {
 	            return Object.keys(this.state.errors).map(function (field) {
@@ -41219,24 +41209,20 @@
 	                _react2.default.createElement(
 	                    'h2',
 	                    null,
-	                    'Try Now!'
+	                    'Try Now.'
 	                ),
 	                _react2.default.createElement(
 	                    'p',
 	                    null,
-	                    'Some message that should explain form purpose'
+	                    'Check category right now:'
 	                ),
 	                _react2.default.createElement(
 	                    _reactBootstrap.Col,
-	                    { xs: 8 },
+	                    { xs: 12 },
 	                    this.state.errors ? this.renderErrors() : '',
 	                    _react2.default.createElement(_sampleForm2.default, {
-	                        submitAction: this.submitObservationSample })
-	                ),
-	                _react2.default.createElement(
-	                    _reactBootstrap.Col,
-	                    { xs: 4 },
-	                    this.state.category ? this.renderCategory() : ''
+	                        submitAction: this.submitObservationSample }),
+	                    this.state.category ? _react2.default.createElement(_categoryAlert2.default, { category: this.state.category }) : ''
 	                )
 	            );
 	        }
@@ -41323,6 +41309,7 @@
 	            this.sampleCategory = response['category'];
 	            this.triggerObservationSampleReceived();
 	        }.bind(this)).catch(function (error) {
+	            console.log(error);
 	            error.response.json().then(function (data) {
 	                this.trigger(this.events.sampleCategoryError, data['errors']);
 	            }.bind(this));
@@ -41365,6 +41352,15 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var clearDecimalInput = function clearDecimalInput(value) {
+	    var parts = value.replace(/[^0-9.,]/g, '').replace(/,/g, '.').split('.');
+	    var newValue = parts[0];
+	    if (parts.length > 1) {
+	        newValue += "." + parts.slice(1).join("");
+	    }
+	    return newValue;
+	};
+
 	var SampleObservationForm = function (_Component) {
 	    _inherits(SampleObservationForm, _Component);
 
@@ -41379,6 +41375,7 @@
 	        _this.handleBirthdayChange = _this.handleBirthdayChange.bind(_this);
 	        _this.handleGenderChange = _this.handleGenderChange.bind(_this);
 	        _this.getFormValidationState = _this.getFormValidationState.bind(_this);
+	        _this.getValueValidationStateName = _this.getValueValidationStateName.bind(_this);
 	        _this.onFormSubmit = _this.onFormSubmit.bind(_this);
 	        _this.submit = _this.submit.bind(_this);
 	        _this.state = {
@@ -41394,25 +41391,26 @@
 	    _createClass(SampleObservationForm, [{
 	        key: 'getFormValidationState',
 	        value: function getFormValidationState() {
-	            return this.state.birthday && this.state.value && this.state.birthday < this.state.timestamp;
+	            return this.state.birthday && this.state.timestamp && this.getValueValidationState() && this.state.birthday < this.state.timestamp;
 	        }
 	    }, {
 	        key: 'handleValueChange',
 	        value: function handleValueChange(event) {
-	            this.setState({ value: parseFloat(event.target.value) });
+	            var newValue = clearDecimalInput(event.target.value);
+	            this.setState({ value: newValue });
 	        }
 	    }, {
 	        key: 'getValueValidationState',
 	        value: function getValueValidationState() {
-	            if (this.state.value !== '' && !isNaN(this.state.value)) {
-	                if (this.state.value > 0) {
-	                    return 'success';
-	                } else {
-	                    return 'error';
-	                }
-	            } else {
-	                return 'error';
+	            return this.state.value !== '' && !isNaN(this.state.value) && this.state.value > 0;
+	        }
+	    }, {
+	        key: 'getValueValidationStateName',
+	        value: function getValueValidationStateName() {
+	            if (this.getValueValidationState()) {
+	                return 'success';
 	            }
+	            return 'error';
 	        }
 	    }, {
 	        key: 'handleTimestampChange',
@@ -41440,6 +41438,7 @@
 	    }, {
 	        key: 'submit',
 	        value: function submit() {
+
 	            this.props.submitAction(this.state);
 	        }
 	    }, {
@@ -41453,12 +41452,12 @@
 	                    { controlId: 'formControlsSelect' },
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
-	                        { componentClass: _reactBootstrap.ControlLabel, sm: 3 },
+	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
 	                        'Gender'
 	                    ),
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
-	                        { sm: 9 },
+	                        { xs: 8 },
 	                        _react2.default.createElement(
 	                            _reactBootstrap.FormControl,
 	                            { className: 'min-width-95p',
@@ -41483,12 +41482,12 @@
 	                    { controlId: 'birthdayControl' },
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
-	                        { componentClass: _reactBootstrap.ControlLabel, sm: 3 },
+	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
 	                        'Birthday'
 	                    ),
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
-	                        { sm: 9 },
+	                        { xs: 8 },
 	                        _react2.default.createElement(_reactBootstrap.FormControl, { className: 'min-width-95p',
 	                            onChange: this.handleBirthdayChange,
 	                            value: this.state.birthday,
@@ -41500,12 +41499,12 @@
 	                    { controlId: 'timestampControl' },
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
-	                        { componentClass: _reactBootstrap.ControlLabel, sm: 3 },
+	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
 	                        'Timestamp'
 	                    ),
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
-	                        { sm: 9 },
+	                        { xs: 8 },
 	                        _react2.default.createElement(_reactBootstrap.FormControl, { className: 'min-width-95p',
 	                            value: this.state.timestamp,
 	                            onChange: this.handleTimestampChange,
@@ -41517,12 +41516,12 @@
 	                    { controlId: 'formControlsSelect' },
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
-	                        { componentClass: _reactBootstrap.ControlLabel, sm: 3 },
+	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
 	                        'Parameter'
 	                    ),
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
-	                        { sm: 9 },
+	                        { xs: 8 },
 	                        _react2.default.createElement(
 	                            _reactBootstrap.FormControl,
 	                            { className: 'min-width-95p',
@@ -41542,23 +41541,20 @@
 	                ),
 	                _react2.default.createElement(
 	                    _reactBootstrap.FormGroup,
-	                    { validationState: this.getValueValidationState(),
+	                    { validationState: this.getValueValidationStateName(),
 	                        controlId: 'valueControl' },
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
-	                        { componentClass: _reactBootstrap.ControlLabel, sm: 3 },
+	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
 	                        'Value'
 	                    ),
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
-	                        { sm: 9 },
+	                        { xs: 8 },
 	                        _react2.default.createElement(_reactBootstrap.FormControl, { value: this.state.value,
-	                            onChange: this.handleValueChange,
-	                            pattern: '[0-9]*',
-	                            inputMode: 'numeric',
-	                            step: '0.01',
-	                            min: '0',
-	                            type: 'number' })
+	                            autoCorrect: 'off',
+	                            pattern: '[0-9.]*',
+	                            onChange: this.handleValueChange })
 	                    )
 	                ),
 	                _react2.default.createElement(
@@ -41566,14 +41562,20 @@
 	                    null,
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
-	                        { smOffset: 3, sm: 9 },
+	                        { xs: 12 },
 	                        _react2.default.createElement(
-	                            _reactBootstrap.Button,
-	                            { type: 'button',
-	                                onClick: this.submit,
-	                                disabled: !this.getFormValidationState(),
-	                                ref: 'submitButton' },
-	                            'Check'
+	                            _reactBootstrap.ButtonGroup,
+	                            { vertical: true, block: true },
+	                            _react2.default.createElement(
+	                                _reactBootstrap.Button,
+	                                { type: 'button',
+	                                    bsStyle: 'success',
+	                                    bsSize: 'large',
+	                                    onClick: this.submit,
+	                                    disabled: !this.getFormValidationState(),
+	                                    ref: 'submitButton' },
+	                                'Check'
+	                            )
 	                        )
 	                    )
 	                )
@@ -41613,13 +41615,80 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _reactDom = __webpack_require__(34);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
 	var _reactBootstrap = __webpack_require__(179);
 
-	var _list = __webpack_require__(437);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var AlertCategory = function (_Component) {
+	    _inherits(AlertCategory, _Component);
+
+	    function AlertCategory() {
+	        _classCallCheck(this, AlertCategory);
+
+	        return _possibleConstructorReturn(this, (AlertCategory.__proto__ || Object.getPrototypeOf(AlertCategory)).apply(this, arguments));
+	    }
+
+	    _createClass(AlertCategory, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var a = _reactDom2.default.findDOMNode(this.refs.alert);
+	            console.log(a);
+	            a.focus();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                _reactBootstrap.Alert,
+	                { tabIndex: '0', ref: 'alert', bsStyle: 'success' },
+	                'This is ',
+	                _react2.default.createElement(
+	                    'strong',
+	                    null,
+	                    this.props.category
+	                )
+	            );
+	        }
+	    }]);
+
+	    return AlertCategory;
+	}(_react.Component);
+
+	exports.default = AlertCategory;
+
+/***/ },
+/* 437 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactBootstrap = __webpack_require__(179);
+
+	var _list = __webpack_require__(438);
 
 	var _list2 = _interopRequireDefault(_list);
 
-	var _add = __webpack_require__(446);
+	var _add = __webpack_require__(447);
 
 	var _add2 = _interopRequireDefault(_add);
 
@@ -41658,7 +41727,7 @@
 	exports.default = Dashboard;
 
 /***/ },
-/* 437 */
+/* 438 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41669,9 +41738,9 @@
 	var ListGroupItem = ReactBootstrap.ListGroupItem;
 
 	var Actions = __webpack_require__(173);
-	var KidsStore = __webpack_require__(438);
+	var KidsStore = __webpack_require__(439);
 
-	var KidDetail = __webpack_require__(439);
+	var KidDetail = __webpack_require__(440);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41707,7 +41776,7 @@
 	});
 
 /***/ },
-/* 438 */
+/* 439 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41799,7 +41868,7 @@
 	});
 
 /***/ },
-/* 439 */
+/* 440 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41814,11 +41883,11 @@
 	var Button = ReactBootstrap.Button;
 
 	var Actions = __webpack_require__(173);
-	var KidsStore = __webpack_require__(438);
+	var KidsStore = __webpack_require__(439);
 	var ObservationsStore = __webpack_require__(434);
-	var AddObservation = __webpack_require__(440);
-	var Modal = __webpack_require__(443);
-	var KidForm = __webpack_require__(444);
+	var AddObservation = __webpack_require__(441);
+	var Modal = __webpack_require__(444);
+	var KidForm = __webpack_require__(445);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -41993,7 +42062,7 @@
 	});
 
 /***/ },
-/* 440 */
+/* 441 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42004,8 +42073,8 @@
 	var Button = ReactBootstrap.Button;
 
 	var Actions = __webpack_require__(173);
-	var ObservationForm = __webpack_require__(441);
-	var Modal = __webpack_require__(443);
+	var ObservationForm = __webpack_require__(442);
+	var Modal = __webpack_require__(444);
 	var ObservationStore = __webpack_require__(434);
 
 	module.exports = React.createClass({
@@ -42043,7 +42112,7 @@
 	});
 
 /***/ },
-/* 441 */
+/* 442 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42057,7 +42126,7 @@
 	var Button = ReactBootstrap.Button;
 	var ControlLabel = ReactBootstrap.ControlLabel;
 
-	var RegularInput = __webpack_require__(442);
+	var RegularInput = __webpack_require__(443);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -42147,7 +42216,7 @@
 	});
 
 /***/ },
-/* 442 */
+/* 443 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42193,7 +42262,7 @@
 	exports.default = Input;
 
 /***/ },
-/* 443 */
+/* 444 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42256,7 +42325,7 @@
 	});
 
 /***/ },
-/* 444 */
+/* 445 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42268,8 +42337,8 @@
 	var FormGroup = ReactBootstrap.FormGroup;
 	var Button = ReactBootstrap.Button;
 
-	var RegularInput = __webpack_require__(442);
-	var ChoicesInput = __webpack_require__(445);
+	var RegularInput = __webpack_require__(443);
+	var ChoicesInput = __webpack_require__(446);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -42327,7 +42396,7 @@
 	});
 
 /***/ },
-/* 445 */
+/* 446 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42393,7 +42462,7 @@
 	});
 
 /***/ },
-/* 446 */
+/* 447 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42404,9 +42473,9 @@
 	var Button = ReactBootstrap.Button;
 
 	var Actions = __webpack_require__(173);
-	var KidsStore = __webpack_require__(438);
-	var Modal = __webpack_require__(443);
-	var KidForm = __webpack_require__(444);
+	var KidsStore = __webpack_require__(439);
+	var Modal = __webpack_require__(444);
+	var KidForm = __webpack_require__(445);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -42445,14 +42514,14 @@
 	});
 
 /***/ },
-/* 447 */
+/* 448 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var React = __webpack_require__(1);
 	var AuthStore = __webpack_require__(175);
-	var KidsStore = __webpack_require__(438);
+	var KidsStore = __webpack_require__(439);
 	var ObservationsStore = __webpack_require__(434);
 	var Reflux = __webpack_require__(174);
 

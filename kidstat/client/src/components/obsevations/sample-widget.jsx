@@ -5,6 +5,7 @@ import Actions from '../../actions.jsx';
 import ObservationStore from '../../stores/observations-store.jsx';
 
 import SampleObservationForm from './sample-form.jsx';
+import AlertCategory from './category-alert.jsx';
 
 
 export default class SampleObservationWidget extends Component {
@@ -28,12 +29,6 @@ export default class SampleObservationWidget extends Component {
         }
     }
 
-    renderCategory() {
-        return <Alert bsStyle="success">
-            This is <strong>{this.state.category}</strong>
-        </Alert>
-    }
-
     renderErrors() {
         return Object.keys(this.state.errors).map(function (field) {
             return this.state.errors[field].map(function (error) {
@@ -51,15 +46,13 @@ export default class SampleObservationWidget extends Component {
 
     render() {
         return <div>
-            <h2>Try Now!</h2>
-            <p>Some message that should explain form purpose</p>
-            <Col xs={8}>
+            <h2>Try Now.</h2>
+            <p>Check category right now:</p>
+            <Col xs={12}>
                 {this.state.errors ? this.renderErrors() : ''}
                 <SampleObservationForm
                     submitAction={this.submitObservationSample}/>
-            </Col>
-            <Col xs={4}>
-                {this.state.category ? this.renderCategory() : ''}
+                {this.state.category ? <AlertCategory category={this.state.category}/> : ''}
             </Col>
         </div>
     }

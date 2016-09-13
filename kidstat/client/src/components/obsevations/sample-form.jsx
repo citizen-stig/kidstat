@@ -4,10 +4,20 @@ import {
     Col,
     FormGroup,
     FormControl,
+    ButtonGroup,
     Button,
     ControlLabel
 } from 'react-bootstrap';
 
+
+var clearDecimalInput = function(value){
+    var parts = value.replace(/[^0-9.,]/g,'').replace(/,/g, '.').split('.');
+    var newValue = parts[0];
+    if (parts.length > 1){
+        newValue +=  "." + parts.slice(1).join("");
+    }
+    return newValue;
+};
 
 export default class SampleObservationForm extends Component {
     constructor() {
@@ -18,6 +28,7 @@ export default class SampleObservationForm extends Component {
         this.handleBirthdayChange = this.handleBirthdayChange.bind(this);
         this.handleGenderChange = this.handleGenderChange.bind(this);
         this.getFormValidationState = this.getFormValidationState.bind(this);
+        this.getValueValidationStateName = this.getValueValidationStateName.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.submit = this.submit.bind(this);
         this.state = {
@@ -30,23 +41,23 @@ export default class SampleObservationForm extends Component {
     }
 
     getFormValidationState() {
-        return (this.state.birthday && this.state.value && (this.state.birthday < this.state.timestamp))
+        return (this.state.birthday && this.state.timestamp && this.getValueValidationState() && (this.state.birthday < this.state.timestamp))
     }
 
     handleValueChange(event) {
-        this.setState({value: parseFloat(event.target.value)});
+        var newValue = clearDecimalInput(event.target.value);
+        this.setState({value: newValue});
     }
 
-    getValueValidationState() {
-        if (this.state.value !== '' && !isNaN(this.state.value)) {
-            if (this.state.value > 0) {
-                return 'success';
-            } else {
-                return 'error';
-            }
-        } else {
-            return 'error'
+    getValueValidationState(){
+        return this.state.value !== '' && !isNaN(this.state.value) && this.state.value > 0
+    }
+
+    getValueValidationStateName() {
+        if (this.getValueValidationState()){
+            return 'success';
         }
+        return 'error';
     }
 
     handleTimestampChange(event) {
@@ -69,6 +80,7 @@ export default class SampleObservationForm extends Component {
     }
 
     submit() {
+
         this.props.submitAction(this.state);
     }
 
@@ -76,10 +88,10 @@ export default class SampleObservationForm extends Component {
         return (
             <Form horizontal onSubmit={this.onFormSubmit}>
                 <FormGroup controlId="formControlsSelect">
-                    <Col componentClass={ControlLabel} sm={3}>
+                    <Col componentClass={ControlLabel} xs={4}>
                         Gender
                     </Col>
-                    <Col sm={9}>
+                    <Col xs={8}>
                         <FormControl className="min-width-95p"
                                      componentClass="select"
                                      value={this.state.gender}
@@ -90,10 +102,10 @@ export default class SampleObservationForm extends Component {
                     </Col>
                 </FormGroup>
                 <FormGroup controlId="birthdayControl">
-                    <Col componentClass={ControlLabel} sm={3}>
+                    <Col componentClass={ControlLabel} xs={4}>
                         Birthday
                     </Col>
-                    <Col sm={9}>
+                    <Col xs={8}>
                         <FormControl className="min-width-95p"
                                      onChange={this.handleBirthdayChange}
                                      value={this.state.birthday}
@@ -101,10 +113,10 @@ export default class SampleObservationForm extends Component {
                     </Col>
                 </FormGroup>
                 <FormGroup controlId="timestampControl">
-                    <Col componentClass={ControlLabel} sm={3}>
+                    <Col componentClass={ControlLabel} xs={4}>
                         Timestamp
                     </Col>
-                    <Col sm={9}>
+                    <Col xs={8}>
                         <FormControl className="min-width-95p"
                                      value={this.state.timestamp}
                                      onChange={this.handleTimestampChange}
@@ -112,10 +124,10 @@ export default class SampleObservationForm extends Component {
                     </Col>
                 </FormGroup>
                 <FormGroup controlId="formControlsSelect">
-                    <Col componentClass={ControlLabel} sm={3}>
+                    <Col componentClass={ControlLabel} xs={4}>
                         Parameter
                     </Col>
-                    <Col sm={9}>
+                    <Col xs={8}>
                         <FormControl className="min-width-95p"
                                      componentClass="select">
                             <option value="height">Height</option>
@@ -123,27 +135,28 @@ export default class SampleObservationForm extends Component {
                         </FormControl>
                     </Col>
                 </FormGroup>
-                <FormGroup validationState={this.getValueValidationState()}
+                <FormGroup validationState={this.getValueValidationStateName()}
                            controlId="valueControl">
-                    <Col componentClass={ControlLabel} sm={3}>
+                    <Col componentClass={ControlLabel} xs={4}>
                         Value
                     </Col>
-                    <Col sm={9}>
+                    <Col xs={8}>
                         <FormControl value={this.state.value}
-                                     onChange={this.handleValueChange}
-                                     pattern="[0-9]*"
-                                     inputMode="numeric"
-                                     step="0.01"
-                                     min="0"
-                                     type="number"/>
+                                     autoCorrect="off"
+                                     pattern="[0-9.]*"
+                                     onChange={this.handleValueChange}/>
                     </Col>
                 </FormGroup>
                 <FormGroup>
-                    <Col smOffset={3} sm={9}>
-                        <Button type="button"
-                                onClick={this.submit}
-                                disabled={!this.getFormValidationState()}
-                                ref="submitButton">Check</Button>
+                    <Col xs={12}>
+                        <ButtonGroup vertical block={true}>
+                            <Button type="button"
+                                    bsStyle="success"
+                                    bsSize="large"
+                                    onClick={this.submit}
+                                    disabled={!this.getFormValidationState()}
+                                    ref="submitButton">Check</Button>
+                        </ButtonGroup>
                     </Col>
                 </FormGroup>
             </Form>

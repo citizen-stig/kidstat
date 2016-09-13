@@ -71,6 +71,7 @@ module.exports = Reflux.createStore({
                 this.sampleCategory = response['category'];
                 this.triggerObservationSampleReceived();
             }.bind(this)).catch(function(error){
+                console.log(error);
                 error.response.json().then(function(data){
                     this.trigger(this.events.sampleCategoryError, data['errors'])
                 }.bind(this))

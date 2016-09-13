@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="author" content="Nikolay Golub">
     <meta name="description" content="Track how your kids grow">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
@@ -17,6 +17,7 @@
 </head>
 <body>
 <div class="main-container"></div>
+
 {%- if config.DEBUG -%}
     <script src="//npmcdn.com/react@15.3.1/dist/react.js"></script>
     <script src="//npmcdn.com/react-dom@15.3.1/dist/react-dom.js"></script>

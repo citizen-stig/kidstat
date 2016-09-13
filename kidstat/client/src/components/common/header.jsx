@@ -30,7 +30,7 @@ module.exports = React.createClass({
                     </NavItem>
                 </Nav>
         }
-        return <Navbar>
+        return <Navbar className={!this.state.authenticated ? "hidden-xs" : ""}>
                     <Navbar.Header>
                         <Navbar.Brand>
                             <a href="#">Kidstat</a>

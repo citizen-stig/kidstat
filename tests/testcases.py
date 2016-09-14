@@ -27,7 +27,7 @@ class BaseTestCase(unittest.TestCase):
 
     def setUp(self):
         self.client = self.app.test_client(use_cookies=True)
-        db.connection.drop_database(self.app.config['MONGODB_SETTINGS']['db'])
+        db.connection.client.drop_database(self.app.config['MONGODB_SETTINGS']['db'])
 
 
 def is_broken_pipe_error():

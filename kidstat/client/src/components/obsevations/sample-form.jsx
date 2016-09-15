@@ -10,16 +10,28 @@ import {
 } from 'react-bootstrap';
 
 
-var clearDecimalInput = function(value){
-    var parts = value.replace(/[^0-9.,]/g,'').replace(/,/g, '.').split('.');
+import {connect} from 'react-redux'
+
+import {getSampleObservation} from '../../actions.jsx'
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+    return {
+        submitAction: function (observation) {
+            dispatch(getSampleObservation(observation))
+        }
+    }
+};
+
+var clearDecimalInput = function (value) {
+    var parts = value.replace(/[^0-9.,]/g, '').replace(/,/g, '.').split('.');
     var newValue = parts[0];
-    if (parts.length > 1){
-        newValue +=  "." + parts.slice(1).join("");
+    if (parts.length > 1) {
+        newValue += "." + parts.slice(1).join("");
     }
     return newValue;
 };
 
-export default class SampleObservationForm extends Component {
+class SampleObservationForm extends Component {
     constructor() {
         super();
         this.handleValueChange = this.handleValueChange.bind(this);
@@ -49,12 +61,12 @@ export default class SampleObservationForm extends Component {
         this.setState({value: newValue});
     }
 
-    getValueValidationState(){
+    getValueValidationState() {
         return this.state.value !== '' && !isNaN(this.state.value) && this.state.value > 0
     }
 
     getValueValidationStateName() {
-        if (this.getValueValidationState()){
+        if (this.getValueValidationState()) {
             return 'success';
         }
         return 'error';
@@ -80,10 +92,16 @@ export default class SampleObservationForm extends Component {
     }
 
     submit() {
-
         this.props.submitAction(this.state);
     }
-
+    renderParameterChoices(){
+        return this.props.parameters.map(function(parameter){
+            return <option key={parameter.id}
+                           value={parameter.name}>
+                {parameter.name}, {parameter.unit}
+            </option>
+        })
+    }
     render() {
         return (
             <Form horizontal onSubmit={this.onFormSubmit}>
@@ -130,8 +148,7 @@ export default class SampleObservationForm extends Component {
                     <Col xs={8}>
                         <FormControl className="min-width-95p"
                                      componentClass="select">
-                            <option value="height">Height</option>
-                            <option value="weight">Weight</option>
+                            {this.renderParameterChoices()}
                         </FormControl>
                     </Col>
                 </FormGroup>
@@ -165,11 +182,26 @@ export default class SampleObservationForm extends Component {
 }
 
 SampleObservationForm.propTypes = {
-    submitAction: PropTypes.func
+    submitAction: PropTypes.func,
+    parameters: PropTypes.array
 };
 
 SampleObservationForm.defaultProps = {
-    submitAction: function (observation) {
-        console.log(observation)
-    }
+    parameters: [
+        {
+            'id': 1,
+            'name': 'weight',
+            'unit': 'kg',
+            'description': 'Sample description'
+        },
+        {
+            'id': 2,
+            'name': 'height',
+            'unit': 'cm',
+            'description': 'This is looong'
+        }
+    ]
 };
+
+SampleObservationForm = connect(null, mapDispatchToProps)(SampleObservationForm);
+export default SampleObservationForm

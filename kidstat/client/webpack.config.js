@@ -22,7 +22,7 @@ if (PROD) {
 }
 
 var config = {
-    entry: APP_DIR + '/app.js',
+    entry: APP_DIR + '/app.jsx',
     externals: {
         "reflux": "Reflux"
     },

@@ -1,12 +1,7 @@
 import React, {Component, PropTypes} from 'react';
-import {Grid, Row, Col, Tabs, Tab} from 'react-bootstrap';
-// import FacebookLogin from 'react-facebook-login';
-
-// import Actions from '../actions.jsx';
+import {Grid, Row, Col} from 'react-bootstrap';
 
 import SampleObservation from './obsevations/sample-widget.jsx'
-// import LoginForm from './auth/login-form.jsx';
-// import SignupForm from './auth/signup-form.jsx';
 
 export default class KidStat extends Component {
     render() {
@@ -18,6 +13,5 @@ export default class KidStat extends Component {
                 </Col>
             </Row>
         </Grid>
-
     }
 }

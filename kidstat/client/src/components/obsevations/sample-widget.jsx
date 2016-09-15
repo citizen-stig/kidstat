@@ -1,32 +1,16 @@
 import React, {Component, PropTypes} from 'react';
 import {Alert, Col} from 'react-bootstrap';
-
-import Actions from '../../actions.jsx';
-import ObservationStore from '../../stores/observations-store.jsx';
-
 import SampleObservationForm from './sample-form.jsx';
-import AlertCategory from './category-alert.jsx';
+import CategoryAlert from './category-alert.jsx';
 
 
 export default class SampleObservationWidget extends Component {
 
     constructor() {
         super();
-        this.submitObservationSample = this.submitObservationSample.bind(this);
-        this.handleObservationStore = this.handleObservationStore.bind(this);
+        // this.submitObservationSample = this.submitObservationSample.bind(this);
+        // this.handleObservationStore = this.handleObservationStore.bind(this);
         this.state = {category: null, errors: null}
-    }
-
-    componentDidMount() {
-        ObservationStore.listen(this.handleObservationStore)
-    }
-
-    handleObservationStore(event, data) {
-        if (event == ObservationStore.events.sampleCategoryReceived) {
-            this.setState({category: data})
-        } else if (event == ObservationStore.events.sampleCategoryError) {
-            this.setState({errors: data})
-        }
     }
 
     renderErrors() {
@@ -39,10 +23,13 @@ export default class SampleObservationWidget extends Component {
         }.bind(this))
     }
 
-    submitObservationSample(observation) {
-        this.setState({errors: null});
-        Actions.requestSampleObservation(observation);
-    }
+    // submitObservationSample(observation) {
+    //     this.setState({errors: null});
+    //     console.log('submit observation somewhere');
+    //     console.log(observation);
+    //     getSampleObservation(observation);
+    //     Actions.requestSampleObservation(observation);
+    // }
 
     render() {
         return <div>
@@ -50,9 +37,8 @@ export default class SampleObservationWidget extends Component {
             <p>Check category right now:</p>
             <Col xs={12}>
                 {this.state.errors ? this.renderErrors() : ''}
-                <SampleObservationForm
-                    submitAction={this.submitObservationSample}/>
-                {this.state.category ? <AlertCategory category={this.state.category}/> : ''}
+                <SampleObservationForm/>
+                <CategoryAlert/>
             </Col>
         </div>
     }

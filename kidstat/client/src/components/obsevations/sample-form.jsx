@@ -18,6 +18,9 @@ import {
     fetchParameters
 } from '../../actions.jsx'
 
+import ErrorsListContainer from '../../containers/observations/sample-observations-errors.jsx';
+
+
 const mapStateToProps = (state, ownProps) => {
     return {
         parameters: state.parameters.data,
@@ -149,6 +152,7 @@ class SampleObservationForm extends Component {
     render() {
         return (
             <Form horizontal onSubmit={this.onFormSubmit}>
+                <ErrorsListContainer/>
                 <FormGroup controlId="formControlsSelect" className="required">
                     <Col componentClass={ControlLabel} xs={4}>
                         Gender

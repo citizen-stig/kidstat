@@ -23741,7 +23741,7 @@
 
 	var _publicIndex2 = _interopRequireDefault(_publicIndex);
 
-	var _loader = __webpack_require__(462);
+	var _loader = __webpack_require__(464);
 
 	var _loader2 = _interopRequireDefault(_loader);
 
@@ -42643,90 +42643,40 @@
 	    value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(3);
-
-	var _react2 = _interopRequireDefault(_react);
-
 	var _reactBootstrap = __webpack_require__(205);
 
 	var _sampleForm = __webpack_require__(459);
 
 	var _sampleForm2 = _interopRequireDefault(_sampleForm);
 
-	var _categoryAlert = __webpack_require__(460);
+	var _categoryAlert = __webpack_require__(462);
 
 	var _categoryAlert2 = _interopRequireDefault(_categoryAlert);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var SampleObservationWidget = function (_Component) {
-	    _inherits(SampleObservationWidget, _Component);
-
-	    function SampleObservationWidget() {
-	        _classCallCheck(this, SampleObservationWidget);
-
-	        var _this = _possibleConstructorReturn(this, (SampleObservationWidget.__proto__ || Object.getPrototypeOf(SampleObservationWidget)).call(this));
-
-	        _this.state = { errors: null };
-	        return _this;
-	    }
-
-	    _createClass(SampleObservationWidget, [{
-	        key: 'renderErrors',
-	        value: function renderErrors() {
-	            return Object.keys(this.state.errors).map(function (field) {
-	                return this.state.errors[field].map(function (error) {
-	                    return _react2.default.createElement(
-	                        _reactBootstrap.Alert,
-	                        { bsStyle: 'error' },
-	                        _react2.default.createElement(
-	                            'strong',
-	                            null,
-	                            field
-	                        ),
-	                        ': ',
-	                        error
-	                    );
-	                }.bind(this));
-	            }.bind(this));
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
-	                    'h2',
-	                    null,
-	                    'Try Now.'
-	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'Check category right now:'
-	                ),
-	                _react2.default.createElement(
-	                    _reactBootstrap.Col,
-	                    { xs: 12 },
-	                    this.state.errors ? this.renderErrors() : '',
-	                    _react2.default.createElement(_sampleForm2.default, null),
-	                    _react2.default.createElement(_categoryAlert2.default, null)
-	                )
-	            );
-	        }
-	    }]);
-
-	    return SampleObservationWidget;
-	}(_react.Component);
+	var SampleObservationWidget = function SampleObservationWidget() {
+	    return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	            'h2',
+	            null,
+	            'Try Now.'
+	        ),
+	        React.createElement(
+	            'p',
+	            null,
+	            'Check category right now:'
+	        ),
+	        React.createElement(
+	            _reactBootstrap.Col,
+	            { xs: 12 },
+	            React.createElement(_sampleForm2.default, null),
+	            React.createElement(_categoryAlert2.default, null)
+	        )
+	    );
+	};
 
 	exports.default = SampleObservationWidget;
 
@@ -42751,6 +42701,10 @@
 	var _reactRedux = __webpack_require__(174);
 
 	var _actions = __webpack_require__(201);
+
+	var _sampleObservationsErrors = __webpack_require__(460);
+
+	var _sampleObservationsErrors2 = _interopRequireDefault(_sampleObservationsErrors);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -42917,6 +42871,7 @@
 	            return _react2.default.createElement(
 	                _reactBootstrap.Form,
 	                { horizontal: true, onSubmit: this.onFormSubmit },
+	                _react2.default.createElement(_sampleObservationsErrors2.default, null),
 	                _react2.default.createElement(
 	                    _reactBootstrap.FormGroup,
 	                    { controlId: 'formControlsSelect', className: 'required' },
@@ -43079,7 +43034,70 @@
 
 	var _reactRedux = __webpack_require__(174);
 
-	var _categoryAlert = __webpack_require__(461);
+	var _errorsList = __webpack_require__(461);
+
+	var _errorsList2 = _interopRequireDefault(_errorsList);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var mapStateToProps = function mapStateToProps(state) {
+	    return {
+	        messages: state.sampleObservation.errors
+	    };
+	};
+
+	var ErrorsListContainer = (0, _reactRedux.connect)(mapStateToProps)(_errorsList2.default);
+	exports.default = ErrorsListContainer;
+
+/***/ },
+/* 461 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _reactBootstrap = __webpack_require__(205);
+
+	var ErrorAlert = function ErrorAlert(_ref) {
+	    var message = _ref.message;
+
+	    return React.createElement(
+	        _reactBootstrap.Alert,
+	        { bsStyle: "danger" },
+	        message
+	    );
+	};
+
+	var ErrorsList = function ErrorsList(_ref2) {
+	    var messages = _ref2.messages;
+
+	    return React.createElement(
+	        "div",
+	        null,
+	        messages.map(function (message) {
+	            return React.createElement(ErrorAlert, { message: message });
+	        })
+	    );
+	};
+
+	exports.default = ErrorsList;
+
+/***/ },
+/* 462 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _reactRedux = __webpack_require__(174);
+
+	var _categoryAlert = __webpack_require__(463);
 
 	var _categoryAlert2 = _interopRequireDefault(_categoryAlert);
 
@@ -43105,7 +43123,7 @@
 	exports.default = CategoryAlertContainer;
 
 /***/ },
-/* 461 */
+/* 463 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43165,7 +43183,7 @@
 	exports.default = CategoryAlert;
 
 /***/ },
-/* 462 */
+/* 464 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

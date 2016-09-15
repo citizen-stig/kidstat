@@ -1,4 +1,4 @@
-from marshmallow import fields, validate, post_load, Schema, ValidationError
+from marshmallow import fields, validate, Schema, ValidationError
 from kidstat import models
 
 
@@ -23,10 +23,3 @@ class BaseObservationSchema(Schema):
     timestamp = fields.DateTime(required=True, format=DT_FORMAT)
     parameter = fields.String(required=True, validate=validate_parameter)
     value = fields.Float(required=True, validate=validate.Range(min=0))
-
-    # @post_load
-    # def annotate_tz_info(self, data):
-    #     timestamp = data['timestamp']
-    #     if timestamp.tzinfo is None:
-    #         data['timestamp'] = timestamp.replace(tzinfo=pytz.UTC)
-    #     return data

@@ -7,6 +7,7 @@ import {
     fetchParameters,
     requestCategoryForSampleObservation,
     receiveCategoryForSampleObservation,
+    fetchParameters,
     GET_PARAMETERS,
     GET_SAMPLE_OBSERVATION_CATEGORY
 } from '../src/actions.jsx';

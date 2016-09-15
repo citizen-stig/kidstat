@@ -23623,36 +23623,15 @@
 	}
 
 	function fetchParameters() {
-
-	    // Thunk middleware knows how to handle functions.
-	    // It passes the dispatch method as an argument to the function,
-	    // thus making it able to dispatch actions itself.
-
 	    return function (dispatch) {
 
-	        // First dispatch: the app state is updated to inform
-	        // that the API call is starting.
-
 	        dispatch(requestParameters());
-
-	        // The function called by the thunk middleware can return a value,
-	        // that is passed on as the return value of the dispatch method.
-
-	        // In this case, we return a promise to wait for.
-	        // This is not required by thunk middleware, but it is convenient for us.
 
 	        return fetch(rootUrl + 'parameters').then(function (response) {
 	            return response.json();
 	        }).then(function (json) {
-	            return (
-	                // We can dispatch many times!
-	                // Here, we update the app state with the results of the API call.
-	                dispatch(receiveParameters(json))
-	            );
+	            return dispatch(receiveParameters(json));
 	        });
-
-	        // In a real world app, you also want to
-	        // catch any error in the network call.
 	    };
 	}
 
@@ -43158,59 +43137,33 @@
 	    value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _reactRedux = __webpack_require__(174);
 
-	var _react = __webpack_require__(3);
+	var Loader = function Loader(_ref) {
+	    var active = _ref.active;
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	    var spinnerStyle = { 'fontSize': '20em' };
+	    return React.createElement(
+	        'div',
+	        { className: active ? '' : 'hidden', id: 'loading' },
+	        React.createElement('i', { id: 'spinner',
+	            className: 'fa fa-refresh fa-spin',
+	            style: spinnerStyle }),
+	        React.createElement(
+	            'span',
+	            { className: 'sr-only' },
+	            'Loading...'
+	        )
+	    );
+	};
 
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	var mapStateToProps = function mapStateToProps(state) {
+	    return {
+	        active: state.sampleObservation.isFetching || state.parameters.isFetching
+	    };
+	};
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Loader = function (_Component) {
-	    _inherits(Loader, _Component);
-
-	    function Loader() {
-	        _classCallCheck(this, Loader);
-
-	        var _this = _possibleConstructorReturn(this, (Loader.__proto__ || Object.getPrototypeOf(Loader)).call(this));
-
-	        _this.state = { active: false };
-	        return _this;
-	    }
-
-	    _createClass(Loader, [{
-	        key: 'show',
-	        value: function show() {
-	            this.setState({ active: true });
-	        }
-	    }, {
-	        key: 'hide',
-	        value: function hide() {
-	            this.setState({ active: false });
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var spinnerStyle = { 'fontSize': '20em' };
-	            return React.createElement(
-	                'div',
-	                { className: this.state.active ? '' : 'hidden', id: 'loading' },
-	                React.createElement('i', { id: 'spinner', className: 'fa fa-refresh fa-spin',
-	                    style: spinnerStyle }),
-	                React.createElement(
-	                    'span',
-	                    { className: 'sr-only' },
-	                    'Loading...'
-	                )
-	            );
-	        }
-	    }]);
-
-	    return Loader;
-	}(_react.Component);
-
+	Loader = (0, _reactRedux.connect)(mapStateToProps)(Loader);
 	exports.default = Loader;
 
 /***/ }

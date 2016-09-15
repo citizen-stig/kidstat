@@ -1,27 +1,22 @@
-import {Component} from 'react';
+import {connect} from 'react-redux'
 
 
-export default class Loader extends Component {
-
-    constructor() {
-        super();
-        this.state = {active: false}
-    }
-
-    show() {
-        this.setState({active: true})
-    }
-
-    hide() {
-        this.setState({active: false})
-    }
-
-    render() {
-        const spinnerStyle = {'fontSize': '20em'};
-        return <div className={this.state.active ? '' : 'hidden'} id="loading">
-            <i id="spinner" className="fa fa-refresh fa-spin"
+let Loader = ({active}) => {
+    const spinnerStyle = {'fontSize': '20em'};
+        return <div className={active ? '' : 'hidden'} id="loading">
+            <i id="spinner"
+               className="fa fa-refresh fa-spin"
                style={spinnerStyle}/>
             <span className="sr-only">Loading...</span>
         </div>
+};
+
+
+const mapStateToProps = (state) => {
+    return {
+        active: (state.sampleObservation.isFetching || state.parameters.isFetching )
     }
-}
+};
+
+Loader = connect(mapStateToProps)(Loader);
+export default Loader

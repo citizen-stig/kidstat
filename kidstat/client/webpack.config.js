@@ -22,7 +22,7 @@ if (PROD) {
 }
 
 var config = {
-    entry: APP_DIR + '/app.jsx',
+    entry: ['whatwg-fetch',APP_DIR + '/app.jsx'],
     externals: {
         "reflux": "Reflux"
     },

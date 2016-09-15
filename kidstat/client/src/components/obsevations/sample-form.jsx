@@ -12,7 +12,7 @@ import {
 
 import {connect} from 'react-redux'
 
-import {getSampleObservation, getParameters} from '../../actions.jsx'
+import {getSampleObservation, fetchParameters} from '../../actions.jsx'
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -26,7 +26,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             dispatch(getSampleObservation(observation))
         },
         getParameters: function () {
-            dispatch(getParameters())
+            dispatch(fetchParameters())
         }
     }
 };

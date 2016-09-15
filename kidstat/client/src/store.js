@@ -7,6 +7,7 @@ import sampleObservation from './reducers/sample-observation.js';
 // var defaultState = {
 //     'sampleObservation': {},
 //     'parameters': [],
+//     'isFetching': false,
 // };
 
 

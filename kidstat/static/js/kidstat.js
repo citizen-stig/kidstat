@@ -23531,8 +23531,12 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// var defaultState = {
-	//     'sampleObservation': {},
+	// var SomeState = {
+	//     'sampleObservation': {
+	//          'category': 'Average',
+	//          'isFetching: false,
+	//          errors:
+	//      },
 	//     'parameters': {
 	//          'isFetching': false
 	//          'data': []
@@ -23593,30 +23597,19 @@
 	    value: true
 	});
 	exports.GET_SAMPLE_OBSERVATION_CATEGORY = exports.GET_PARAMETERS = undefined;
-	exports.requestCategoryForSampleObservation = requestCategoryForSampleObservation;
-	exports.receiveCategoryForSampleObservation = receiveCategoryForSampleObservation;
 	exports.requestParameters = requestParameters;
 	exports.receiveParameters = receiveParameters;
 	exports.fetchParameters = fetchParameters;
+	exports.requestCategoryForSampleObservation = requestCategoryForSampleObservation;
+	exports.receiveCategoryForSampleObservation = receiveCategoryForSampleObservation;
+	exports.fetchCategoryForSampleObservation = fetchCategoryForSampleObservation;
 
 	__webpack_require__(1);
 
-	var GET_PARAMETERS = exports.GET_PARAMETERS = 'GET_PARAMETERS';
-	var GET_SAMPLE_OBSERVATION_CATEGORY = exports.GET_SAMPLE_OBSERVATION_CATEGORY = 'GET_SAMPLE_OBSERVATION_CATEGORY';
-
-	function requestCategoryForSampleObservation(observation) {
-	    return { type: GET_SAMPLE_OBSERVATION_CATEGORY, observation: observation };
-	}
-
-	function receiveCategoryForSampleObservation(json) {
-	    return {
-	        type: GET_SAMPLE_OBSERVATION_CATEGORY,
-	        status: 'success',
-	        data: json
-	    };
-	}
+	var rootUrl = '/api/v1/';
 
 	// Parameters
+	var GET_PARAMETERS = exports.GET_PARAMETERS = 'GET_PARAMETERS';
 	function requestParameters() {
 	    return { type: GET_PARAMETERS };
 	}
@@ -23628,8 +23621,6 @@
 	        response: json.data
 	    };
 	}
-
-	var rootUrl = '/api/v1/';
 
 	function fetchParameters() {
 
@@ -23665,6 +23656,42 @@
 	    };
 	}
 
+	// Sample Observations
+	var GET_SAMPLE_OBSERVATION_CATEGORY = exports.GET_SAMPLE_OBSERVATION_CATEGORY = 'GET_SAMPLE_OBSERVATION_CATEGORY';
+
+	function requestCategoryForSampleObservation(observation) {
+	    return { type: GET_SAMPLE_OBSERVATION_CATEGORY, observation: observation };
+	}
+
+	function receiveCategoryForSampleObservation(json) {
+	    return {
+	        type: GET_SAMPLE_OBSERVATION_CATEGORY,
+	        status: 'success',
+	        response: json
+	    };
+	}
+
+	function fetchCategoryForSampleObservation(observation) {
+
+	    return function (dispatch) {
+
+	        dispatch(requestCategoryForSampleObservation(observation));
+
+	        return fetch(rootUrl + 'try', {
+	            method: 'post',
+	            body: JSON.stringify(observation),
+	            headers: {
+	                'Accept': 'application/json',
+	                'Content-Type': 'application/json'
+	            }
+	        }).then(function (response) {
+	            return response.json();
+	        }).then(function (json) {
+	            return dispatch(receiveCategoryForSampleObservation(json));
+	        });
+	    };
+	}
+
 /***/ },
 /* 202 */
 /***/ function(module, exports, __webpack_require__) {
@@ -23678,20 +23705,36 @@
 
 	var _actions = __webpack_require__(201);
 
+	var initialState = {
+	    category: null,
+	    isFetching: false,
+	    errors: []
+	};
+
 	function sampleObservation() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
 	    var action = arguments[1];
 
 	    switch (action.type) {
 	        case _actions.GET_SAMPLE_OBSERVATION_CATEGORY:
-
-	            if (action.observation.value < 50) {
-	                return { category: 'Low' };
-	            } else if (action.observation.value >= 50 && action.observation.value < 100) {
-	                return { category: 'Average' };
-	            } else {
-	                return { category: 'High' };
+	            if (action.status === undefined) {
+	                // Request
+	                return {
+	                    category: state.category,
+	                    isFetching: true,
+	                    errors: []
+	                };
+	            } else if (action.status == 'success') {
+	                // Response Received
+	                return { category: action.response.category,
+	                    isFetching: false,
+	                    errors: [] };
 	            }
+	            // Error
+	            return {
+	                data: state.category,
+	                isFetching: false,
+	                errors: action.errors };
 	        default:
 	            return state;
 	    }
@@ -42748,7 +42791,7 @@
 	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
 	    return {
 	        submitAction: function submitAction(observation) {
-	            dispatch((0, _actions.requestCategoryForSampleObservation)(observation));
+	            dispatch((0, _actions.fetchCategoryForSampleObservation)(observation));
 	        },
 	        getParameters: function getParameters() {
 	            dispatch((0, _actions.fetchParameters)());

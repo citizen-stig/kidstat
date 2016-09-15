@@ -4,8 +4,12 @@ import parameters from './reducers/parameters.js';
 import sampleObservation from './reducers/sample-observation.js';
 
 
-// var defaultState = {
-//     'sampleObservation': {},
+// var SomeState = {
+//     'sampleObservation': {
+//          'category': 'Average',
+//          'isFetching: false,
+//          errors:
+//      },
 //     'parameters': {
 //          'isFetching': false
 //          'data': []

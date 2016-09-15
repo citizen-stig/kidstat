@@ -23173,7 +23173,7 @@
 
 	var _publicIndex2 = _interopRequireDefault(_publicIndex);
 
-	var _loader = __webpack_require__(458);
+	var _loader = __webpack_require__(459);
 
 	var _loader2 = _interopRequireDefault(_loader);
 
@@ -23189,7 +23189,7 @@
 	            { className: 'container' },
 	            _react2.default.createElement(_publicIndex2.default, null)
 	        ),
-	        _react2.default.createElement(_loader2.default, { ref: 'loader' })
+	        _react2.default.createElement(_loader2.default, null)
 	    );
 	};
 
@@ -42030,8 +42030,6 @@
 	    value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -42044,49 +42042,28 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var PublicIndex = function PublicIndex() {
+	    return _react2.default.createElement(
+	        _reactBootstrap.Grid,
+	        null,
+	        _react2.default.createElement(
+	            _reactBootstrap.Row,
+	            { className: 'show-grid' },
+	            _react2.default.createElement(
+	                'h1',
+	                { className: 'text-center' },
+	                'Welcome to the KidStat!'
+	            ),
+	            _react2.default.createElement(
+	                _reactBootstrap.Col,
+	                { xs: 12, md: 7 },
+	                _react2.default.createElement(_sampleWidget2.default, null)
+	            )
+	        )
+	    );
+	};
 
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var KidStat = function (_Component) {
-	    _inherits(KidStat, _Component);
-
-	    function KidStat() {
-	        _classCallCheck(this, KidStat);
-
-	        return _possibleConstructorReturn(this, (KidStat.__proto__ || Object.getPrototypeOf(KidStat)).apply(this, arguments));
-	    }
-
-	    _createClass(KidStat, [{
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                _reactBootstrap.Grid,
-	                null,
-	                _react2.default.createElement(
-	                    _reactBootstrap.Row,
-	                    { className: 'show-grid' },
-	                    _react2.default.createElement(
-	                        'h1',
-	                        { className: 'text-center' },
-	                        'Welcome to the KidStat!'
-	                    ),
-	                    _react2.default.createElement(
-	                        _reactBootstrap.Col,
-	                        { xs: 12, md: 7 },
-	                        _react2.default.createElement(_sampleWidget2.default, null)
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-
-	    return KidStat;
-	}(_react.Component);
-
-	exports.default = KidStat;
+	exports.default = PublicIndex;
 
 /***/ },
 /* 455 */
@@ -42128,11 +42105,9 @@
 	    function SampleObservationWidget() {
 	        _classCallCheck(this, SampleObservationWidget);
 
-	        // this.submitObservationSample = this.submitObservationSample.bind(this);
-	        // this.handleObservationStore = this.handleObservationStore.bind(this);
 	        var _this = _possibleConstructorReturn(this, (SampleObservationWidget.__proto__ || Object.getPrototypeOf(SampleObservationWidget)).call(this));
 
-	        _this.state = { category: null, errors: null };
+	        _this.state = { errors: null };
 	        return _this;
 	    }
 
@@ -42155,15 +42130,6 @@
 	                }.bind(this));
 	            }.bind(this));
 	        }
-
-	        // submitObservationSample(observation) {
-	        //     this.setState({errors: null});
-	        //     console.log('submit observation somewhere');
-	        //     console.log(observation);
-	        //     getSampleObservation(observation);
-	        //     Actions.requestSampleObservation(observation);
-	        // }
-
 	    }, {
 	        key: 'render',
 	        value: function render() {
@@ -42226,10 +42192,19 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	    return {
+	        parameters: state.parameters
+	    };
+	};
+
 	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
 	    return {
 	        submitAction: function submitAction(observation) {
 	            dispatch((0, _actions.getSampleObservation)(observation));
+	        },
+	        getParameters: function getParameters() {
+	            dispatch((0, _actions.getParameters)());
 	        }
 	    };
 	};
@@ -42271,6 +42246,11 @@
 	    }
 
 	    _createClass(SampleObservationForm, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.props.getParameters();
+	        }
+	    }, {
 	        key: 'getFormValidationState',
 	        value: function getFormValidationState() {
 	            return this.state.birthday && this.state.timestamp && this.getValueValidationState() && this.state.birthday < this.state.timestamp;
@@ -42477,21 +42457,24 @@
 	    parameters: _react.PropTypes.array
 	};
 
-	SampleObservationForm.defaultProps = {
-	    parameters: [{
-	        'id': 1,
-	        'name': 'weight',
-	        'unit': 'kg',
-	        'description': 'Sample description'
-	    }, {
-	        'id': 2,
-	        'name': 'height',
-	        'unit': 'cm',
-	        'description': 'This is looong'
-	    }]
-	};
+	// SampleObservationForm.defaultProps = {
+	//     parameters: [
+	//         {
+	//             'id': 1,
+	//             'name': 'weight',
+	//             'unit': 'kg',
+	//             'description': 'Sample description'
+	//         },
+	//         {
+	//             'id': 2,
+	//             'name': 'height',
+	//             'unit': 'cm',
+	//             'description': 'This is looong'
+	//         }
+	//     ]
+	// };
 
-	SampleObservationForm = (0, _reactRedux.connect)(null, mapDispatchToProps)(SampleObservationForm);
+	SampleObservationForm = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(SampleObservationForm);
 	exports.default = SampleObservationForm;
 
 /***/ },
@@ -42504,17 +42487,50 @@
 	    value: true
 	});
 
+	var _reactRedux = __webpack_require__(172);
+
+	var _categoryAlert = __webpack_require__(458);
+
+	var _categoryAlert2 = _interopRequireDefault(_categoryAlert);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var CategoryAlertContainer = function CategoryAlertContainer(_ref) {
+	    var category = _ref.category;
+
+	    return React.createElement(
+	        'div',
+	        null,
+	        category ? React.createElement(_categoryAlert2.default, { category: category }) : ''
+	    );
+	};
+
+	var mapStateToProps = function mapStateToProps(state) {
+	    return {
+	        category: state.sampleObservation.category
+	    };
+	};
+
+	CategoryAlertContainer = (0, _reactRedux.connect)(mapStateToProps, null)(CategoryAlertContainer);
+	exports.default = CategoryAlertContainer;
+
+/***/ },
+/* 458 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(1);
 
-	var _react2 = _interopRequireDefault(_react);
-
 	var _reactDom = __webpack_require__(34);
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _reactRedux = __webpack_require__(172);
 
 	var _reactBootstrap = __webpack_require__(202);
 
@@ -42526,47 +42542,8 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var mapStateToProps = function mapStateToProps(state) {
-	    return {
-	        category: state.sampleObservation.category
-	    };
-	};
-
-	var CategoryAlertContainer = function (_Component) {
-	    _inherits(CategoryAlertContainer, _Component);
-
-	    function CategoryAlertContainer() {
-	        _classCallCheck(this, CategoryAlertContainer);
-
-	        return _possibleConstructorReturn(this, (CategoryAlertContainer.__proto__ || Object.getPrototypeOf(CategoryAlertContainer)).apply(this, arguments));
-	    }
-
-	    _createClass(CategoryAlertContainer, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            _reactDom2.default.findDOMNode(this.refs.alert).focus();
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                _reactBootstrap.Alert,
-	                { tabIndex: '0', ref: 'alert', bsStyle: 'success' },
-	                'This is ',
-	                _react2.default.createElement(
-	                    'strong',
-	                    null,
-	                    this.props.category
-	                )
-	            );
-	        }
-	    }]);
-
-	    return CategoryAlertContainer;
-	}(_react.Component);
-
-	var CategoryAlert = function (_Component2) {
-	    _inherits(CategoryAlert, _Component2);
+	var CategoryAlert = function (_Component) {
+	    _inherits(CategoryAlert, _Component);
 
 	    function CategoryAlert() {
 	        _classCallCheck(this, CategoryAlert);
@@ -42576,13 +42553,18 @@
 
 	    _createClass(CategoryAlert, [{
 	        key: 'render',
+
+	        // TODO: Add focus after component did mount
 	        value: function render() {
-	            console.log('CategoryAlert.render()');
-	            console.log(this.props);
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                this.props.category ? _react2.default.createElement(CategoryAlertContainer, { category: this.props.category }) : ''
+	            return React.createElement(
+	                _reactBootstrap.Alert,
+	                { tabIndex: '0', bsStyle: 'success' },
+	                'This is ',
+	                React.createElement(
+	                    'strong',
+	                    null,
+	                    this.props.category
+	                )
 	            );
 	        }
 	    }]);
@@ -42590,11 +42572,10 @@
 	    return CategoryAlert;
 	}(_react.Component);
 
-	CategoryAlert = (0, _reactRedux.connect)(mapStateToProps, null)(CategoryAlert);
 	exports.default = CategoryAlert;
 
 /***/ },
-/* 458 */
+/* 459 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

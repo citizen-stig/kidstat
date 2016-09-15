@@ -10,7 +10,7 @@ const KidStat = () => {
         <div className="container">
             <PublicIndex/>
         </div>
-        <Loader ref="loader"/>
+        <Loader/>
     </div>
 };
 

@@ -12,12 +12,21 @@ import {
 
 import {connect} from 'react-redux'
 
-import {getSampleObservation} from '../../actions.jsx'
+import {getSampleObservation, getParameters} from '../../actions.jsx'
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        parameters: state.parameters
+    }
+};
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         submitAction: function (observation) {
             dispatch(getSampleObservation(observation))
+        },
+        getParameters: function () {
+            dispatch(getParameters())
         }
     }
 };
@@ -50,6 +59,10 @@ class SampleObservationForm extends Component {
             parameter: 'height',
             value: ''
         }
+    }
+
+    componentDidMount(){
+        this.props.getParameters();
     }
 
     getFormValidationState() {
@@ -94,14 +107,16 @@ class SampleObservationForm extends Component {
     submit() {
         this.props.submitAction(this.state);
     }
-    renderParameterChoices(){
-        return this.props.parameters.map(function(parameter){
+
+    renderParameterChoices() {
+        return this.props.parameters.map(function (parameter) {
             return <option key={parameter.id}
                            value={parameter.name}>
                 {parameter.name}, {parameter.unit}
             </option>
         })
     }
+
     render() {
         return (
             <Form horizontal onSubmit={this.onFormSubmit}>
@@ -183,25 +198,9 @@ class SampleObservationForm extends Component {
 
 SampleObservationForm.propTypes = {
     submitAction: PropTypes.func,
+    getParameters: PropTypes.func,
     parameters: PropTypes.array
 };
 
-SampleObservationForm.defaultProps = {
-    parameters: [
-        {
-            'id': 1,
-            'name': 'weight',
-            'unit': 'kg',
-            'description': 'Sample description'
-        },
-        {
-            'id': 2,
-            'name': 'height',
-            'unit': 'cm',
-            'description': 'This is looong'
-        }
-    ]
-};
-
-SampleObservationForm = connect(null, mapDispatchToProps)(SampleObservationForm);
+SampleObservationForm = connect(mapStateToProps, mapDispatchToProps)(SampleObservationForm);
 export default SampleObservationForm

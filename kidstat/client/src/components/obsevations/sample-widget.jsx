@@ -1,16 +1,14 @@
 import React, {Component, PropTypes} from 'react';
 import {Alert, Col} from 'react-bootstrap';
 import SampleObservationForm from './sample-form.jsx';
-import CategoryAlert from './category-alert.jsx';
 
+import CategoryAlertContainer from '../../containers/category-alert.jsx';
 
 export default class SampleObservationWidget extends Component {
 
     constructor() {
         super();
-        // this.submitObservationSample = this.submitObservationSample.bind(this);
-        // this.handleObservationStore = this.handleObservationStore.bind(this);
-        this.state = {category: null, errors: null}
+        this.state = {errors: null}
     }
 
     renderErrors() {
@@ -22,15 +20,6 @@ export default class SampleObservationWidget extends Component {
             }.bind(this))
         }.bind(this))
     }
-
-    // submitObservationSample(observation) {
-    //     this.setState({errors: null});
-    //     console.log('submit observation somewhere');
-    //     console.log(observation);
-    //     getSampleObservation(observation);
-    //     Actions.requestSampleObservation(observation);
-    // }
-
     render() {
         return <div>
             <h2>Try Now.</h2>
@@ -38,7 +27,7 @@ export default class SampleObservationWidget extends Component {
             <Col xs={12}>
                 {this.state.errors ? this.renderErrors() : ''}
                 <SampleObservationForm/>
-                <CategoryAlert/>
+                <CategoryAlertContainer/>
             </Col>
         </div>
     }

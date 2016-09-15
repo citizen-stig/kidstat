@@ -44,7 +44,7 @@ describe('Sample Observation Action Test', function () {
                 {
                     type: GET_SAMPLE_OBSERVATION_CATEGORY,
                     status: 'success',
-                    data: json
+                    response: json
                 }
             )
         })

@@ -14,8 +14,8 @@ describe('Parameters Reducer Test', function () {
         function () {
             const expectedState = {data: [], isFetching: false, errors: []};
             expect(parameters(undefined, {})).to.deep.equal(expectedState);
-    });
-    it('should return current state if action is unknown', function(){
+        });
+    it('should return current state if action is unknown', function () {
         const currentState = {data: [], isFetching: true, errors: []};
         expect(parameters(currentState, {type: 'QWE'})).to.deep.equal(
             currentState)
@@ -27,11 +27,12 @@ describe('Parameters Reducer Test', function () {
             expectedState
         )
     });
-    it('should reset errors on new request', function(){
+    it('should reset errors on new request', function () {
         const currentState = {
             data: [],
             isFetching: false,
-            errors: ['something']};
+            errors: ['something']
+        };
         const expectedState = {
             data: [],
             isFetching: true,
@@ -41,7 +42,7 @@ describe('Parameters Reducer Test', function () {
             expectedState
         )
     });
-    it('should add parameters to state after response is succeeded', function(){
+    it('should add parameters to state after response is succeeded', function () {
         const currentState = {
             data: [],
             isFetching: true,
@@ -59,20 +60,32 @@ describe('Parameters Reducer Test', function () {
         const action = {
             type: GET_PARAMETERS,
             status: 'success',
-            response: parametersData};
+            response: parametersData
+        };
         expect(parameters(currentState, action)).to.deep.equal(expectedState)
     })
 });
 
 describe('Sample Observation Reducer Test', function () {
-    it('should return empty object for undefined action', function () {
-        expect(sampleObservation(undefined, {})).to.deep.equal({});
+    it('should return initial state', function () {
+        const expectedState = {category: null, isFetching: false, errors: []};
+        expect(sampleObservation(undefined, {})).to.deep.equal(expectedState);
     });
-    it('should return low category for value less 50', function () {
-        let observation = {value: 49};
-        expect(sampleObservation(
-            undefined,
-            {type: GET_SAMPLE_OBSERVATION_CATEGORY, observation})
-        ).to.deep.equal({category: 'Low'})
+    it('should return current state if action is unknown', function () {
+        const currentState = {category: null, isFetching: true, errors: []};
+        expect(sampleObservation(currentState, {type: 'QWE'})).to.deep.equal(
+            currentState)
     });
+    it('should change isFetching on get get sample observation action',
+        function () {
+            // undefined action.status means that request should be performed
+            const expectedState = {
+                category: null,
+                isFetching: true,
+                errors: []
+            };
+            const action = {type: GET_SAMPLE_OBSERVATION_CATEGORY};
+            expect(sampleObservation(undefined, action)).to.deep.equal(expectedState)
+        });
+
 });

@@ -10,21 +10,57 @@ import {
 
 
 describe('Parameters Reducer Test', function () {
-    it('should return empty array as for undefined action', function () {
-        expect(parameters(undefined, {})).to.deep.equal([]);
+    it('should return initial state if current state is undefined',
+        function () {
+            const expectedState = {data: [], isFetching: false, errors: []};
+            expect(parameters(undefined, {})).to.deep.equal(expectedState);
     });
-    it('should return parameters on get parameters action', function () {
+    it('should return current state if action is unknown', function(){
+        const currentState = {data: [], isFetching: true, errors: []};
+        expect(parameters(currentState, {type: 'QWE'})).to.deep.equal(
+            currentState)
+    });
+    it('should change isFetching on get parameters action', function () {
+        // undefined action.status means that request should be performed
+        const expectedState = {data: [], isFetching: true, errors: []};
         expect(parameters(undefined, {type: GET_PARAMETERS})).to.deep.equal(
-            [
-                {
-                    'id': 1, 'name': 'weight', 'unit': 'kg',
-                    'description': 'Sample description'
-                },
-                {
-                    'id': 2, 'name': 'height', 'unit': 'cm',
-                    'description': 'This is looong'
-                }
-            ])
+            expectedState
+        )
+    });
+    it('should reset errors on new request', function(){
+        const currentState = {
+            data: [],
+            isFetching: false,
+            errors: ['something']};
+        const expectedState = {
+            data: [],
+            isFetching: true,
+            errors: []
+        };
+        expect(parameters(currentState, {type: GET_PARAMETERS})).to.deep.equal(
+            expectedState
+        )
+    });
+    it('should add parameters to state after response is succeeded', function(){
+        const currentState = {
+            data: [],
+            isFetching: true,
+            errors: []
+        };
+        const parametersData = [
+            {id: 1, name: 'weight', unit: 'kg', description: 'something'},
+            {id: 2, name: 'height', unit: 'cm', description: 'something new'}
+        ];
+        const expectedState = {
+            data: parametersData,
+            isFetching: false,
+            errors: []
+        };
+        const action = {
+            type: GET_PARAMETERS,
+            status: 'success',
+            response: parametersData};
+        expect(parameters(currentState, action)).to.deep.equal(expectedState)
     })
 });
 

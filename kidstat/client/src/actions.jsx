@@ -1,17 +1,21 @@
 import 'whatwg-fetch';
 export const GET_PARAMETERS = 'GET_PARAMETERS';
-
-
 export const GET_SAMPLE_OBSERVATION_CATEGORY = 'GET_SAMPLE_OBSERVATION_CATEGORY';
 
 
-export function getSampleObservation(observation) {
-    console.log('getSampleObservationAction');
+export function requestCategoryForSampleObservation(observation) {
     return {type: GET_SAMPLE_OBSERVATION_CATEGORY, observation}
 }
 
+export function receiveCategoryForSampleObservation(json){
+    return {
+        type: GET_SAMPLE_OBSERVATION_CATEGORY,
+        status: 'success',
+        data: json
+    }
+}
 
-//Parameters
+// Parameters
 export function requestParameters() {
     return {type: GET_PARAMETERS};
 }
@@ -20,7 +24,7 @@ export function receiveParameters(json) {
     return {
         type: GET_PARAMETERS,
         status: 'success',
-        parameters: json.data
+        response: json.data
     }
 }
 

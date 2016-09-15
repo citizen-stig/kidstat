@@ -1,31 +1,23 @@
 import {GET_PARAMETERS} from '../actions.jsx';
 
+const initialState = {
+    data: [],
+    isFetching: false,
+    errors: []
+};
 
-export default function parameters(state = [], action){
+export default function parameters(state = initialState, action){
     switch (action.type) {
         case GET_PARAMETERS:
             if (action.status === undefined){
-                // Make request
-
+                // Request
+                return {data: state.data, isFetching: true, errors: []}
             } else if (action.status == 'success') {
-                return action.parameters;
-            } else {
-                return state
+                // Response received
+                return {data: action.response, isFetching: false, errors: []};
             }
-            // return [
-            //     {
-            //         'id': 1,
-            //         'name': 'weight',
-            //         'unit': 'kg',
-            //         'description': 'Sample description'
-            //     },
-            //     {
-            //         'id': 2,
-            //         'name': 'height',
-            //         'unit': 'cm',
-            //         'description': 'This is looong'
-            //     }
-            // ];
+            // Error received
+            return {data: state.data, isFetching: false, errors: action.errors};
         default:
             return state;
     }

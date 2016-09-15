@@ -23533,7 +23533,10 @@
 
 	// var defaultState = {
 	//     'sampleObservation': {},
-	//     'parameters': [],
+	//     'parameters': {
+	//          'isFetching': false
+	//          'data': []
+	//      },
 	//     'isFetching': false,
 	// };
 
@@ -23554,34 +23557,27 @@
 
 	var _actions = __webpack_require__(201);
 
+	var initialState = {
+	    data: [],
+	    isFetching: false,
+	    errors: []
+	};
+
 	function parameters() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
 	    var action = arguments[1];
 
 	    switch (action.type) {
 	        case _actions.GET_PARAMETERS:
 	            if (action.status === undefined) {
-	                // Make request
-
+	                // Request
+	                return { data: state.data, isFetching: true, errors: [] };
 	            } else if (action.status == 'success') {
-	                return action.parameters;
-	            } else {
-	                return state;
+	                // Response received
+	                return { data: action.response, isFetching: false, errors: [] };
 	            }
-	        // return [
-	        //     {
-	        //         'id': 1,
-	        //         'name': 'weight',
-	        //         'unit': 'kg',
-	        //         'description': 'Sample description'
-	        //     },
-	        //     {
-	        //         'id': 2,
-	        //         'name': 'height',
-	        //         'unit': 'cm',
-	        //         'description': 'This is looong'
-	        //     }
-	        // ];
+	            // Error received
+	            return { data: state.data, isFetching: false, errors: action.errors };
 	        default:
 	            return state;
 	    }
@@ -23597,7 +23593,8 @@
 	    value: true
 	});
 	exports.GET_SAMPLE_OBSERVATION_CATEGORY = exports.GET_PARAMETERS = undefined;
-	exports.getSampleObservation = getSampleObservation;
+	exports.requestCategoryForSampleObservation = requestCategoryForSampleObservation;
+	exports.receiveCategoryForSampleObservation = receiveCategoryForSampleObservation;
 	exports.requestParameters = requestParameters;
 	exports.receiveParameters = receiveParameters;
 	exports.fetchParameters = fetchParameters;
@@ -23605,15 +23602,21 @@
 	__webpack_require__(1);
 
 	var GET_PARAMETERS = exports.GET_PARAMETERS = 'GET_PARAMETERS';
-
 	var GET_SAMPLE_OBSERVATION_CATEGORY = exports.GET_SAMPLE_OBSERVATION_CATEGORY = 'GET_SAMPLE_OBSERVATION_CATEGORY';
 
-	function getSampleObservation(observation) {
-	    console.log('getSampleObservationAction');
+	function requestCategoryForSampleObservation(observation) {
 	    return { type: GET_SAMPLE_OBSERVATION_CATEGORY, observation: observation };
 	}
 
-	//Parameters
+	function receiveCategoryForSampleObservation(json) {
+	    return {
+	        type: GET_SAMPLE_OBSERVATION_CATEGORY,
+	        status: 'success',
+	        data: json
+	    };
+	}
+
+	// Parameters
 	function requestParameters() {
 	    return { type: GET_PARAMETERS };
 	}
@@ -23622,7 +23625,7 @@
 	    return {
 	        type: GET_PARAMETERS,
 	        status: 'success',
-	        parameters: json.data
+	        response: json.data
 	    };
 	}
 
@@ -23681,7 +23684,7 @@
 
 	    switch (action.type) {
 	        case _actions.GET_SAMPLE_OBSERVATION_CATEGORY:
-	            console.log("Getting sample observation in reducer");
+
 	            if (action.observation.value < 50) {
 	                return { category: 'Low' };
 	            } else if (action.observation.value >= 50 && action.observation.value < 100) {
@@ -42737,14 +42740,15 @@
 
 	var mapStateToProps = function mapStateToProps(state, ownProps) {
 	    return {
-	        parameters: state.parameters
+	        parameters: state.parameters.data,
+	        errors: state.parameters.errors
 	    };
 	};
 
 	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
 	    return {
 	        submitAction: function submitAction(observation) {
-	            dispatch((0, _actions.getSampleObservation)(observation));
+	            dispatch((0, _actions.requestCategoryForSampleObservation)(observation));
 	        },
 	        getParameters: function getParameters() {
 	            dispatch((0, _actions.fetchParameters)());

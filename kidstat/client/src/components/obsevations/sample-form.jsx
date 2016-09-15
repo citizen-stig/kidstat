@@ -12,18 +12,19 @@ import {
 
 import {connect} from 'react-redux'
 
-import {getSampleObservation, fetchParameters} from '../../actions.jsx'
+import {requestCategoryForSampleObservation, fetchParameters} from '../../actions.jsx'
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        parameters: state.parameters
+        parameters: state.parameters.data,
+        errors: state.parameters.errors
     }
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         submitAction: function (observation) {
-            dispatch(getSampleObservation(observation))
+            dispatch(requestCategoryForSampleObservation(observation))
         },
         getParameters: function () {
             dispatch(fetchParameters())

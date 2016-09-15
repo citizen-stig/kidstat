@@ -6,8 +6,8 @@ const ErrorAlert = ({message}) => {
 };
 
 const ErrorsList = ({messages}) => {
-    return <div>{messages.map(function (message) {
-        return <ErrorAlert message={message}/>
+    return <div>{messages.map(function (message, i) {
+        return <ErrorAlert key={i} message={message}/>
     })}
     </div>
 };

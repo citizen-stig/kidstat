@@ -19,9 +19,12 @@ import {
 } from '../../actions.jsx'
 
 import ErrorsListContainer from '../../containers/observations/sample-observations-errors.jsx';
+import ParameterSelect from './observation-form.jsx';
 
 
 const mapStateToProps = (state, ownProps) => {
+    console.log("ULALA");
+    console.log(ownProps);
     return {
         parameters: state.parameters.data,
         errors: state.parameters.errors
@@ -60,24 +63,30 @@ class SampleObservationForm extends Component {
         this.handleGenderChange = this.handleGenderChange.bind(this);
         this.getFormValidationState = this.getFormValidationState.bind(this);
         this.getValueValidationStateName = this.getValueValidationStateName.bind(this);
+        this.handleParameterChange = this.handleParameterChange.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.submit = this.submit.bind(this);
         this.state = {
             gender: 'male',
             birthday: '',
             timestamp: new Date().toISOString().split("T")[0],
-            parameter: 'height',
+            parameter: '',
             value: '',
             errors: []
         }
     }
 
     componentDidMount() {
-        this.props.getParameters();
+        var a = this.props.getParameters();
+        console.log("Component mount")
+        console.log(a)
+
     }
 
     getFormValidationState() {
-        return (this.state.timestamp && this.getValueValidationState() && this.getBirthdayValidationState())
+        console.log('Form Validation State');
+        console.log(this.state);
+        return (this.state.gender && this.state.parameter && this.state.timestamp && this.getValueValidationState() && this.getBirthdayValidationState())
     }
 
     handleValueChange(event) {
@@ -120,6 +129,10 @@ class SampleObservationForm extends Component {
 
     handleGenderChange(event) {
         this.setState({gender: event.target.value})
+    }
+
+    handleParameterChange(event){
+        this.setState({parameter: event.target.value})
     }
 
     onFormSubmit(event) {
@@ -195,18 +208,7 @@ class SampleObservationForm extends Component {
                                      type="date"/>
                     </Col>
                 </FormGroup>
-                <FormGroup controlId="formControlsSelect" className="required">
-                    <Col componentClass={ControlLabel} xs={4}>
-                        Parameter
-                    </Col>
-                    <Col xs={8}>
-                        <FormControl className="min-width-95p"
-                                     required={true}
-                                     componentClass="select">
-                            {this.renderParameterChoices()}
-                        </FormControl>
-                    </Col>
-                </FormGroup>
+                <ParameterSelect onChange={this.handleParameterChange}/>
                 <FormGroup validationState={this.getValueValidationStateName()}
                            controlId="valueControl" className="required">
                     <Col componentClass={ControlLabel} xs={4}>

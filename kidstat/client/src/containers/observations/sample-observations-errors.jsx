@@ -4,7 +4,7 @@ import ErrorsList from '../../components/obsevations/errors-list.jsx'
 
 const mapStateToProps = (state) => {
     return {
-        messages: state.sampleObservation.errors
+        messages: [...state.sampleObservation.errors, ...state.parameters.errors]
     }
 };
 

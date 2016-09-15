@@ -26,6 +26,13 @@ def create_app():
 
     app.config.from_object(config_obj)
     db.init_app(app)
+    # FIXME: Workaround for flask-mongoengine 0.8 issue
+    # https://github.com/MongoEngine/flask-mongoengine/issues/259
+    mongodb_settings = app.config['MONGODB_SETTINGS']
+    app.before_first_request(
+        lambda: db.connection.authenticate(mongodb_settings.get('username'),
+                                           mongodb_settings.get('password')))
+
     Mail(app)
 
     @app.route('/')

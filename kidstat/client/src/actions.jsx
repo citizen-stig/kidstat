@@ -1,7 +1,5 @@
 import 'whatwg-fetch';
-
-const rootUrl = '/api/v1/';
-
+import {get, post} from './api.js';
 
 // Parameters
 export const GET_PARAMETERS = 'GET_PARAMETERS';
@@ -17,16 +15,41 @@ export function receiveParameters(json) {
     }
 }
 
+function genericErrorsHandler(type, json) {
+    let errors;
+    if ("message" in json) {
+        errors = [json['message']];
+    } else if ("errors" in json) {
+        errors = json['errors']
+    } else {
+        errors = ['Unknown Error'];
+    }
+    return {
+        type: type,
+        status: 'error',
+        errors: errors
+    }
+
+}
+
+export function handleParametersErrors(json) {
+    return genericErrorsHandler(GET_PARAMETERS, json);
+}
+
 export function fetchParameters() {
     return function (dispatch) {
 
         dispatch(requestParameters());
-
-        return fetch(rootUrl + 'parameters')
-            .then(response => response.json())
+        return get({url: 'parameters'}).then()
             .then(json =>
                 dispatch(receiveParameters(json))
-            );
+            ).catch(function (error) {
+                if (error.response) {
+                    return error.response.json()
+                        .then(json => dispatch(handleParametersErrors(json)))
+                }
+                return dispatch(handleParametersErrors({}))
+            });
     }
 }
 
@@ -46,21 +69,21 @@ export function receiveCategoryForSampleObservation(json) {
     }
 }
 
+export function handleCategoryForSampleObservationErrors(json){
+    return genericErrorsHandler(GET_SAMPLE_OBSERVATION_CATEGORY, json)
+}
+
 export function fetchCategoryForSampleObservation(observation) {
-
     return function (dispatch) {
-
         dispatch(requestCategoryForSampleObservation(observation));
-
-        return fetch(rootUrl + 'try', {
-            method: 'post',
-            body: JSON.stringify(observation),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(response => response.json())
-            .then(json =>
-                dispatch(receiveCategoryForSampleObservation(json)));
+        return post({url: 'try', body: observation})
+            .then(json => dispatch(receiveCategoryForSampleObservation(json)))
+            .catch(function(error){
+                if(error.response){
+                    return error.response.json()
+                        .then(json => dispatch(handleCategoryForSampleObservationErrors(json)));
+                }
+                return dispatch(handleCategoryForSampleObservationErrors({}))
+            });
     }
 }

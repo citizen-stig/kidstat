@@ -37,6 +37,7 @@ class Categories(IntEnum):
 
 
 class Parameter(db.Document):
+    id = db.ObjectIdField(primary_key=True, default=ObjectId)
     name = db.StringField(required=True, unique=True)
     description = db.StringField(max_length=255)
     unit = db.StringField(max_length=10)

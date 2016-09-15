@@ -42799,6 +42799,8 @@
 	        _this.getValueValidationState = _this.getValueValidationState.bind(_this);
 	        _this.handleTimestampChange = _this.handleTimestampChange.bind(_this);
 	        _this.handleBirthdayChange = _this.handleBirthdayChange.bind(_this);
+	        _this.getBirthdayValidationState = _this.getBirthdayValidationState.bind(_this);
+	        _this.getBirthdayValidationStateName = _this.getBirthdayValidationStateName.bind(_this);
 	        _this.handleGenderChange = _this.handleGenderChange.bind(_this);
 	        _this.getFormValidationState = _this.getFormValidationState.bind(_this);
 	        _this.getValueValidationStateName = _this.getValueValidationStateName.bind(_this);
@@ -42809,7 +42811,8 @@
 	            birthday: '',
 	            timestamp: new Date().toISOString().split("T")[0],
 	            parameter: 'height',
-	            value: ''
+	            value: '',
+	            errors: []
 	        };
 	        return _this;
 	    }
@@ -42822,7 +42825,7 @@
 	    }, {
 	        key: 'getFormValidationState',
 	        value: function getFormValidationState() {
-	            return this.state.birthday && this.state.timestamp && this.getValueValidationState() && this.state.birthday < this.state.timestamp;
+	            return this.state.timestamp && this.getValueValidationState() && this.getBirthdayValidationState();
 	        }
 	    }, {
 	        key: 'handleValueChange',
@@ -42854,6 +42857,22 @@
 	            this.setState({ birthday: event.target.value });
 	        }
 	    }, {
+	        key: 'getBirthdayValidationState',
+	        value: function getBirthdayValidationState() {
+	            return this.state.birthday && this.state.birthday < this.state.timestamp;
+	        }
+	    }, {
+	        key: 'getBirthdayValidationStateName',
+	        value: function getBirthdayValidationStateName() {
+	            if (this.state.birthday) {
+	                if (this.getBirthdayValidationState()) {
+	                    return "success";
+	                }
+	                return "error";
+	            }
+	            return "warning";
+	        }
+	    }, {
 	        key: 'handleGenderChange',
 	        value: function handleGenderChange(event) {
 	            this.setState({ gender: event.target.value });
@@ -42869,7 +42888,14 @@
 	    }, {
 	        key: 'submit',
 	        value: function submit() {
-	            this.props.submitAction(this.state);
+	            var observation = {
+	                gender: this.state.gender,
+	                birthday: this.state.birthday,
+	                timestamp: this.state.timestamp,
+	                parameter: this.state.parameter,
+	                value: parseFloat(this.state.value)
+	            };
+	            this.props.submitAction(observation);
 	        }
 	    }, {
 	        key: 'renderParameterChoices',
@@ -42893,7 +42919,7 @@
 	                { horizontal: true, onSubmit: this.onFormSubmit },
 	                _react2.default.createElement(
 	                    _reactBootstrap.FormGroup,
-	                    { controlId: 'formControlsSelect' },
+	                    { controlId: 'formControlsSelect', className: 'required' },
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
 	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
@@ -42923,7 +42949,8 @@
 	                ),
 	                _react2.default.createElement(
 	                    _reactBootstrap.FormGroup,
-	                    { controlId: 'birthdayControl' },
+	                    { controlId: 'birthdayControl', className: 'required',
+	                        validationState: this.getBirthdayValidationStateName() },
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
 	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
@@ -42933,14 +42960,20 @@
 	                        _reactBootstrap.Col,
 	                        { xs: 8 },
 	                        _react2.default.createElement(_reactBootstrap.FormControl, { className: 'min-width-95p',
+	                            required: true,
 	                            onChange: this.handleBirthdayChange,
 	                            value: this.state.birthday,
-	                            type: 'date' })
+	                            type: 'date' }),
+	                        !this.getBirthdayValidationState() ? _react2.default.createElement(
+	                            _reactBootstrap.HelpBlock,
+	                            null,
+	                            'Birthday should be less then a timestamp'
+	                        ) : ''
 	                    )
 	                ),
 	                _react2.default.createElement(
 	                    _reactBootstrap.FormGroup,
-	                    { controlId: 'timestampControl' },
+	                    { controlId: 'timestampControl', className: 'required' },
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
 	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
@@ -42950,6 +42983,7 @@
 	                        _reactBootstrap.Col,
 	                        { xs: 8 },
 	                        _react2.default.createElement(_reactBootstrap.FormControl, { className: 'min-width-95p',
+	                            required: true,
 	                            value: this.state.timestamp,
 	                            onChange: this.handleTimestampChange,
 	                            type: 'date' })
@@ -42957,7 +42991,7 @@
 	                ),
 	                _react2.default.createElement(
 	                    _reactBootstrap.FormGroup,
-	                    { controlId: 'formControlsSelect' },
+	                    { controlId: 'formControlsSelect', className: 'required' },
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
 	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
@@ -42969,6 +43003,7 @@
 	                        _react2.default.createElement(
 	                            _reactBootstrap.FormControl,
 	                            { className: 'min-width-95p',
+	                                required: true,
 	                                componentClass: 'select' },
 	                            this.renderParameterChoices()
 	                        )
@@ -42977,7 +43012,7 @@
 	                _react2.default.createElement(
 	                    _reactBootstrap.FormGroup,
 	                    { validationState: this.getValueValidationStateName(),
-	                        controlId: 'valueControl' },
+	                        controlId: 'valueControl', className: 'required' },
 	                    _react2.default.createElement(
 	                        _reactBootstrap.Col,
 	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
@@ -42988,8 +43023,10 @@
 	                        { xs: 8 },
 	                        _react2.default.createElement(_reactBootstrap.FormControl, { value: this.state.value,
 	                            autoCorrect: 'off',
+	                            required: true,
 	                            pattern: '[0-9.]*',
-	                            onChange: this.handleValueChange })
+	                            onChange: this.handleValueChange }),
+	                        _react2.default.createElement(_reactBootstrap.FormControl.Feedback, null)
 	                    )
 	                ),
 	                _react2.default.createElement(

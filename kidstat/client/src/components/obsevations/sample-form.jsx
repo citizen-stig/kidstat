@@ -6,13 +6,17 @@ import {
     FormControl,
     ButtonGroup,
     Button,
-    ControlLabel
+    ControlLabel,
+    HelpBlock
 } from 'react-bootstrap';
 
 
 import {connect} from 'react-redux'
 
-import {fetchCategoryForSampleObservation, fetchParameters} from '../../actions.jsx'
+import {
+    fetchCategoryForSampleObservation,
+    fetchParameters
+} from '../../actions.jsx'
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -48,6 +52,8 @@ class SampleObservationForm extends Component {
         this.getValueValidationState = this.getValueValidationState.bind(this);
         this.handleTimestampChange = this.handleTimestampChange.bind(this);
         this.handleBirthdayChange = this.handleBirthdayChange.bind(this);
+        this.getBirthdayValidationState = this.getBirthdayValidationState.bind(this);
+        this.getBirthdayValidationStateName = this.getBirthdayValidationStateName.bind(this);
         this.handleGenderChange = this.handleGenderChange.bind(this);
         this.getFormValidationState = this.getFormValidationState.bind(this);
         this.getValueValidationStateName = this.getValueValidationStateName.bind(this);
@@ -58,16 +64,17 @@ class SampleObservationForm extends Component {
             birthday: '',
             timestamp: new Date().toISOString().split("T")[0],
             parameter: 'height',
-            value: ''
+            value: '',
+            errors: []
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.props.getParameters();
     }
 
     getFormValidationState() {
-        return (this.state.birthday && this.state.timestamp && this.getValueValidationState() && (this.state.birthday < this.state.timestamp))
+        return (this.state.timestamp && this.getValueValidationState() && this.getBirthdayValidationState())
     }
 
     handleValueChange(event) {
@@ -94,6 +101,20 @@ class SampleObservationForm extends Component {
         this.setState({birthday: event.target.value})
     }
 
+    getBirthdayValidationState() {
+        return this.state.birthday && this.state.birthday < this.state.timestamp
+    }
+
+    getBirthdayValidationStateName() {
+        if (this.state.birthday) {
+            if (this.getBirthdayValidationState()) {
+                return "success";
+            }
+            return "error";
+        }
+        return "warning"
+    }
+
     handleGenderChange(event) {
         this.setState({gender: event.target.value})
     }
@@ -106,7 +127,14 @@ class SampleObservationForm extends Component {
     }
 
     submit() {
-        this.props.submitAction(this.state);
+        let observation = {
+            gender: this.state.gender,
+            birthday: this.state.birthday,
+            timestamp: this.state.timestamp,
+            parameter: this.state.parameter,
+            value: parseFloat(this.state.value)
+        };
+        this.props.submitAction(observation);
     }
 
     renderParameterChoices() {
@@ -121,7 +149,7 @@ class SampleObservationForm extends Component {
     render() {
         return (
             <Form horizontal onSubmit={this.onFormSubmit}>
-                <FormGroup controlId="formControlsSelect">
+                <FormGroup controlId="formControlsSelect" className="required">
                     <Col componentClass={ControlLabel} xs={4}>
                         Gender
                     </Col>
@@ -135,50 +163,60 @@ class SampleObservationForm extends Component {
                         </FormControl>
                     </Col>
                 </FormGroup>
-                <FormGroup controlId="birthdayControl">
+                <FormGroup controlId="birthdayControl" className="required"
+                           validationState={this.getBirthdayValidationStateName()}>
                     <Col componentClass={ControlLabel} xs={4}>
                         Birthday
                     </Col>
                     <Col xs={8}>
                         <FormControl className="min-width-95p"
+                                     required={true}
                                      onChange={this.handleBirthdayChange}
                                      value={this.state.birthday}
                                      type="date"/>
+                        {!this.getBirthdayValidationState() ?
+                            <HelpBlock>Birthday should be less then a
+                                timestamp</HelpBlock> : ''}
                     </Col>
                 </FormGroup>
-                <FormGroup controlId="timestampControl">
+                <FormGroup controlId="timestampControl" className="required">
                     <Col componentClass={ControlLabel} xs={4}>
                         Timestamp
                     </Col>
                     <Col xs={8}>
                         <FormControl className="min-width-95p"
+                                     required={true}
                                      value={this.state.timestamp}
                                      onChange={this.handleTimestampChange}
                                      type="date"/>
                     </Col>
                 </FormGroup>
-                <FormGroup controlId="formControlsSelect">
+                <FormGroup controlId="formControlsSelect" className="required">
                     <Col componentClass={ControlLabel} xs={4}>
                         Parameter
                     </Col>
                     <Col xs={8}>
                         <FormControl className="min-width-95p"
+                                     required={true}
                                      componentClass="select">
                             {this.renderParameterChoices()}
                         </FormControl>
                     </Col>
                 </FormGroup>
                 <FormGroup validationState={this.getValueValidationStateName()}
-                           controlId="valueControl">
+                           controlId="valueControl" className="required">
                     <Col componentClass={ControlLabel} xs={4}>
                         Value
                     </Col>
                     <Col xs={8}>
                         <FormControl value={this.state.value}
                                      autoCorrect="off"
+                                     required={true}
                                      pattern="[0-9.]*"
                                      onChange={this.handleValueChange}/>
+                        <FormControl.Feedback />
                     </Col>
+
                 </FormGroup>
                 <FormGroup>
                     <Col xs={12}>

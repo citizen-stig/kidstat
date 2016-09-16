@@ -112,9 +112,8 @@ class SampleObservationForm extends Component {
 
 SampleObservationForm.propTypes = {
     submitAction: PropTypes.func,
-    changeAction: PropTypes.func,
     getParameters: PropTypes.func,
-    parameters: PropTypes.array
+    observation: PropTypes.object
 };
 
 

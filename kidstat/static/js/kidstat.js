@@ -42954,9 +42954,8 @@
 
 	SampleObservationForm.propTypes = {
 	    submitAction: _react.PropTypes.func,
-	    changeAction: _react.PropTypes.func,
 	    getParameters: _react.PropTypes.func,
-	    parameters: _react.PropTypes.array
+	    observation: _react.PropTypes.object
 	};
 
 	SampleObservationForm = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(SampleObservationForm);

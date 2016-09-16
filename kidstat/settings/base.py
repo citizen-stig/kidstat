@@ -1,4 +1,19 @@
 from datetime import timedelta
+import os
+from pymongo.uri_parser import parse_uri
+
+
+def get_mongodb_settings():
+    connection_string = os.environ['MONGODB_URI']
+    parsed = parse_uri(connection_string)
+    first_node = parsed['nodelist'][0]
+    host, port = first_node
+    return {
+        'host': host,
+        'port': port,
+        'db': parsed['database'],
+        'username': parsed['username'],
+        'password': parsed['password']}
 
 
 class Config(object):

@@ -12,9 +12,9 @@ const getValidationStateName = (validationState) => {
 };
 
 
-const BirthdayInput = ({value, onChange, getValidationState}) => {
+const BirthdayInput = ({value, onChange, isValid}) => {
     return <FormGroup controlId="birthdayControl" className="required"
-                      validationState={getValidationStateName(getValidationState())}>
+                      validationState={getValidationStateName(isValid)}>
         <Col componentClass={ControlLabel} xs={4}>
             Birthday
         </Col>
@@ -24,8 +24,7 @@ const BirthdayInput = ({value, onChange, getValidationState}) => {
                          onChange={onChange}
                          value={value}
                          type="date"/>
-            {!getValidationState() ?
-                <HelpBlock>Birthday should be less then a timestamp</HelpBlock> : ''}
+            {!isValid ? <HelpBlock>Birthday should be less then a timestamp</HelpBlock> : ''}
         </Col>
     </FormGroup>
 };

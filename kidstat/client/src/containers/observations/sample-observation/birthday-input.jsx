@@ -1,15 +1,18 @@
 import {connect} from 'react-redux'
 
 import {changeSampleObservation} from '../../../actions.jsx'
-import BirthdayInput from '../../../components/obsevations/birthday-input.jsx';
+import BirthdayInput from '../../../components/kids/inputs/birthday.jsx';
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
+    let isValid = state.sampleObservation.data.birthday &&
+        (state.sampleObservation.data.birthday < state.sampleObservation.data.timestamp);
     return {
         value: state.sampleObservation.data.birthday,
+        isValid: isValid
     }
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
     return {
         onChange: (event) => {
             dispatch(changeSampleObservation({birthday: event.target.value}))

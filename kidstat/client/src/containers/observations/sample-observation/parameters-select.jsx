@@ -1,16 +1,16 @@
 import {connect} from 'react-redux'
 
 import {changeSampleObservation} from '../../../actions.jsx'
-import ParameterSelect from '../../../components/obsevations/parameters-select';
+import ParameterSelect from '../../../components/observations/inputs/parametet';
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     return {
         parameters: state.parameters.data,
         value: state.sampleObservation.data.parameter,
     }
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
     return {
         onChange: (event) => {
             dispatch(changeSampleObservation({parameter: event.target.value}))

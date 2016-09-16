@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {Grid, Row, Col} from 'react-bootstrap';
 
-import SampleObservationWidget from './obsevations/sample-widget.jsx'
+import SampleObservationWidget from './observations/sample-widget.jsx'
 
 
 const PublicIndex = () => {

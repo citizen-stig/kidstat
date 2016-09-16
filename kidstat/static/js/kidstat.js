@@ -23709,7 +23709,7 @@
 
 	function fetchCategoryForSampleObservation(observation) {
 	    return function (dispatch) {
-	        dispatch(requestCategoryForSampleObservation(observation));
+	        dispatch(requestCategoryForSampleObservation());
 	        return (0, _api.post)({ url: 'try', body: observation }).then(function (json) {
 	            return dispatch(receiveCategoryForSampleObservation(json));
 	        }).catch(function (error) {
@@ -42835,9 +42835,9 @@
 
 	var _valueInput2 = _interopRequireDefault(_valueInput);
 
-	var _sampleObservationsErrors = __webpack_require__(471);
+	var _errorsList = __webpack_require__(471);
 
-	var _sampleObservationsErrors2 = _interopRequireDefault(_sampleObservationsErrors);
+	var _errorsList2 = _interopRequireDefault(_errorsList);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -42847,7 +42847,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	var mapStateToProps = function mapStateToProps(state) {
 	    var sampleObservation = state.sampleObservation.data;
 	    var observation = {
 	        gender: sampleObservation.gender,
@@ -42863,8 +42863,6 @@
 	};
 
 	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
-	    console.log('SampleForm');
-	    console.log(ownProps);
 	    return {
 	        submitAction: function submitAction(observation) {
 	            dispatch((0, _actions.fetchCategoryForSampleObservation)(observation));
@@ -42919,11 +42917,9 @@
 	            return _react2.default.createElement(
 	                _reactBootstrap.Form,
 	                { horizontal: true, onSubmit: this.onFormSubmit },
-	                _react2.default.createElement(_sampleObservationsErrors2.default, null),
+	                _react2.default.createElement(_errorsList2.default, null),
 	                _react2.default.createElement(_genderSelect2.default, null),
-	                _react2.default.createElement(_birthdayInput2.default, { getValidationState: function getValidationState() {
-	                        true;
-	                    } }),
+	                _react2.default.createElement(_birthdayInput2.default, null),
 	                _react2.default.createElement(_timestampInput2.default, null),
 	                _react2.default.createElement(_parametersSelect2.default, null),
 	                _react2.default.createElement(_valueInput2.default, null),
@@ -42980,19 +42976,19 @@
 
 	var _actions = __webpack_require__(201);
 
-	var _genderSelect = __webpack_require__(462);
+	var _gender = __webpack_require__(462);
 
-	var _genderSelect2 = _interopRequireDefault(_genderSelect);
+	var _gender2 = _interopRequireDefault(_gender);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	var mapStateToProps = function mapStateToProps(state) {
 	    return {
 	        value: state.sampleObservation.data.gender
 	    };
 	};
 
-	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	    return {
 	        onChange: function onChange(event) {
 	            dispatch((0, _actions.changeSampleObservation)({ gender: event.target.value }));
@@ -43000,7 +42996,7 @@
 	    };
 	};
 
-	var GenderSelectContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_genderSelect2.default);
+	var GenderSelectContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_gender2.default);
 	exports.default = GenderSelectContainer;
 
 /***/ },
@@ -43067,19 +43063,21 @@
 
 	var _actions = __webpack_require__(201);
 
-	var _birthdayInput = __webpack_require__(464);
+	var _birthday = __webpack_require__(464);
 
-	var _birthdayInput2 = _interopRequireDefault(_birthdayInput);
+	var _birthday2 = _interopRequireDefault(_birthday);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	var mapStateToProps = function mapStateToProps(state) {
+	    var isValid = state.sampleObservation.data.birthday && state.sampleObservation.data.birthday < state.sampleObservation.data.timestamp;
 	    return {
-	        value: state.sampleObservation.data.birthday
+	        value: state.sampleObservation.data.birthday,
+	        isValid: isValid
 	    };
 	};
 
-	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	    return {
 	        onChange: function onChange(event) {
 	            dispatch((0, _actions.changeSampleObservation)({ birthday: event.target.value }));
@@ -43087,7 +43085,7 @@
 	    };
 	};
 
-	var BirthdayInputContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_birthdayInput2.default);
+	var BirthdayInputContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_birthday2.default);
 	exports.default = BirthdayInputContainer;
 
 /***/ },
@@ -43113,12 +43111,12 @@
 	var BirthdayInput = function BirthdayInput(_ref) {
 	    var value = _ref.value;
 	    var onChange = _ref.onChange;
-	    var getValidationState = _ref.getValidationState;
+	    var isValid = _ref.isValid;
 
 	    return React.createElement(
 	        _reactBootstrap.FormGroup,
 	        { controlId: "birthdayControl", className: "required",
-	            validationState: getValidationStateName(getValidationState()) },
+	            validationState: getValidationStateName(isValid) },
 	        React.createElement(
 	            _reactBootstrap.Col,
 	            { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
@@ -43132,7 +43130,7 @@
 	                onChange: onChange,
 	                value: value,
 	                type: "date" }),
-	            !getValidationState() ? React.createElement(
+	            !isValid ? React.createElement(
 	                _reactBootstrap.HelpBlock,
 	                null,
 	                "Birthday should be less then a timestamp"
@@ -43157,19 +43155,19 @@
 
 	var _actions = __webpack_require__(201);
 
-	var _timestampInput = __webpack_require__(466);
+	var _timestamp = __webpack_require__(466);
 
-	var _timestampInput2 = _interopRequireDefault(_timestampInput);
+	var _timestamp2 = _interopRequireDefault(_timestamp);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	var mapStateToProps = function mapStateToProps(state) {
 	    return {
 	        value: state.sampleObservation.data.timestamp
 	    };
 	};
 
-	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	    return {
 	        onChange: function onChange(event) {
 	            dispatch((0, _actions.changeSampleObservation)({ timestamp: event.target.value }));
@@ -43177,7 +43175,7 @@
 	    };
 	};
 
-	var TimestampInputContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_timestampInput2.default);
+	var TimestampInputContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_timestamp2.default);
 	exports.default = TimestampInputContainer;
 
 /***/ },
@@ -43232,20 +43230,20 @@
 
 	var _actions = __webpack_require__(201);
 
-	var _parametersSelect = __webpack_require__(468);
+	var _parametet = __webpack_require__(468);
 
-	var _parametersSelect2 = _interopRequireDefault(_parametersSelect);
+	var _parametet2 = _interopRequireDefault(_parametet);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	var mapStateToProps = function mapStateToProps(state) {
 	    return {
 	        parameters: state.parameters.data,
 	        value: state.sampleObservation.data.parameter
 	    };
 	};
 
-	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	    return {
 	        onChange: function onChange(event) {
 	            dispatch((0, _actions.changeSampleObservation)({ parameter: event.target.value }));
@@ -43253,7 +43251,7 @@
 	    };
 	};
 
-	var ParameterSelectContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_parametersSelect2.default);
+	var ParameterSelectContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_parametet2.default);
 	exports.default = ParameterSelectContainer;
 
 /***/ },
@@ -43352,15 +43350,17 @@
 
 	var _actions = __webpack_require__(201);
 
-	var _valueInput = __webpack_require__(470);
+	var _value = __webpack_require__(470);
 
-	var _valueInput2 = _interopRequireDefault(_valueInput);
+	var _value2 = _interopRequireDefault(_value);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	var mapStateToProps = function mapStateToProps(state) {
+	    var value = state.sampleObservation.data.value;
 	    return {
-	        value: state.sampleObservation.data.value
+	        value: value,
+	        isValid: !isNaN(value) && value > 0
 	    };
 	};
 
@@ -43373,7 +43373,7 @@
 	    return newValue;
 	};
 
-	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	    return {
 	        onChange: function onChange(event) {
 	            dispatch((0, _actions.changeSampleObservation)({ value: clearDecimalInput(event.target.value) }));
@@ -43381,7 +43381,7 @@
 	    };
 	};
 
-	var ValueInputContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_valueInput2.default);
+	var ValueInputContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_value2.default);
 	exports.default = ValueInputContainer;
 
 /***/ },
@@ -43396,14 +43396,22 @@
 
 	var _reactBootstrap = __webpack_require__(206);
 
+	var getValidationStateName = function getValidationStateName(validationState) {
+	    if (validationState) {
+	        return "success";
+	    } else {
+	        return "error";
+	    }
+	};
+
 	var ValueInput = function ValueInput(_ref) {
 	    var value = _ref.value;
 	    var onChange = _ref.onChange;
-	    var getValidationState = _ref.getValidationState;
+	    var isValid = _ref.isValid;
 
 	    return React.createElement(
 	        _reactBootstrap.FormGroup,
-	        { validationState: getValidationState,
+	        { validationState: getValidationStateName(isValid),
 	            controlId: "valueControl", className: "required" },
 	        React.createElement(
 	            _reactBootstrap.Col,

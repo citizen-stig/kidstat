@@ -5,9 +5,13 @@ import {
     ControlLabel,
 } from 'react-bootstrap';
 
+const getValidationStateName = (validationState) => {
+    if(validationState){ return "success"} else { return "error"}
+};
 
-const ValueInput = ({value, onChange, getValidationState}) => {
-    return <FormGroup validationState={getValidationState}
+
+const ValueInput = ({value, onChange, isValid}) => {
+    return <FormGroup validationState={getValidationStateName(isValid)}
                       controlId="valueControl" className="required">
         <Col componentClass={ControlLabel} xs={4}>Value</Col>
         <Col xs={8}>

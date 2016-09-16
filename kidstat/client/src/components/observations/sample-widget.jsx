@@ -1,7 +1,8 @@
 import {Col} from 'react-bootstrap';
 
 import SampleObservationForm from './sample-form.jsx';
-import CategoryAlertContainer from '../../containers/category-alert.jsx';
+import CategoryAlertContainer
+    from '../../containers/observations/sample-observation/category-alert.jsx';
 
 let SampleObservationWidget = () => {
     return <div>

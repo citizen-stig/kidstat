@@ -25,15 +25,10 @@ describe('Parameters Actions Test', function () {
 });
 
 describe('Sample Observation Action Test', function () {
-    it('should TBD requestCategoryForSampleObservation',
+    it('should return only type requestCategoryForSampleObservation',
         function () {
-            const observation = {value: 123};
-            expect(requestCategoryForSampleObservation(observation)).to
-                .deep.equal(
-                {
-                    type: GET_SAMPLE_OBSERVATION_CATEGORY,
-                    data: observation
-                }
+            expect(requestCategoryForSampleObservation()).to
+                .deep.equal({type: GET_SAMPLE_OBSERVATION_CATEGORY}
             )
         });
     it('should return category for receiveCategoryForSampleObservation',

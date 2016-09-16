@@ -1,15 +1,16 @@
 import {connect} from 'react-redux';
 
 import {changeSampleObservation} from '../../../actions.jsx'
-import TimestampInput from '../../../components/obsevations/timestamp-input.jsx';
+import TimestampInput
+    from '../../../components/observations/inputs/timestamp.jsx';
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     return {
         value: state.sampleObservation.data.timestamp,
     }
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
     return {
         onChange: (event) => {
             dispatch(changeSampleObservation({timestamp: event.target.value}))

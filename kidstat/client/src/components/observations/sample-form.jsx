@@ -1,20 +1,16 @@
 import React, {Component, PropTypes} from 'react';
 import {
-    Form,
     Col,
+    Form,
     FormGroup,
-    FormControl,
     ButtonGroup,
     Button,
-    ControlLabel,
-    HelpBlock
 } from 'react-bootstrap';
 
 
 import {connect} from 'react-redux'
 
 import {
-    changeSampleObservation,
     fetchCategoryForSampleObservation,
     fetchParameters
 } from '../../actions.jsx'
@@ -29,12 +25,11 @@ import ParameterSelect
     from '../../containers/observations/sample-observation/parameters-select.jsx'
 import ValueInput
     from '../../containers/observations/sample-observation/value-input.jsx';
+import ErrorsListContainer
+    from '../../containers/observations/sample-observation/errors-list.jsx';
 
 
-import ErrorsListContainer from '../../containers/observations/sample-observations-errors.jsx';
-
-
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     let sampleObservation = state.sampleObservation.data;
     let observation = {
         gender: sampleObservation.gender,
@@ -50,8 +45,6 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-    console.log('SampleForm');
-    console.log(ownProps);
     return {
         submitAction: function (observation) {
             dispatch(fetchCategoryForSampleObservation(observation))
@@ -96,7 +89,7 @@ class SampleObservationForm extends Component {
             <Form horizontal onSubmit={this.onFormSubmit}>
                 <ErrorsListContainer/>
                 <GenderSelectContainer/>
-                <BirthdayInput getValidationState={() => { true }}/>
+                <BirthdayInput/>
                 <TimestampInput/>
                 <ParameterSelect/>
                 <ValueInput/>

@@ -1,6 +1,6 @@
 import {connect} from 'react-redux'
 
-import CategoryAlert from '../components/obsevations/category-alert.jsx';
+import CategoryAlert from '../../../components/observations/category-alert.jsx';
 
 let CategoryAlertContainer = ({category}) => {
     return <div>
@@ -17,4 +17,3 @@ const mapStateToProps = (state) => {
 
 CategoryAlertContainer = connect(mapStateToProps, null)(CategoryAlertContainer);
 export default CategoryAlertContainer
-

@@ -1,15 +1,15 @@
 import {connect} from 'react-redux'
 
 import {changeSampleObservation} from '../../../actions.jsx'
-import GenderSelect from '../../../components/obsevations/gender-select.jsx';
+import GenderSelect from '../../../components/kids/inputs/gender.jsx';
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     return {
         value: state.sampleObservation.data.gender,
     }
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
     return {
         onChange: (event) => {
             dispatch(changeSampleObservation({gender: event.target.value}))

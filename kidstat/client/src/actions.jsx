@@ -62,8 +62,8 @@ export function changeSampleObservation(observation){
     return {type: CHANGE_SAMPLE_OBSERVATION, data: observation}
 }
 
-export function requestCategoryForSampleObservation(observation) {
-    return {type: GET_SAMPLE_OBSERVATION_CATEGORY, data: observation}
+export function requestCategoryForSampleObservation() {
+    return {type: GET_SAMPLE_OBSERVATION_CATEGORY,}
 }
 
 export function receiveCategoryForSampleObservation(json) {
@@ -80,7 +80,7 @@ export function handleCategoryForSampleObservationErrors(json){
 
 export function fetchCategoryForSampleObservation(observation) {
     return function (dispatch) {
-        dispatch(requestCategoryForSampleObservation(observation));
+        dispatch(requestCategoryForSampleObservation());
         return post({url: 'try', body: observation})
             .then(json => dispatch(receiveCategoryForSampleObservation(json)))
             .catch(function(error){

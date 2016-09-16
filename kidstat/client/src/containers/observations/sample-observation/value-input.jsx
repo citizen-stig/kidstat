@@ -1,11 +1,13 @@
 import {connect} from 'react-redux'
 
 import {changeSampleObservation} from '../../../actions.jsx'
-import ValueInput from '../../../components/obsevations/value-input.jsx';
+import ValueInput from '../../../components/observations/inputs/value.jsx';
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
+    let value = state.sampleObservation.data.value;
     return {
-        value: state.sampleObservation.data.value,
+        value: value,
+        isValid: !isNaN(value) && (value > 0)
     }
 };
 
@@ -19,7 +21,7 @@ var clearDecimalInput = function (value) {
 };
 
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (dispatch) => {
     return {
         onChange: (event) => {
             dispatch(changeSampleObservation({value: clearDecimalInput(event.target.value)}))

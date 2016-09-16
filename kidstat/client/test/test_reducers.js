@@ -5,6 +5,7 @@ import parameters from '../src/reducers/parameters.js';
 import sampleObservation from '../src/reducers/sample-observation.js';
 import {
     GET_PARAMETERS,
+    CHANGE_SAMPLE_OBSERVATION,
     GET_SAMPLE_OBSERVATION_CATEGORY
 } from '../src/actions.jsx';
 
@@ -68,7 +69,17 @@ describe('Parameters Reducer Test', function () {
 
 describe('Sample Observation Reducer Test', function () {
     it('should return initial state', function () {
-        const expectedState = {category: null, isFetching: false, errors: []};
+        const expectedState = {
+            data: {
+                category: '',
+                gender: 'male',
+                birthday: '',
+                timestamp: new Date().toISOString().split("T")[0],
+                parameter: '',
+                value: '',
+            },
+            isFetching: false, errors: []
+        };
         expect(sampleObservation(undefined, {})).to.deep.equal(expectedState);
     });
     it('should return current state if action is unknown', function () {
@@ -80,12 +91,36 @@ describe('Sample Observation Reducer Test', function () {
         function () {
             // undefined action.status means that request should be performed
             const expectedState = {
-                category: null,
+                data: {
+                    category: '',
+                    gender: 'male',
+                    birthday: '',
+                    timestamp: new Date().toISOString().split("T")[0],
+                    parameter: '',
+                    value: '',
+                },
                 isFetching: true,
                 errors: []
             };
             const action = {type: GET_SAMPLE_OBSERVATION_CATEGORY};
             expect(sampleObservation(undefined, action)).to.deep.equal(expectedState)
         });
+    it('should change only data key presented in action', function(){
+        const expectedState = {
+                data: {
+                    category: '',
+                    gender: 'male',
+                    birthday: '',
+                    timestamp: new Date().toISOString().split("T")[0],
+                    parameter: '',
+                    value: '123',
+                },
+                isFetching: false,
+                errors: []
+            };
+        const action = {type: CHANGE_SAMPLE_OBSERVATION, data: {value: '123'}};
+        expect(sampleObservation(undefined, action)).to.deep.equal(expectedState);
+
+    })
 
 });

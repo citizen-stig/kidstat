@@ -4,10 +4,8 @@ import {assert, expect} from 'chai'
 import {
     requestParameters,
     receiveParameters,
-    fetchParameters,
     requestCategoryForSampleObservation,
     receiveCategoryForSampleObservation,
-    fetchParameters,
     GET_PARAMETERS,
     GET_SAMPLE_OBSERVATION_CATEGORY
 } from '../src/actions.jsx';
@@ -27,14 +25,14 @@ describe('Parameters Actions Test', function () {
 });
 
 describe('Sample Observation Action Test', function () {
-    it('should return only type for requestCategoryForSampleObservation',
+    it('should TBD requestCategoryForSampleObservation',
         function () {
             const observation = {value: 123};
             expect(requestCategoryForSampleObservation(observation)).to
                 .deep.equal(
                 {
                     type: GET_SAMPLE_OBSERVATION_CATEGORY,
-                    observation: observation
+                    data: observation
                 }
             )
         });

@@ -7,26 +7,7 @@ import {
     ControlLabel,
 } from 'react-bootstrap';
 
-import {connect} from 'react-redux'
-
-
-const mapStateToProps = (state, ownProps) => {
-    let value;
-    let parameters = state.parameters.data;
-    if(parameters.length > 0){
-        value = parameters[0]
-    } else {
-        value = ''
-    }
-    return {
-        parameters: parameters,
-        value: value,
-        errors: state.parameters.errors
-    }
-};
-
-
-class ParameterSelect extends Component {
+export default class ParameterSelect extends Component {
 
     renderParameterChoices() {
         return this.props.parameters.map(function (parameter) {
@@ -51,7 +32,3 @@ class ParameterSelect extends Component {
         </FormGroup>
     }
 }
-
-
-ParameterSelect = connect(mapStateToProps)(ParameterSelect);
-export default ParameterSelect;

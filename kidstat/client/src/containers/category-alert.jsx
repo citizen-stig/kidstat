@@ -10,7 +10,7 @@ let CategoryAlertContainer = ({category}) => {
 
 const mapStateToProps = (state) => {
     return {
-        category: state.sampleObservation.category
+        category: state.sampleObservation.data.category
     }
 };
 

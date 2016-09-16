@@ -56,9 +56,14 @@ export function fetchParameters() {
 
 // Sample Observations
 export const GET_SAMPLE_OBSERVATION_CATEGORY = 'GET_SAMPLE_OBSERVATION_CATEGORY';
+export const CHANGE_SAMPLE_OBSERVATION = 'CHANGE_SAMPLE_OBSERVATION';
+
+export function changeSampleObservation(observation){
+    return {type: CHANGE_SAMPLE_OBSERVATION, data: observation}
+}
 
 export function requestCategoryForSampleObservation(observation) {
-    return {type: GET_SAMPLE_OBSERVATION_CATEGORY, observation}
+    return {type: GET_SAMPLE_OBSERVATION_CATEGORY, data: observation}
 }
 
 export function receiveCategoryForSampleObservation(json) {

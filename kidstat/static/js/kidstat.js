@@ -23516,7 +23516,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
 
 	var _redux = __webpack_require__(181);
@@ -23529,11 +23529,17 @@
 
 	var _sampleObservation2 = _interopRequireDefault(_sampleObservation);
 
+	var _actions = __webpack_require__(201);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	// var SomeState = {
 	//     'sampleObservation': {
-	//          'category': 'Average',
+	//          data: {
+	//              gender: 'male'
+	//              timestamp: ...
+	//             ......
+	//              'category': 'Average'},
 	//          'isFetching: false,
 	//          errors:
 	//      },
@@ -23546,7 +23552,20 @@
 
 
 	var kidstatReducer = (0, _redux.combineReducers)({ parameters: _parameters2.default, sampleObservation: _sampleObservation2.default });
-	exports.default = kidstatReducer;
+
+	var rootReducer = function rootReducer() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	    var action = arguments[1];
+
+	    var newState = kidstatReducer(state, action);
+	    if (!newState.sampleObservation.data.parameter && newState.parameters.data.length > 0) {
+	        // Set first parameter as selected value for sampleObservation
+	        var newObservation = { parameter: newState.parameters.data[0].name };
+	        newState.sampleObservation = (0, _sampleObservation2.default)(newState.sampleObservation, (0, _actions.changeSampleObservation)(newObservation));
+	    }
+	    return newState;
+	};
+	exports.default = rootReducer;
 
 /***/ },
 /* 200 */
@@ -23598,11 +23617,12 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.GET_SAMPLE_OBSERVATION_CATEGORY = exports.GET_PARAMETERS = undefined;
+	exports.CHANGE_SAMPLE_OBSERVATION = exports.GET_SAMPLE_OBSERVATION_CATEGORY = exports.GET_PARAMETERS = undefined;
 	exports.requestParameters = requestParameters;
 	exports.receiveParameters = receiveParameters;
 	exports.handleParametersErrors = handleParametersErrors;
 	exports.fetchParameters = fetchParameters;
+	exports.changeSampleObservation = changeSampleObservation;
 	exports.requestCategoryForSampleObservation = requestCategoryForSampleObservation;
 	exports.receiveCategoryForSampleObservation = receiveCategoryForSampleObservation;
 	exports.handleCategoryForSampleObservationErrors = handleCategoryForSampleObservationErrors;
@@ -23665,9 +23685,14 @@
 
 	// Sample Observations
 	var GET_SAMPLE_OBSERVATION_CATEGORY = exports.GET_SAMPLE_OBSERVATION_CATEGORY = 'GET_SAMPLE_OBSERVATION_CATEGORY';
+	var CHANGE_SAMPLE_OBSERVATION = exports.CHANGE_SAMPLE_OBSERVATION = 'CHANGE_SAMPLE_OBSERVATION';
 
-	function requestCategoryForSampleObservation(observation) {
-	    return { type: GET_SAMPLE_OBSERVATION_CATEGORY, observation: observation };
+	function changeSampleObservation(observation) {
+	    return { type: CHANGE_SAMPLE_OBSERVATION, data: observation };
+	}
+
+	function requestCategoryForSampleObservation() {
+	    return { type: GET_SAMPLE_OBSERVATION_CATEGORY };
 	}
 
 	function receiveCategoryForSampleObservation(json) {
@@ -23762,7 +23787,14 @@
 	var _actions = __webpack_require__(201);
 
 	var initialState = {
-	    category: null,
+	    data: {
+	        category: '',
+	        gender: 'male',
+	        birthday: '',
+	        timestamp: new Date().toISOString().split("T")[0],
+	        parameter: '',
+	        value: ''
+	    },
 	    isFetching: false,
 	    errors: []
 	};
@@ -23776,21 +23808,25 @@
 	            if (action.status === undefined) {
 	                // Request
 	                return {
-	                    category: state.category,
+	                    data: state.data,
 	                    isFetching: true,
 	                    errors: []
 	                };
 	            } else if (action.status == 'success') {
 	                // Response Received
-	                return { category: action.response.category,
+	                var data = Object.assign({}, state.data, { category: action.response.category });
+	                return { data: data,
 	                    isFetching: false,
 	                    errors: [] };
 	            }
 	            // Error
 	            return {
-	                data: state.category,
+	                data: state.data,
 	                isFetching: false,
 	                errors: action.errors };
+	        case _actions.CHANGE_SAMPLE_OBSERVATION:
+	            var newObservation = Object.assign({}, state.data, action.data);
+	            return Object.assign({}, state, { data: newObservation });
 	        default:
 	            return state;
 	    }
@@ -23818,7 +23854,7 @@
 
 	var _publicIndex2 = _interopRequireDefault(_publicIndex);
 
-	var _loader = __webpack_require__(466);
+	var _loader = __webpack_require__(475);
 
 	var _loader2 = _interopRequireDefault(_loader);
 
@@ -42726,7 +42762,7 @@
 
 	var _sampleForm2 = _interopRequireDefault(_sampleForm);
 
-	var _categoryAlert = __webpack_require__(464);
+	var _categoryAlert = __webpack_require__(473);
 
 	var _categoryAlert2 = _interopRequireDefault(_categoryAlert);
 
@@ -42779,13 +42815,29 @@
 
 	var _actions = __webpack_require__(201);
 
-	var _sampleObservationsErrors = __webpack_require__(461);
+	var _genderSelect = __webpack_require__(461);
+
+	var _genderSelect2 = _interopRequireDefault(_genderSelect);
+
+	var _birthdayInput = __webpack_require__(463);
+
+	var _birthdayInput2 = _interopRequireDefault(_birthdayInput);
+
+	var _timestampInput = __webpack_require__(465);
+
+	var _timestampInput2 = _interopRequireDefault(_timestampInput);
+
+	var _parametersSelect = __webpack_require__(467);
+
+	var _parametersSelect2 = _interopRequireDefault(_parametersSelect);
+
+	var _valueInput = __webpack_require__(469);
+
+	var _valueInput2 = _interopRequireDefault(_valueInput);
+
+	var _sampleObservationsErrors = __webpack_require__(471);
 
 	var _sampleObservationsErrors2 = _interopRequireDefault(_sampleObservationsErrors);
-
-	var _observationForm = __webpack_require__(463);
-
-	var _observationForm2 = _interopRequireDefault(_observationForm);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -42796,15 +42848,23 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var mapStateToProps = function mapStateToProps(state, ownProps) {
-	    console.log("ULALA");
-	    console.log(ownProps);
+	    var sampleObservation = state.sampleObservation.data;
+	    var observation = {
+	        gender: sampleObservation.gender,
+	        birthday: sampleObservation.birthday,
+	        timestamp: sampleObservation.timestamp,
+	        parameter: sampleObservation.parameter,
+	        value: sampleObservation.value
+	    };
 	    return {
-	        parameters: state.parameters.data,
+	        observation: observation,
 	        errors: state.parameters.errors
 	    };
 	};
 
 	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	    console.log('SampleForm');
+	    console.log(ownProps);
 	    return {
 	        submitAction: function submitAction(observation) {
 	            dispatch((0, _actions.fetchCategoryForSampleObservation)(observation));
@@ -42815,15 +42875,6 @@
 	    };
 	};
 
-	var clearDecimalInput = function clearDecimalInput(value) {
-	    var parts = value.replace(/[^0-9.,]/g, '').replace(/,/g, '.').split('.');
-	    var newValue = parts[0];
-	    if (parts.length > 1) {
-	        newValue += "." + parts.slice(1).join("");
-	    }
-	    return newValue;
-	};
-
 	var SampleObservationForm = function (_Component) {
 	    _inherits(SampleObservationForm, _Component);
 
@@ -42832,97 +42883,22 @@
 
 	        var _this = _possibleConstructorReturn(this, (SampleObservationForm.__proto__ || Object.getPrototypeOf(SampleObservationForm)).call(this));
 
-	        _this.handleValueChange = _this.handleValueChange.bind(_this);
-	        _this.getValueValidationState = _this.getValueValidationState.bind(_this);
-	        _this.handleTimestampChange = _this.handleTimestampChange.bind(_this);
-	        _this.handleBirthdayChange = _this.handleBirthdayChange.bind(_this);
-	        _this.getBirthdayValidationState = _this.getBirthdayValidationState.bind(_this);
-	        _this.getBirthdayValidationStateName = _this.getBirthdayValidationStateName.bind(_this);
-	        _this.handleGenderChange = _this.handleGenderChange.bind(_this);
 	        _this.getFormValidationState = _this.getFormValidationState.bind(_this);
-	        _this.getValueValidationStateName = _this.getValueValidationStateName.bind(_this);
-	        _this.handleParameterChange = _this.handleParameterChange.bind(_this);
 	        _this.onFormSubmit = _this.onFormSubmit.bind(_this);
 	        _this.submit = _this.submit.bind(_this);
-	        _this.state = {
-	            gender: 'male',
-	            birthday: '',
-	            timestamp: new Date().toISOString().split("T")[0],
-	            parameter: '',
-	            value: '',
-	            errors: []
-	        };
 	        return _this;
 	    }
 
 	    _createClass(SampleObservationForm, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            var a = this.props.getParameters();
-	            console.log("Component mount");
-	            console.log(a);
+	            this.props.getParameters();
 	        }
 	    }, {
 	        key: 'getFormValidationState',
 	        value: function getFormValidationState() {
-	            console.log('Form Validation State');
-	            console.log(this.state);
-	            return this.state.gender && this.state.parameter && this.state.timestamp && this.getValueValidationState() && this.getBirthdayValidationState();
-	        }
-	    }, {
-	        key: 'handleValueChange',
-	        value: function handleValueChange(event) {
-	            var newValue = clearDecimalInput(event.target.value);
-	            this.setState({ value: newValue });
-	        }
-	    }, {
-	        key: 'getValueValidationState',
-	        value: function getValueValidationState() {
-	            return this.state.value !== '' && !isNaN(this.state.value) && this.state.value > 0;
-	        }
-	    }, {
-	        key: 'getValueValidationStateName',
-	        value: function getValueValidationStateName() {
-	            if (this.getValueValidationState()) {
-	                return 'success';
-	            }
-	            return 'error';
-	        }
-	    }, {
-	        key: 'handleTimestampChange',
-	        value: function handleTimestampChange(event) {
-	            this.setState({ timestamp: event.target.value });
-	        }
-	    }, {
-	        key: 'handleBirthdayChange',
-	        value: function handleBirthdayChange(event) {
-	            this.setState({ birthday: event.target.value });
-	        }
-	    }, {
-	        key: 'getBirthdayValidationState',
-	        value: function getBirthdayValidationState() {
-	            return this.state.birthday && this.state.birthday < this.state.timestamp;
-	        }
-	    }, {
-	        key: 'getBirthdayValidationStateName',
-	        value: function getBirthdayValidationStateName() {
-	            if (this.state.birthday) {
-	                if (this.getBirthdayValidationState()) {
-	                    return "success";
-	                }
-	                return "error";
-	            }
-	            return "warning";
-	        }
-	    }, {
-	        key: 'handleGenderChange',
-	        value: function handleGenderChange(event) {
-	            this.setState({ gender: event.target.value });
-	        }
-	    }, {
-	        key: 'handleParameterChange',
-	        value: function handleParameterChange(event) {
-	            this.setState({ parameter: event.target.value });
+	            var observation = this.props.observation;
+	            return observation.gender && observation.parameter && observation.timestamp && observation.value;
 	        }
 	    }, {
 	        key: 'onFormSubmit',
@@ -42935,28 +42911,7 @@
 	    }, {
 	        key: 'submit',
 	        value: function submit() {
-	            var observation = {
-	                gender: this.state.gender,
-	                birthday: this.state.birthday,
-	                timestamp: this.state.timestamp,
-	                parameter: this.state.parameter,
-	                value: parseFloat(this.state.value)
-	            };
-	            this.props.submitAction(observation);
-	        }
-	    }, {
-	        key: 'renderParameterChoices',
-	        value: function renderParameterChoices() {
-	            return this.props.parameters.map(function (parameter) {
-	                return _react2.default.createElement(
-	                    'option',
-	                    { key: parameter.id,
-	                        value: parameter.name },
-	                    parameter.name,
-	                    ', ',
-	                    parameter.unit
-	                );
-	            });
+	            this.props.submitAction(this.props.observation);
 	        }
 	    }, {
 	        key: 'render',
@@ -42965,99 +42920,13 @@
 	                _reactBootstrap.Form,
 	                { horizontal: true, onSubmit: this.onFormSubmit },
 	                _react2.default.createElement(_sampleObservationsErrors2.default, null),
-	                _react2.default.createElement(
-	                    _reactBootstrap.FormGroup,
-	                    { controlId: 'formControlsSelect', className: 'required' },
-	                    _react2.default.createElement(
-	                        _reactBootstrap.Col,
-	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
-	                        'Gender'
-	                    ),
-	                    _react2.default.createElement(
-	                        _reactBootstrap.Col,
-	                        { xs: 8 },
-	                        _react2.default.createElement(
-	                            _reactBootstrap.FormControl,
-	                            { className: 'min-width-95p',
-	                                componentClass: 'select',
-	                                value: this.state.gender,
-	                                onChange: this.handleGenderChange },
-	                            _react2.default.createElement(
-	                                'option',
-	                                { value: 'male' },
-	                                'Boy'
-	                            ),
-	                            _react2.default.createElement(
-	                                'option',
-	                                { value: 'female' },
-	                                'Girl'
-	                            )
-	                        )
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    _reactBootstrap.FormGroup,
-	                    { controlId: 'birthdayControl', className: 'required',
-	                        validationState: this.getBirthdayValidationStateName() },
-	                    _react2.default.createElement(
-	                        _reactBootstrap.Col,
-	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
-	                        'Birthday'
-	                    ),
-	                    _react2.default.createElement(
-	                        _reactBootstrap.Col,
-	                        { xs: 8 },
-	                        _react2.default.createElement(_reactBootstrap.FormControl, { className: 'min-width-95p',
-	                            required: true,
-	                            onChange: this.handleBirthdayChange,
-	                            value: this.state.birthday,
-	                            type: 'date' }),
-	                        !this.getBirthdayValidationState() ? _react2.default.createElement(
-	                            _reactBootstrap.HelpBlock,
-	                            null,
-	                            'Birthday should be less then a timestamp'
-	                        ) : ''
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    _reactBootstrap.FormGroup,
-	                    { controlId: 'timestampControl', className: 'required' },
-	                    _react2.default.createElement(
-	                        _reactBootstrap.Col,
-	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
-	                        'Timestamp'
-	                    ),
-	                    _react2.default.createElement(
-	                        _reactBootstrap.Col,
-	                        { xs: 8 },
-	                        _react2.default.createElement(_reactBootstrap.FormControl, { className: 'min-width-95p',
-	                            required: true,
-	                            value: this.state.timestamp,
-	                            onChange: this.handleTimestampChange,
-	                            type: 'date' })
-	                    )
-	                ),
-	                _react2.default.createElement(_observationForm2.default, { onChange: this.handleParameterChange }),
-	                _react2.default.createElement(
-	                    _reactBootstrap.FormGroup,
-	                    { validationState: this.getValueValidationStateName(),
-	                        controlId: 'valueControl', className: 'required' },
-	                    _react2.default.createElement(
-	                        _reactBootstrap.Col,
-	                        { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
-	                        'Value'
-	                    ),
-	                    _react2.default.createElement(
-	                        _reactBootstrap.Col,
-	                        { xs: 8 },
-	                        _react2.default.createElement(_reactBootstrap.FormControl, { value: this.state.value,
-	                            autoCorrect: 'off',
-	                            required: true,
-	                            pattern: '[0-9.]*',
-	                            onChange: this.handleValueChange }),
-	                        _react2.default.createElement(_reactBootstrap.FormControl.Feedback, null)
-	                    )
-	                ),
+	                _react2.default.createElement(_genderSelect2.default, null),
+	                _react2.default.createElement(_birthdayInput2.default, { getValidationState: function getValidationState() {
+	                        true;
+	                    } }),
+	                _react2.default.createElement(_timestampInput2.default, null),
+	                _react2.default.createElement(_parametersSelect2.default, null),
+	                _react2.default.createElement(_valueInput2.default, null),
 	                _react2.default.createElement(
 	                    _reactBootstrap.FormGroup,
 	                    null,
@@ -43089,6 +42958,7 @@
 
 	SampleObservationForm.propTypes = {
 	    submitAction: _react.PropTypes.func,
+	    changeAction: _react.PropTypes.func,
 	    getParameters: _react.PropTypes.func,
 	    parameters: _react.PropTypes.array
 	};
@@ -43108,22 +42978,30 @@
 
 	var _reactRedux = __webpack_require__(174);
 
-	var _errorsList = __webpack_require__(462);
+	var _actions = __webpack_require__(201);
 
-	var _errorsList2 = _interopRequireDefault(_errorsList);
+	var _genderSelect = __webpack_require__(462);
+
+	var _genderSelect2 = _interopRequireDefault(_genderSelect);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-	var mapStateToProps = function mapStateToProps(state) {
+	var mapStateToProps = function mapStateToProps(state, ownProps) {
 	    return {
-	        messages: [].concat(_toConsumableArray(state.sampleObservation.errors), _toConsumableArray(state.parameters.errors))
+	        value: state.sampleObservation.data.gender
 	    };
 	};
 
-	var ErrorsListContainer = (0, _reactRedux.connect)(mapStateToProps)(_errorsList2.default);
-	exports.default = ErrorsListContainer;
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	    return {
+	        onChange: function onChange(event) {
+	            dispatch((0, _actions.changeSampleObservation)({ gender: event.target.value }));
+	        }
+	    };
+	};
+
+	var GenderSelectContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_genderSelect2.default);
+	exports.default = GenderSelectContainer;
 
 /***/ },
 /* 462 */
@@ -43137,32 +43015,249 @@
 
 	var _reactBootstrap = __webpack_require__(206);
 
-	var ErrorAlert = function ErrorAlert(_ref) {
-	    var message = _ref.message;
+	var GenderSelect = function GenderSelect(_ref) {
+	    var value = _ref.value;
+	    var onChange = _ref.onChange;
 
 	    return React.createElement(
-	        _reactBootstrap.Alert,
-	        { bsStyle: "danger" },
-	        message
+	        _reactBootstrap.FormGroup,
+	        { controlId: "formControlsSelect", className: "required" },
+	        React.createElement(
+	            _reactBootstrap.Col,
+	            { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
+	            "Gender"
+	        ),
+	        React.createElement(
+	            _reactBootstrap.Col,
+	            { xs: 8 },
+	            React.createElement(
+	                _reactBootstrap.FormControl,
+	                { className: "min-width-95p",
+	                    componentClass: "select",
+	                    value: value,
+	                    onChange: onChange },
+	                React.createElement(
+	                    "option",
+	                    { value: "male" },
+	                    "Boy"
+	                ),
+	                React.createElement(
+	                    "option",
+	                    { value: "female" },
+	                    "Girl"
+	                )
+	            )
+	        )
 	    );
 	};
 
-	var ErrorsList = function ErrorsList(_ref2) {
-	    var messages = _ref2.messages;
-
-	    return React.createElement(
-	        "div",
-	        null,
-	        messages.map(function (message, i) {
-	            return React.createElement(ErrorAlert, { key: i, message: message });
-	        })
-	    );
-	};
-
-	exports.default = ErrorsList;
+	exports.default = GenderSelect;
 
 /***/ },
 /* 463 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _reactRedux = __webpack_require__(174);
+
+	var _actions = __webpack_require__(201);
+
+	var _birthdayInput = __webpack_require__(464);
+
+	var _birthdayInput2 = _interopRequireDefault(_birthdayInput);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	    return {
+	        value: state.sampleObservation.data.birthday
+	    };
+	};
+
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	    return {
+	        onChange: function onChange(event) {
+	            dispatch((0, _actions.changeSampleObservation)({ birthday: event.target.value }));
+	        }
+	    };
+	};
+
+	var BirthdayInputContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_birthdayInput2.default);
+	exports.default = BirthdayInputContainer;
+
+/***/ },
+/* 464 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _reactBootstrap = __webpack_require__(206);
+
+	var getValidationStateName = function getValidationStateName(validationState) {
+	    if (validationState) {
+	        return "success";
+	    } else {
+	        return "error";
+	    }
+	};
+
+	var BirthdayInput = function BirthdayInput(_ref) {
+	    var value = _ref.value;
+	    var onChange = _ref.onChange;
+	    var getValidationState = _ref.getValidationState;
+
+	    return React.createElement(
+	        _reactBootstrap.FormGroup,
+	        { controlId: "birthdayControl", className: "required",
+	            validationState: getValidationStateName(getValidationState()) },
+	        React.createElement(
+	            _reactBootstrap.Col,
+	            { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
+	            "Birthday"
+	        ),
+	        React.createElement(
+	            _reactBootstrap.Col,
+	            { xs: 8 },
+	            React.createElement(_reactBootstrap.FormControl, { className: "min-width-95p",
+	                required: true,
+	                onChange: onChange,
+	                value: value,
+	                type: "date" }),
+	            !getValidationState() ? React.createElement(
+	                _reactBootstrap.HelpBlock,
+	                null,
+	                "Birthday should be less then a timestamp"
+	            ) : ''
+	        )
+	    );
+	};
+
+	exports.default = BirthdayInput;
+
+/***/ },
+/* 465 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _reactRedux = __webpack_require__(174);
+
+	var _actions = __webpack_require__(201);
+
+	var _timestampInput = __webpack_require__(466);
+
+	var _timestampInput2 = _interopRequireDefault(_timestampInput);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	    return {
+	        value: state.sampleObservation.data.timestamp
+	    };
+	};
+
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	    return {
+	        onChange: function onChange(event) {
+	            dispatch((0, _actions.changeSampleObservation)({ timestamp: event.target.value }));
+	        }
+	    };
+	};
+
+	var TimestampInputContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_timestampInput2.default);
+	exports.default = TimestampInputContainer;
+
+/***/ },
+/* 466 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _reactBootstrap = __webpack_require__(206);
+
+	var TimestampInput = function TimestampInput(_ref) {
+	    var value = _ref.value;
+	    var onChange = _ref.onChange;
+
+	    return React.createElement(
+	        _reactBootstrap.FormGroup,
+	        { controlId: "timestampControl", className: "required" },
+	        React.createElement(
+	            _reactBootstrap.Col,
+	            { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
+	            "Timestamp"
+	        ),
+	        React.createElement(
+	            _reactBootstrap.Col,
+	            { xs: 8 },
+	            React.createElement(_reactBootstrap.FormControl, { className: "min-width-95p",
+	                required: true,
+	                value: value,
+	                onChange: onChange,
+	                type: "date" })
+	        )
+	    );
+	};
+
+	exports.default = TimestampInput;
+
+/***/ },
+/* 467 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _reactRedux = __webpack_require__(174);
+
+	var _actions = __webpack_require__(201);
+
+	var _parametersSelect = __webpack_require__(468);
+
+	var _parametersSelect2 = _interopRequireDefault(_parametersSelect);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	    return {
+	        parameters: state.parameters.data,
+	        value: state.sampleObservation.data.parameter
+	    };
+	};
+
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	    return {
+	        onChange: function onChange(event) {
+	            dispatch((0, _actions.changeSampleObservation)({ parameter: event.target.value }));
+	        }
+	    };
+	};
+
+	var ParameterSelectContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_parametersSelect2.default);
+	exports.default = ParameterSelectContainer;
+
+/***/ },
+/* 468 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43179,8 +43274,6 @@
 
 	var _reactBootstrap = __webpack_require__(206);
 
-	var _reactRedux = __webpack_require__(174);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -43188,21 +43281,6 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var mapStateToProps = function mapStateToProps(state, ownProps) {
-	    var value = void 0;
-	    var parameters = state.parameters.data;
-	    if (parameters.length > 0) {
-	        value = parameters[0];
-	    } else {
-	        value = '';
-	    }
-	    return {
-	        parameters: parameters,
-	        value: value,
-	        errors: state.parameters.errors
-	    };
-	};
 
 	var ParameterSelect = function (_Component) {
 	    _inherits(ParameterSelect, _Component);
@@ -43258,11 +43336,10 @@
 	    return ParameterSelect;
 	}(_react.Component);
 
-	ParameterSelect = (0, _reactRedux.connect)(mapStateToProps)(ParameterSelect);
 	exports.default = ParameterSelect;
 
 /***/ },
-/* 464 */
+/* 469 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43273,7 +43350,159 @@
 
 	var _reactRedux = __webpack_require__(174);
 
-	var _categoryAlert = __webpack_require__(465);
+	var _actions = __webpack_require__(201);
+
+	var _valueInput = __webpack_require__(470);
+
+	var _valueInput2 = _interopRequireDefault(_valueInput);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var mapStateToProps = function mapStateToProps(state, ownProps) {
+	    return {
+	        value: state.sampleObservation.data.value
+	    };
+	};
+
+	var clearDecimalInput = function clearDecimalInput(value) {
+	    var parts = value.replace(/[^0-9.,]/g, '').replace(/,/g, '.').split('.');
+	    var newValue = parts[0];
+	    if (parts.length > 1) {
+	        newValue += "." + parts.slice(1).join("");
+	    }
+	    return newValue;
+	};
+
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+	    return {
+	        onChange: function onChange(event) {
+	            dispatch((0, _actions.changeSampleObservation)({ value: clearDecimalInput(event.target.value) }));
+	        }
+	    };
+	};
+
+	var ValueInputContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_valueInput2.default);
+	exports.default = ValueInputContainer;
+
+/***/ },
+/* 470 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _reactBootstrap = __webpack_require__(206);
+
+	var ValueInput = function ValueInput(_ref) {
+	    var value = _ref.value;
+	    var onChange = _ref.onChange;
+	    var getValidationState = _ref.getValidationState;
+
+	    return React.createElement(
+	        _reactBootstrap.FormGroup,
+	        { validationState: getValidationState,
+	            controlId: "valueControl", className: "required" },
+	        React.createElement(
+	            _reactBootstrap.Col,
+	            { componentClass: _reactBootstrap.ControlLabel, xs: 4 },
+	            "Value"
+	        ),
+	        React.createElement(
+	            _reactBootstrap.Col,
+	            { xs: 8 },
+	            React.createElement(_reactBootstrap.FormControl, { value: value,
+	                autoCorrect: "off",
+	                required: true,
+	                pattern: "[0-9.]*",
+	                onChange: onChange }),
+	            React.createElement(_reactBootstrap.FormControl.Feedback, null)
+	        )
+	    );
+	};
+
+	exports.default = ValueInput;
+
+/***/ },
+/* 471 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _reactRedux = __webpack_require__(174);
+
+	var _errorsList = __webpack_require__(472);
+
+	var _errorsList2 = _interopRequireDefault(_errorsList);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	var mapStateToProps = function mapStateToProps(state) {
+	    return {
+	        messages: [].concat(_toConsumableArray(state.sampleObservation.errors), _toConsumableArray(state.parameters.errors))
+	    };
+	};
+
+	var ErrorsListContainer = (0, _reactRedux.connect)(mapStateToProps)(_errorsList2.default);
+	exports.default = ErrorsListContainer;
+
+/***/ },
+/* 472 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _reactBootstrap = __webpack_require__(206);
+
+	var ErrorAlert = function ErrorAlert(_ref) {
+	    var message = _ref.message;
+
+	    return React.createElement(
+	        _reactBootstrap.Alert,
+	        { bsStyle: "danger" },
+	        message
+	    );
+	};
+
+	var ErrorsList = function ErrorsList(_ref2) {
+	    var messages = _ref2.messages;
+
+	    return React.createElement(
+	        "div",
+	        null,
+	        messages.map(function (message, i) {
+	            return React.createElement(ErrorAlert, { key: i, message: message });
+	        })
+	    );
+	};
+
+	exports.default = ErrorsList;
+
+/***/ },
+/* 473 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _reactRedux = __webpack_require__(174);
+
+	var _categoryAlert = __webpack_require__(474);
 
 	var _categoryAlert2 = _interopRequireDefault(_categoryAlert);
 
@@ -43291,7 +43520,7 @@
 
 	var mapStateToProps = function mapStateToProps(state) {
 	    return {
-	        category: state.sampleObservation.category
+	        category: state.sampleObservation.data.category
 	    };
 	};
 
@@ -43299,7 +43528,7 @@
 	exports.default = CategoryAlertContainer;
 
 /***/ },
-/* 465 */
+/* 474 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43359,7 +43588,7 @@
 	exports.default = CategoryAlert;
 
 /***/ },
-/* 466 */
+/* 475 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

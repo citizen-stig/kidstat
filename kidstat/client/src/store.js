@@ -2,11 +2,15 @@ import {combineReducers} from 'redux';
 
 import parameters from './reducers/parameters.js';
 import sampleObservation from './reducers/sample-observation.js';
-
+import {changeSampleObservation} from './actions.jsx'
 
 // var SomeState = {
 //     'sampleObservation': {
-//          'category': 'Average',
+//          data: {
+//              gender: 'male'
+//              timestamp: ...
+//             ......
+//              'category': 'Average'},
 //          'isFetching: false,
 //          errors:
 //      },
@@ -19,4 +23,16 @@ import sampleObservation from './reducers/sample-observation.js';
 
 
 const kidstatReducer = combineReducers({parameters, sampleObservation});
-export default kidstatReducer;
+
+const rootReducer = (state = {}, action) =>{
+    let newState = kidstatReducer(state, action);
+    if(!(newState.sampleObservation.data.parameter) && newState.parameters.data.length > 0){
+        // Set first parameter as selected value for sampleObservation
+        let newObservation = {parameter: newState.parameters.data[0].name};
+        newState.sampleObservation = sampleObservation(
+            newState.sampleObservation,
+            changeSampleObservation(newObservation));
+    }
+    return newState
+};
+export default rootReducer;

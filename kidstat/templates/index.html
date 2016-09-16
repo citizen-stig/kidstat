@@ -1,20 +1,11 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="author" content="Nikolay Golub">
-    <meta name="description" content="Track how your kids grow">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
-    <!--[if lt IE 9]>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <![endif]-->
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Kidstat - Track Kid Growth{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
+{%- block body -%}
 <div class="main-container"></div>
 {%- if config.DEBUG -%}
     <script src="//npmcdn.com/react@15.3.1/dist/react.js"></script>
@@ -27,5 +18,4 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/redux/3.6.0/redux.js"></script>
     <script src="{{ url_for('static', filename='js/kidstat.min.js') }}"></script>
 {%- endif -%}
-</body>
-</html>
+{% endblock %}

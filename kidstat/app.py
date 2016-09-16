@@ -34,12 +34,15 @@ def create_app():
             lambda: db.connection.authenticate(mongodb_settings.get('username'),
                                                mongodb_settings.get('password'))
         )
-
     Mail(app)
 
     @app.route('/')
     def home():
         return render_template('index.html')
+
+    @app.route('/about')
+    def about():
+        return render_template('about.html')
 
     return app
 

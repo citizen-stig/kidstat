@@ -44,6 +44,8 @@ export function fetchParameters() {
             .then(json =>
                 dispatch(receiveParameters(json))
             ).catch(function (error) {
+                console.log('Error in fetchParameters');
+                console.log(error);
                 if (error.response) {
                     return error.response.json()
                         .then(json => dispatch(handleParametersErrors(json)))
@@ -84,6 +86,8 @@ export function fetchCategoryForSampleObservation(observation) {
         return post({url: 'try', body: observation})
             .then(json => dispatch(receiveCategoryForSampleObservation(json)))
             .catch(function(error){
+                console.log('Error in fetchCategoryForSampleObservation');
+                console.log(error);
                 if(error.response){
                     return error.response.json()
                         .then(json => dispatch(handleCategoryForSampleObservationErrors(json)));

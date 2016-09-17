@@ -20,10 +20,25 @@ function genericErrorsHandler(type, json) {
     if ("message" in json) {
         errors = [json['message']];
     } else if ("errors" in json) {
-        errors = json['errors']
+        let jsonErrors = json['errors'];
+        if (typeof jsonErrors === 'object') {
+            errors = [];
+            for (let key in jsonErrors) {
+                if (jsonErrors.hasOwnProperty(key)) {
+                    let error = key + ": " + jsonErrors[key];
+                    errors.push(error);
+                }
+            }
+        } else if (jsonErrors.constructor === Array) {
+            errors = jsonErrors;
+        } else {
+            console.log('Unknown format, try it this way');
+            errors = [jsonErrors];
+        }
     } else {
         errors = ['Unknown Error'];
     }
+
     return {
         type: type,
         status: 'error',

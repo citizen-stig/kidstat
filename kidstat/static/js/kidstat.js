@@ -23618,6 +23618,9 @@
 	    value: true
 	});
 	exports.CHANGE_SAMPLE_OBSERVATION = exports.GET_SAMPLE_OBSERVATION_CATEGORY = exports.GET_PARAMETERS = undefined;
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 	exports.requestParameters = requestParameters;
 	exports.receiveParameters = receiveParameters;
 	exports.handleParametersErrors = handleParametersErrors;
@@ -23651,10 +23654,25 @@
 	    if ("message" in json) {
 	        errors = [json['message']];
 	    } else if ("errors" in json) {
-	        errors = json['errors'];
+	        var jsonErrors = json['errors'];
+	        if ((typeof jsonErrors === 'undefined' ? 'undefined' : _typeof(jsonErrors)) === 'object') {
+	            errors = [];
+	            for (var key in jsonErrors) {
+	                if (jsonErrors.hasOwnProperty(key)) {
+	                    var error = key + ": " + jsonErrors[key];
+	                    errors.push(error);
+	                }
+	            }
+	        } else if (jsonErrors.constructor === Array) {
+	            errors = jsonErrors;
+	        } else {
+	            console.log('Unknown format, try it this way');
+	            errors = [jsonErrors];
+	        }
 	    } else {
 	        errors = ['Unknown Error'];
 	    }
+
 	    return {
 	        type: type,
 	        status: 'error',
@@ -23706,7 +23724,12 @@
 	}
 
 	function handleCategoryForSampleObservationErrors(json) {
-	    return genericErrorsHandler(GET_SAMPLE_OBSERVATION_CATEGORY, json);
+	    console.log('Handle error for sample observation response ');
+	    console.log(json);
+	    var action = genericErrorsHandler(GET_SAMPLE_OBSERVATION_CATEGORY, json);
+	    console.log('Action for sample observation error');
+	    console.log(action);
+	    return action;
 	}
 
 	function fetchCategoryForSampleObservation(observation) {
@@ -23717,7 +23740,9 @@
 	        }).catch(function (error) {
 	            console.log('Error in fetchCategoryForSampleObservation');
 	            console.log(error);
+	            console.log(error.response);
 	            if (error.response) {
+	                console.log('Error from server!!!!');
 	                return error.response.json().then(function (json) {
 	                    return dispatch(handleCategoryForSampleObservationErrors(json));
 	                });
@@ -42906,7 +42931,8 @@
 	        key: 'getFormValidationState',
 	        value: function getFormValidationState() {
 	            var observation = this.props.observation;
-	            return observation.gender && observation.parameter && observation.timestamp && observation.value;
+	            return observation.gender && observation.parameter && observation.value;
+	            // return (observation.gender && observation.parameter && observation.value && observation.birthday && observation.timestamp && (observation.birthday < observation.timestamp))
 	        }
 	    }, {
 	        key: 'onFormSubmit',
@@ -43548,23 +43574,13 @@
 /* 474 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
-	var _reactDom = __webpack_require__(36);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
 	var _reactBootstrap = __webpack_require__(206);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	// ref={node => {
-	//     ReactDOM.findDOMNode(node).focus()
-	// }}>
 
 	var CategoryAlert = function CategoryAlert(_ref) {
 	    var category = _ref.category;
@@ -43572,12 +43588,10 @@
 	    return React.createElement(
 	        _reactBootstrap.Alert,
 	        {
-	            tabIndex: '0', bsStyle: 'success'
-
-	        },
-	        'This is ',
+	            tabIndex: "0", bsStyle: "success" },
+	        "This is ",
 	        React.createElement(
-	            'strong',
+	            "strong",
 	            null,
 	            category
 	        )

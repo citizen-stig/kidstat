@@ -70,7 +70,7 @@ class SampleObservationForm extends Component {
 
     getFormValidationState() {
         let observation = this.props.observation;
-        return (observation.gender && observation.parameter && observation.timestamp && observation.value)
+        return (observation.gender && observation.parameter && observation.value && observation.birthday && observation.timestamp && (observation.birthday < observation.timestamp))
     }
 
     onFormSubmit(event) {

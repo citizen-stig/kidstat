@@ -23811,23 +23811,29 @@
 	        case _actions.GET_SAMPLE_OBSERVATION_CATEGORY:
 	            if (action.status === undefined) {
 	                // Request
+	                var data = Object.assign({}, state.data, { category: '' });
 	                return {
-	                    data: state.data,
+	                    data: data,
 	                    isFetching: true,
 	                    errors: []
 	                };
-	            } else if (action.status == 'success') {
+	            } else if (action.status === 'success') {
 	                // Response Received
-	                var data = Object.assign({}, state.data, { category: action.response.category });
-	                return { data: data,
+	                var _data = Object.assign({}, state.data, { category: action.response.category });
+	                return {
+	                    data: _data,
 	                    isFetching: false,
-	                    errors: [] };
+	                    errors: []
+	                };
+	            } else if (action.status === 'error') {
+	                // Error
+	                return {
+	                    data: state.data,
+	                    isFetching: false,
+	                    errors: action.errors
+	                };
 	            }
-	            // Error
-	            return {
-	                data: state.data,
-	                isFetching: false,
-	                errors: action.errors };
+	            return state;
 	        case _actions.CHANGE_SAMPLE_OBSERVATION:
 	            var newObservation = Object.assign({}, state.data, action.data);
 	            return Object.assign({}, state, { data: newObservation });
@@ -43556,16 +43562,19 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	// ref={node => {
+	//     ReactDOM.findDOMNode(node).focus()
+	// }}>
+
 	var CategoryAlert = function CategoryAlert(_ref) {
 	    var category = _ref.category;
 
 	    return React.createElement(
 	        _reactBootstrap.Alert,
 	        {
-	            tabIndex: '0', bsStyle: 'success',
-	            ref: function ref(node) {
-	                _reactDom2.default.findDOMNode(node).focus();
-	            } },
+	            tabIndex: '0', bsStyle: 'success'
+
+	        },
 	        'This is ',
 	        React.createElement(
 	            'strong',

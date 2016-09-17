@@ -85,7 +85,9 @@ class SampleObservationResource(Resource):
                                          timestamp=args['timestamp'],
                                          value=args['value'])
         observation._instance = kid
-        category = observation.get_category()
-
-        return jsonify({"success": True,
-                        'category': category.pretty})
+        try:
+            category = observation.get_category()
+            return jsonify({"success": True,
+                            'category': category.pretty})
+        except ValueError as exc:
+            abort(422, errors=[str(exc)])

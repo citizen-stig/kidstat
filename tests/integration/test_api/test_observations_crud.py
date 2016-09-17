@@ -308,3 +308,29 @@ class SampleAPITestCase(BaseAPIIntegrationTestCase):
         self.assertEqual(len(response_data), 2)
         self.assertIn('category', response_data)
         self.assertEqual(response_data['category'], expected_category.pretty)
+
+    def test_too_old(self):
+        parameter = model_factories.ParameterFactory()
+        age = 3
+        value = 1.33
+        standard = model_factories.StandardFactory(age=age,
+                                                   percentile=50,
+                                                   parameter=parameter,
+                                                   value=value)
+        birthday = datetime(2016, 9, 6)
+        timestamp = birthday + timedelta(days=age + 2)
+        data = {'value': 1.33,
+                'gender': standard.gender,
+                'parameter': parameter.name,
+                'timestamp': timestamp.strftime(DT_FORMAT),
+                'birthday': birthday.strftime(DT_FORMAT)}
+
+        response = requests.post(self.url, json=data)
+        self.assertEqual(response.status_code, 422)
+        response_json = response.json()
+        self.assertEqual(len(response_json), 1)
+        self.assertIn('errors', response_json)
+        errors = response_json['errors']
+        self.assertEqual(errors,
+                         ["Standard for this observation is not found!"])
+

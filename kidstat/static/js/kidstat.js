@@ -23724,12 +23724,7 @@
 	}
 
 	function handleCategoryForSampleObservationErrors(json) {
-	    console.log('Handle error for sample observation response ');
-	    console.log(json);
-	    var action = genericErrorsHandler(GET_SAMPLE_OBSERVATION_CATEGORY, json);
-	    console.log('Action for sample observation error');
-	    console.log(action);
-	    return action;
+	    return genericErrorsHandler(GET_SAMPLE_OBSERVATION_CATEGORY, json);
 	}
 
 	function fetchCategoryForSampleObservation(observation) {
@@ -23740,9 +23735,7 @@
 	        }).catch(function (error) {
 	            console.log('Error in fetchCategoryForSampleObservation');
 	            console.log(error);
-	            console.log(error.response);
 	            if (error.response) {
-	                console.log('Error from server!!!!');
 	                return error.response.json().then(function (json) {
 	                    return dispatch(handleCategoryForSampleObservationErrors(json));
 	                });
@@ -42931,8 +42924,7 @@
 	        key: 'getFormValidationState',
 	        value: function getFormValidationState() {
 	            var observation = this.props.observation;
-	            return observation.gender && observation.parameter && observation.value;
-	            // return (observation.gender && observation.parameter && observation.value && observation.birthday && observation.timestamp && (observation.birthday < observation.timestamp))
+	            return observation.gender && observation.parameter && observation.value && observation.birthday && observation.timestamp && observation.birthday < observation.timestamp;
 	        }
 	    }, {
 	        key: 'onFormSubmit',

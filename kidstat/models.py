@@ -88,7 +88,7 @@ class Observation(db.EmbeddedDocument):
             .first()
         if standard:
             return standard.get_category()
-        return Categories.very_high
+        raise ValueError("Standard for this observation is not found!")
 
 
 class Kid(db.EmbeddedDocument):

@@ -11,6 +11,7 @@ const initialState = {
         timestamp: new Date().toISOString().split("T")[0],
         parameter: '',
         value: '',
+        isValid: false
     },
     isFetching: false,
     errors: []
@@ -52,6 +53,10 @@ export default function sampleObservation(state = initialState, action) {
             return state;
         case CHANGE_SAMPLE_OBSERVATION:
             let newObservation = Object.assign({}, state.data, action.data);
+            newObservation.isValid = !!(newObservation.gender &&
+                newObservation.birthday && newObservation.timestamp &&
+                newObservation.value &&
+                (newObservation.birthday <= newObservation.timestamp));
             return Object.assign({}, state, {data: newObservation});
         default:
             return state;

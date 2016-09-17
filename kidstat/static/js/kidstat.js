@@ -23623,6 +23623,7 @@
 
 	exports.requestParameters = requestParameters;
 	exports.receiveParameters = receiveParameters;
+	exports.genericErrorsHandler = genericErrorsHandler;
 	exports.handleParametersErrors = handleParametersErrors;
 	exports.fetchParameters = fetchParameters;
 	exports.changeSampleObservation = changeSampleObservation;
@@ -23649,22 +23650,31 @@
 	    };
 	}
 
+	// TODO: how to test this, if it is not exported?
 	function genericErrorsHandler(type, json) {
 	    var errors = void 0;
 	    if ("message" in json) {
 	        errors = [json['message']];
 	    } else if ("errors" in json) {
 	        var jsonErrors = json['errors'];
-	        if ((typeof jsonErrors === 'undefined' ? 'undefined' : _typeof(jsonErrors)) === 'object') {
+	        if (jsonErrors.constructor === Array) {
+	            errors = jsonErrors;
+	        } else if ((typeof jsonErrors === 'undefined' ? 'undefined' : _typeof(jsonErrors)) === 'object') {
 	            errors = [];
 	            for (var key in jsonErrors) {
 	                if (jsonErrors.hasOwnProperty(key)) {
-	                    var error = key + ": " + jsonErrors[key];
-	                    errors.push(error);
+	                    var value = jsonErrors[key];
+	                    if (value.constructor === Array) {
+	                        for (var i = 0; i < value.length; i++) {
+	                            var error = key + ": " + value[i];
+	                            errors.push(error);
+	                        }
+	                    } else {
+	                        var _error = key + ": " + value;
+	                        errors.push(_error);
+	                    }
 	                }
 	            }
-	        } else if (jsonErrors.constructor === Array) {
-	            errors = jsonErrors;
 	        } else {
 	            console.log('Unknown format, try it this way');
 	            errors = [jsonErrors];
@@ -23815,7 +23825,8 @@
 	        birthday: '',
 	        timestamp: new Date().toISOString().split("T")[0],
 	        parameter: '',
-	        value: ''
+	        value: '',
+	        isValid: false
 	    },
 	    isFetching: false,
 	    errors: []
@@ -23854,6 +23865,7 @@
 	            return state;
 	        case _actions.CHANGE_SAMPLE_OBSERVATION:
 	            var newObservation = Object.assign({}, state.data, action.data);
+	            newObservation.isValid = !!(newObservation.gender && newObservation.birthday && newObservation.timestamp && newObservation.value && newObservation.birthday <= newObservation.timestamp);
 	            return Object.assign({}, state, { data: newObservation });
 	        default:
 	            return state;
@@ -42885,6 +42897,7 @@
 	        value: sampleObservation.value
 	    };
 	    return {
+	        isValid: sampleObservation.isValid,
 	        observation: observation,
 	        errors: state.parameters.errors
 	    };
@@ -42923,8 +42936,7 @@
 	    }, {
 	        key: 'getFormValidationState',
 	        value: function getFormValidationState() {
-	            var observation = this.props.observation;
-	            return observation.gender && observation.parameter && observation.value && observation.birthday && observation.timestamp && observation.birthday < observation.timestamp;
+	            return this.props.isValid;
 	        }
 	    }, {
 	        key: 'onFormSubmit',
@@ -42983,7 +42995,8 @@
 	SampleObservationForm.propTypes = {
 	    submitAction: _react.PropTypes.func,
 	    getParameters: _react.PropTypes.func,
-	    observation: _react.PropTypes.object
+	    observation: _react.PropTypes.object,
+	    isValid: _react.PropTypes.bool
 	};
 
 	SampleObservationForm = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(SampleObservationForm);
@@ -43097,7 +43110,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var mapStateToProps = function mapStateToProps(state) {
-	    var isValid = state.sampleObservation.data.birthday && state.sampleObservation.data.birthday < state.sampleObservation.data.timestamp;
+	    var isValid = state.sampleObservation.data.birthday && state.sampleObservation.data.birthday <= state.sampleObservation.data.timestamp;
 	    return {
 	        value: state.sampleObservation.data.birthday,
 	        isValid: isValid
@@ -43160,7 +43173,7 @@
 	            !isValid ? React.createElement(
 	                _reactBootstrap.HelpBlock,
 	                null,
-	                "Birthday should be less then a timestamp"
+	                "Birthday should be less than or equal a timestamp"
 	            ) : ''
 	        )
 	    );

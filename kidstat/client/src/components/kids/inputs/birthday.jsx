@@ -24,7 +24,7 @@ const BirthdayInput = ({value, onChange, isValid}) => {
                          onChange={onChange}
                          value={value}
                          type="date"/>
-            {!isValid ? <HelpBlock>Birthday should be less then a timestamp</HelpBlock> : ''}
+            {!isValid ? <HelpBlock>Birthday should be less than or equal a timestamp</HelpBlock> : ''}
         </Col>
     </FormGroup>
 };

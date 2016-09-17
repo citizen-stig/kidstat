@@ -5,7 +5,7 @@ import BirthdayInput from '../../../components/kids/inputs/birthday.jsx';
 
 const mapStateToProps = (state) => {
     let isValid = state.sampleObservation.data.birthday &&
-        (state.sampleObservation.data.birthday < state.sampleObservation.data.timestamp);
+        (state.sampleObservation.data.birthday <= state.sampleObservation.data.timestamp);
     return {
         value: state.sampleObservation.data.birthday,
         isValid: isValid

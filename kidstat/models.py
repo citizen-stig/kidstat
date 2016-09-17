@@ -79,6 +79,8 @@ class Observation(db.EmbeddedDocument):
         standards = Standard.objects.filter(parameter=self.parameter,
                                             gender=kid.gender,
                                             age=age)
+        if standards.count() == 0:
+            raise ValueError("Standard for this observation is not found!")
         return standards
 
     def get_category(self):
@@ -88,7 +90,7 @@ class Observation(db.EmbeddedDocument):
             .first()
         if standard:
             return standard.get_category()
-        raise ValueError("Standard for this observation is not found!")
+        return Categories.very_high
 
 
 class Kid(db.EmbeddedDocument):

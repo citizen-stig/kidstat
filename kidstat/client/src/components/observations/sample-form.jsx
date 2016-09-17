@@ -39,6 +39,7 @@ const mapStateToProps = (state) => {
         value: sampleObservation.value
     };
     return {
+        isValid: sampleObservation.isValid,
         observation: observation,
         errors: state.parameters.errors
     }
@@ -69,8 +70,7 @@ class SampleObservationForm extends Component {
     }
 
     getFormValidationState() {
-        let observation = this.props.observation;
-        return (observation.gender && observation.parameter && observation.value && observation.birthday && observation.timestamp && (observation.birthday < observation.timestamp))
+        return this.props.isValid;
     }
 
     onFormSubmit(event) {
@@ -113,7 +113,8 @@ class SampleObservationForm extends Component {
 SampleObservationForm.propTypes = {
     submitAction: PropTypes.func,
     getParameters: PropTypes.func,
-    observation: PropTypes.object
+    observation: PropTypes.object,
+    isValid: PropTypes.bool
 };
 
 

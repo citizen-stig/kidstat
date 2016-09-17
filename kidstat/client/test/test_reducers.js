@@ -77,13 +77,24 @@ describe('Sample Observation Reducer Test', function () {
                 timestamp: new Date().toISOString().split("T")[0],
                 parameter: '',
                 value: '',
+                isValid: false
             },
             isFetching: false, errors: []
         };
         expect(sampleObservation(undefined, {})).to.deep.equal(expectedState);
     });
     it('should return current state if action is unknown', function () {
-        const currentState = {category: null, isFetching: true, errors: []};
+        const currentState = {
+            data: {
+                category: '',
+                gender: 'male',
+                birthday: '',
+                timestamp: new Date().toISOString().split("T")[0],
+                parameter: '',
+                value: '',
+                isValid: false
+            },
+            isFetching: false, errors: []};
         expect(sampleObservation(currentState, {type: 'QWE'})).to.deep.equal(
             currentState)
     });
@@ -98,12 +109,14 @@ describe('Sample Observation Reducer Test', function () {
                     timestamp: new Date().toISOString().split("T")[0],
                     parameter: '',
                     value: '',
+                    isValid: false
                 },
                 isFetching: true,
                 errors: []
             };
             const action = {type: GET_SAMPLE_OBSERVATION_CATEGORY};
-            expect(sampleObservation(undefined, action)).to.deep.equal(expectedState)
+            expect(sampleObservation(undefined, action))
+                .to.deep.equal(expectedState)
         });
     it('should reset "category" on get sample observation action',
         function(){
@@ -115,6 +128,7 @@ describe('Sample Observation Reducer Test', function () {
                     timestamp: new Date().toISOString().split("T")[0],
                     parameter: 'param1',
                     value: '123',
+                    isValid: true
                 },
                 isFetching: false,
                 errors: []
@@ -127,6 +141,7 @@ describe('Sample Observation Reducer Test', function () {
                     timestamp: new Date().toISOString().split("T")[0],
                     parameter: 'param1',
                     value: '123',
+                    isValid: true
                 },
                 isFetching: true,
                 errors: []
@@ -144,13 +159,13 @@ describe('Sample Observation Reducer Test', function () {
                     timestamp: new Date().toISOString().split("T")[0],
                     parameter: '',
                     value: '123',
+                    isValid: false
                 },
                 isFetching: false,
                 errors: []
             };
         const action = {type: CHANGE_SAMPLE_OBSERVATION, data: {value: '123'}};
         expect(sampleObservation(undefined, action)).to.deep.equal(expectedState);
-
     })
 
 });

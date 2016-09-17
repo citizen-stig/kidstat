@@ -15,22 +15,31 @@ export function receiveParameters(json) {
     }
 }
 
-function genericErrorsHandler(type, json) {
+// TODO: how to test this, if it is not exported?
+export function genericErrorsHandler(type, json) {
     let errors;
     if ("message" in json) {
         errors = [json['message']];
     } else if ("errors" in json) {
         let jsonErrors = json['errors'];
-        if (typeof jsonErrors === 'object') {
+        if (jsonErrors.constructor === Array) {
+            errors = jsonErrors;
+        } else if (typeof jsonErrors === 'object') {
             errors = [];
             for (let key in jsonErrors) {
                 if (jsonErrors.hasOwnProperty(key)) {
-                    let error = key + ": " + jsonErrors[key];
-                    errors.push(error);
+                    let value = jsonErrors[key];
+                    if (value.constructor === Array) {
+                        for (let i = 0; i < value.length; i++) {
+                            let error = key + ": " + value[i];
+                            errors.push(error)
+                        }
+                    } else {
+                        let error = key + ": " + value;
+                        errors.push(error);
+                    }
                 }
             }
-        } else if (jsonErrors.constructor === Array) {
-            errors = jsonErrors;
         } else {
             console.log('Unknown format, try it this way');
             errors = [jsonErrors];
@@ -75,7 +84,7 @@ export function fetchParameters() {
 export const GET_SAMPLE_OBSERVATION_CATEGORY = 'GET_SAMPLE_OBSERVATION_CATEGORY';
 export const CHANGE_SAMPLE_OBSERVATION = 'CHANGE_SAMPLE_OBSERVATION';
 
-export function changeSampleObservation(observation){
+export function changeSampleObservation(observation) {
     return {type: CHANGE_SAMPLE_OBSERVATION, data: observation}
 }
 
@@ -91,7 +100,7 @@ export function receiveCategoryForSampleObservation(json) {
     }
 }
 
-export function handleCategoryForSampleObservationErrors(json){
+export function handleCategoryForSampleObservationErrors(json) {
     return genericErrorsHandler(GET_SAMPLE_OBSERVATION_CATEGORY, json)
 }
 
@@ -100,10 +109,10 @@ export function fetchCategoryForSampleObservation(observation) {
         dispatch(requestCategoryForSampleObservation());
         return post({url: 'try', body: observation})
             .then(json => dispatch(receiveCategoryForSampleObservation(json)))
-            .catch(function(error){
+            .catch(function (error) {
                 console.log('Error in fetchCategoryForSampleObservation');
                 console.log(error);
-                if(error.response){
+                if (error.response) {
                     return error.response.json()
                         .then(json => dispatch(handleCategoryForSampleObservationErrors(json)));
                 }

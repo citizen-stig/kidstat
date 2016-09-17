@@ -87,7 +87,7 @@ describe('Sample Observation Reducer Test', function () {
         expect(sampleObservation(currentState, {type: 'QWE'})).to.deep.equal(
             currentState)
     });
-    it('should change isFetching on get get sample observation action',
+    it('should change isFetching on get sample observation action',
         function () {
             // undefined action.status means that request should be performed
             const expectedState = {
@@ -104,6 +104,36 @@ describe('Sample Observation Reducer Test', function () {
             };
             const action = {type: GET_SAMPLE_OBSERVATION_CATEGORY};
             expect(sampleObservation(undefined, action)).to.deep.equal(expectedState)
+        });
+    it('should reset "category" on get sample observation action',
+        function(){
+            const currentState = {
+                data: {
+                    category: 'Very Low',
+                    gender: 'male',
+                    birthday: '2016-01-01',
+                    timestamp: new Date().toISOString().split("T")[0],
+                    parameter: 'param1',
+                    value: '123',
+                },
+                isFetching: false,
+                errors: []
+            };
+            const expectedState = {
+                data: {
+                    category: '',
+                    gender: 'male',
+                    birthday: '2016-01-01',
+                    timestamp: new Date().toISOString().split("T")[0],
+                    parameter: 'param1',
+                    value: '123',
+                },
+                isFetching: true,
+                errors: []
+            };
+            const action = {type: GET_SAMPLE_OBSERVATION_CATEGORY};
+            expect(sampleObservation(currentState, action))
+                .to.deep.equal(expectedState)
         });
     it('should change only data key presented in action', function(){
         const expectedState = {

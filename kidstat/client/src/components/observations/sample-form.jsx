@@ -60,7 +60,6 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 class SampleObservationForm extends Component {
     constructor() {
         super();
-        this.getFormValidationState = this.getFormValidationState.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.submit = this.submit.bind(this);
     }
@@ -69,12 +68,8 @@ class SampleObservationForm extends Component {
         this.props.getParameters();
     }
 
-    getFormValidationState() {
-        return this.props.isValid;
-    }
-
     onFormSubmit(event) {
-        if (this.getFormValidationState()) {
+        if (this.props.isValid) {
             this.submit()
         }
         event.preventDefault();
@@ -100,7 +95,7 @@ class SampleObservationForm extends Component {
                                     bsStyle="success"
                                     bsSize="large"
                                     onClick={this.submit}
-                                    disabled={!this.getFormValidationState()}
+                                    disabled={!this.props.isValid}
                                     ref="submitButton">Check</Button>
                         </ButtonGroup>
                     </Col>

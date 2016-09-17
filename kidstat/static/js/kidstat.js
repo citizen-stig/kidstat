@@ -42922,7 +42922,6 @@
 
 	        var _this = _possibleConstructorReturn(this, (SampleObservationForm.__proto__ || Object.getPrototypeOf(SampleObservationForm)).call(this));
 
-	        _this.getFormValidationState = _this.getFormValidationState.bind(_this);
 	        _this.onFormSubmit = _this.onFormSubmit.bind(_this);
 	        _this.submit = _this.submit.bind(_this);
 	        return _this;
@@ -42934,14 +42933,9 @@
 	            this.props.getParameters();
 	        }
 	    }, {
-	        key: 'getFormValidationState',
-	        value: function getFormValidationState() {
-	            return this.props.isValid;
-	        }
-	    }, {
 	        key: 'onFormSubmit',
 	        value: function onFormSubmit(event) {
-	            if (this.getFormValidationState()) {
+	            if (this.props.isValid) {
 	                this.submit();
 	            }
 	            event.preventDefault();
@@ -42978,7 +42972,7 @@
 	                                    bsStyle: 'success',
 	                                    bsSize: 'large',
 	                                    onClick: this.submit,
-	                                    disabled: !this.getFormValidationState(),
+	                                    disabled: !this.props.isValid,
 	                                    ref: 'submitButton' },
 	                                'Check'
 	                            )

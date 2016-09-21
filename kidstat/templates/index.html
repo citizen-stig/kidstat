@@ -1,9 +1,7 @@
 {% extends 'base.html' %}
+{% set current_page = 'home' %}
 
 {% block title %}Kidstat - Track Kid Growth{% endblock %}
-{% block extra_head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-{% endblock %}
 
 {%- block body -%}
 <div class="main-container"></div>

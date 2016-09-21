@@ -9,6 +9,7 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <!--[if lt IE 9]>
         <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
     <![endif]-->
@@ -24,6 +25,24 @@
 </head>
 <body>
 {% block body %}{% endblock %}
+    <footer class="footer">
+      <div class="container">
+          <div class="col-sm-6 col-xs-12"><p>&copy; 2016 Nikolay Golub // All rights reserved</p></div>
+          <div class="col-sm-6 col-xs-12">
+            <ul class="footer-nav list-inline-style">
+
+                <li>
+                    {%- if current_page == 'home' -%}<strong>Home</strong>
+                    {%- else -%}<a href="{{ url_for("home") }}">Home</a>{%- endif -%}
+                </li>
+                <li>
+                    {%- if current_page == 'about' -%}<strong>About</strong>
+                    {%- else -%}<a href="{{ url_for("about") }}">About</a>{%- endif -%}
+                </li>
+            </ul>
+          </div>
+      </div>
+    </footer>
 {%- if not config.DEBUG -%}
     <!-- Yandex.Metrika counter --> <script type="text/javascript"> (function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter39652195 = new Ya.Metrika({ id:39652195, clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true, trackHash:true }); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = "https://mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks"); </script> <noscript><div><img src="https://mc.yandex.ru/watch/39652195" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
 {%- endif -%}

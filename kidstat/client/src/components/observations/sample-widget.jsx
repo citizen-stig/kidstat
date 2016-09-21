@@ -6,7 +6,7 @@ import CategoryAlertContainer
 
 let SampleObservationWidget = () => {
     return <div>
-        <h2>Try Now.</h2>
+        <h2>Try Now</h2>
         <p>Check category right now:</p>
         <Col xs={12}>
             <SampleObservationForm/>

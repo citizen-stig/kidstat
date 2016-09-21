@@ -3,4 +3,30 @@
 {% block title %}About KidStat{% endblock %}
 
 {%- block body -%}
+    <nav class="navbar navbar-default hidden-xs">
+        <div class="container">
+            <a class="navbar-brand" href="/">Home</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="jumbotron">
+
+                <div class="row">
+                <div class="col-md-2 hidden-xs">
+                    <img src="{{ url_for('static', filename='images/WHO_Logo.png') }}" class="img-fluid img-responsive">
+                </div>
+                    <div class="col-md-10 col-xs-12">
+                        <h1>KidStat</h1>
+                    <p>World Health Organization provides standards for child growth, that have been collected over time. It's possible to categorize measurement by groups</p>
+                </div>
+                </div>
+            </div>
+            <h2>How it works?</h2>
+            <p>When you enter observation value, applications looks over available standards and categorize it using a following table:</p>
+            <h2>Technologies used</h2>
+            <p>All data is stored in Mongodb. Flask(Python microframework) serves REST API and authorization. React is used for client side logic. Vanilla Bootstrap is used for styling.</p>
+            <h2>Author</h2>
+            <p>My name is <a href="https://golub.pro" target="_blank">Nikolay Golub</a>, I'm Software Engineer at Toptal. This project was built on my free time for exploring new technologies</p>
+        </div>
 {%- endblock -%}

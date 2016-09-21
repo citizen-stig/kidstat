@@ -7,7 +7,7 @@ import SampleObservationWidget from './observations/sample-widget.jsx'
 const PublicIndex = () => {
     return <Grid>
         <Row className="show-grid">
-            <h1 className="text-center">Welcome to the KidStat!</h1>
+            <h1 className="text-center">KidStat</h1>
             <Col xs={12} md={7}>
                 <SampleObservationWidget/>
             </Col>

@@ -42773,7 +42773,7 @@
 	            _react2.default.createElement(
 	                'h1',
 	                { className: 'text-center' },
-	                'Welcome to the KidStat!'
+	                'KidStat'
 	            ),
 	            _react2.default.createElement(
 	                _reactBootstrap.Col,
@@ -42815,7 +42815,7 @@
 	        React.createElement(
 	            'h2',
 	            null,
-	            'Try Now.'
+	            'Try Now'
 	        ),
 	        React.createElement(
 	            'p',
@@ -43573,13 +43573,19 @@
 /* 474 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
+	var _reactDom = __webpack_require__(36);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
 	var _reactBootstrap = __webpack_require__(206);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var CategoryAlert = function CategoryAlert(_ref) {
 	    var category = _ref.category;
@@ -43587,10 +43593,15 @@
 	    return React.createElement(
 	        _reactBootstrap.Alert,
 	        {
-	            tabIndex: "0", bsStyle: "success" },
-	        "This is ",
+	            ref: function ref(input) {
+	                if (input != null) {
+	                    _reactDom2.default.findDOMNode(input).focus();
+	                }
+	            },
+	            tabIndex: '0', bsStyle: 'success' },
+	        'This is ',
 	        React.createElement(
-	            "strong",
+	            'strong',
 	            null,
 	            category
 	        )

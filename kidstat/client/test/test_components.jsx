@@ -11,13 +11,14 @@ import Header from '../src/components/common/header.jsx'
 import CategoryAlert from '../src/components/observations/category-alert.jsx';
 
 describe('Header Component Test', function () {
+    // Workaround for this: https://github.com/facebook/react/issues/4839
+    var headerComponent = new Header();
+    var header = TestUtils.renderIntoDocument(headerComponent);
     it('should contain text "KidStat"', function () {
-        var header = TestUtils.renderIntoDocument(<Header />);
         var brandA = TestUtils.findRenderedDOMComponentWithTag(header, 'a');
         assert.equal(brandA.textContent, 'KidStat');
     });
     it('should have class "hidden-xs"', function () {
-        var header = TestUtils.renderIntoDocument(<Header />);
         var nav = TestUtils.findRenderedDOMComponentWithTag(header, 'nav');
         assert.ok(nav.classList.contains('hidden-xs'),
             'hidden-xs is not found in nav classList');
@@ -26,14 +27,20 @@ describe('Header Component Test', function () {
 
 
 describe('Category Alert Test', function () {
-    it('should have category inside <strong/> tag', function () {
-        console.log('========');
-        var categoryName = 'Average';
-        var b = <CategoryAlert category={categoryName}/>;
-        console.log(b);
-        console.log('========');
-        var categoryAlert = TestUtils.renderIntoDocument(<CategoryAlert category={categoryName}/>);
-        console.log(categoryAlert);
+    var categoryName = 'Average';
+    // Workaround for this: https://github.com/facebook/react/issues/4839
+    var categoryComponent = new CategoryAlert({category: categoryName});
+    var categoryAlert = TestUtils.renderIntoDocument(categoryComponent);
 
+    it('should have category inside <strong/> tag', function () {
+        var strong = TestUtils.findRenderedDOMComponentWithTag(
+            categoryAlert, 'strong');
+        assert.equal(strong.textContent, categoryName);
+    });
+    it('should have "success" class', function(){
+        var alertDiv = TestUtils.findRenderedDOMComponentWithClass(
+            categoryAlert, 'alert');
+        assert.ok(alertDiv.classList.contains('alert-success'),
+            'Class "success" is not found in alert class list')
     })
 });

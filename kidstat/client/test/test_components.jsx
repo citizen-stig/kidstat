@@ -8,7 +8,7 @@ import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 
 import Header from '../src/components/common/header.jsx'
-
+import CategoryAlert from '../src/components/observations/category-alert.jsx';
 
 describe('Header Component Test', function () {
     it('should contain text "KidStat"', function () {
@@ -25,3 +25,15 @@ describe('Header Component Test', function () {
 });
 
 
+describe('Category Alert Test', function () {
+    it('should have category inside <strong/> tag', function () {
+        console.log('========');
+        var categoryName = 'Average';
+        var b = <CategoryAlert category={categoryName}/>;
+        console.log(b);
+        console.log('========');
+        var categoryAlert = TestUtils.renderIntoDocument(<CategoryAlert category={categoryName}/>);
+        console.log(categoryAlert);
+
+    })
+});

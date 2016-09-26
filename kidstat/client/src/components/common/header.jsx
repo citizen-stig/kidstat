@@ -1,14 +1,14 @@
-import {Component} from 'react';
+import React from 'react';
 import {Navbar} from 'react-bootstrap';
 
-export default class Header extends Component {
+export default class Header extends React.Component {
     render() {
         return <Navbar className="hidden-xs">
             <Navbar.Header>
                 <Navbar.Brand>
-                    <a href="#">Kidstat</a>
+                    <a href="#">KidStat</a>
                 </Navbar.Brand>
             </Navbar.Header>
         </Navbar>
     }
-}
+};

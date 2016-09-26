@@ -9,12 +9,6 @@ import TestUtils from 'react-addons-test-utils';
 
 import Header from '../src/components/common/header.jsx'
 
-describe('Empty Component Test', function () {
-    it('always should run successfully', function () {
-        assert.equal('A', 'A');
-    });
-});
-
 
 describe('Header Component Test', function () {
     it('should contain text "KidStat"', function () {
@@ -29,4 +23,5 @@ describe('Header Component Test', function () {
             'hidden-xs is not found in nav classList');
     })
 });
+
 

@@ -1,3 +1,4 @@
+import React from 'react';
 import {Col} from 'react-bootstrap';
 
 import SampleObservationForm from './sample-form.jsx';

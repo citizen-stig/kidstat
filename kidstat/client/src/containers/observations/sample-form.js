@@ -5,7 +5,7 @@ import SampleObservationForm from '../../components/observations/sample-form.jsx
 import {
     fetchCategoryForSampleObservation,
     fetchParameters
-} from '../../actions.jsx'
+} from '../../actions.js'
 
 const mapStateToProps = (state) => {
     let sampleObservation = state.sampleObservation.data;

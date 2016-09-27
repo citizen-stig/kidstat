@@ -7,7 +7,7 @@ import {
     GET_PARAMETERS,
     CHANGE_SAMPLE_OBSERVATION,
     GET_SAMPLE_OBSERVATION_CATEGORY
-} from '../src/actions.jsx';
+} from '../src/actions.js';
 
 
 describe('Parameters Reducer Test', function () {

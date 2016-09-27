@@ -1,6 +1,6 @@
 import {connect} from 'react-redux'
 
-import {changeSampleObservation} from '../../../actions.jsx'
+import {changeSampleObservation} from '../../../actions.js'
 import GenderSelect from '../../../components/kids/inputs/gender.jsx';
 
 const mapStateToProps = (state) => {

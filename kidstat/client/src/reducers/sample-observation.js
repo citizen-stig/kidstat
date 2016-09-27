@@ -1,7 +1,7 @@
 import {
     GET_SAMPLE_OBSERVATION_CATEGORY,
     CHANGE_SAMPLE_OBSERVATION
-} from '../actions.jsx';
+} from '../actions.js';
 
 const initialState = {
     data: {

@@ -1,4 +1,4 @@
-import {GET_PARAMETERS} from '../actions.jsx';
+import {GET_PARAMETERS} from '../actions.js';
 
 const initialState = {
     data: [],

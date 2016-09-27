@@ -65,7 +65,7 @@ describe('Sample Observation Widget Test', function () {
 
     before(function(){
         const SampleObservationWidget = proxyquire('../src/components/observations/sample-widget.jsx', {
-            './sample-form.jsx': MockComponent,
+            '../../containers/observations/sample-form.js': MockComponent,
             '../../containers/observations/sample-observation/category-alert.jsx': MockComponent,
         }).default;
         sampleObservationWidget = new SampleObservationWidget();
@@ -90,4 +90,20 @@ describe('Sample Observation Widget Test', function () {
         var Col = sampleObservationWidget.props.children[2];
         assert.equal(Col.props.children.length, 2)
     })
+});
+
+
+describe('Sample Observation Form Test', function () {
+    it('has submit button with text "Check"');
+    it('has proper child inputs');
+    it('has calls props.getParameters when component did mount');
+    it('calls props.submitAction on button click');
+    it('calls submit on event "onFormSubmit"')
+
+});
+
+
+describe('Errors List component', function(){
+    it('has empty div when no errors specified');
+    it('has errors alerts with proper messages');
 });

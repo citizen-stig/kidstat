@@ -64,7 +64,7 @@ export function fetchParameters() {
     return function (dispatch) {
 
         dispatch(requestParameters());
-        return get({url: 'parameters'}).then()
+        return get({url: 'parameters'})
             .then(json =>
                 dispatch(receiveParameters(json))
             ).catch(function (error) {

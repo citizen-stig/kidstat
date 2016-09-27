@@ -1,6 +1,6 @@
 import {connect} from 'react-redux'
 
-import {changeSampleObservation} from '../../../actions.jsx'
+import {changeSampleObservation} from '../../../actions.js'
 import BirthdayInput from '../../../components/kids/inputs/birthday.jsx';
 
 const mapStateToProps = (state) => {

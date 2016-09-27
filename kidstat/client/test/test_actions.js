@@ -9,7 +9,7 @@ import {
     genericErrorsHandler,
     GET_PARAMETERS,
     GET_SAMPLE_OBSERVATION_CATEGORY
-} from '../src/actions.jsx';
+} from '../src/actions.js';
 
 describe('Parameters Actions Test', function () {
     it('should return only type for requestParameters', function () {

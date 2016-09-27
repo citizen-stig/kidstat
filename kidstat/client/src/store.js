@@ -2,7 +2,7 @@ import {combineReducers} from 'redux';
 
 import parameters from './reducers/parameters.js';
 import sampleObservation from './reducers/sample-observation.js';
-import {changeSampleObservation} from './actions.jsx'
+import {changeSampleObservation} from './actions.js'
 
 // var SomeState = {
 //     'sampleObservation': {

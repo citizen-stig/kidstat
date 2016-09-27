@@ -1,4 +1,4 @@
-import {connect} from 'react-redux'
+import React from 'react';
 
 
 let Loader = ({active}) => {
@@ -11,12 +11,8 @@ let Loader = ({active}) => {
         </div>
 };
 
-
-const mapStateToProps = (state) => {
-    return {
-        active: (state.sampleObservation.isFetching || state.parameters.isFetching )
-    }
+Loader.propTypes = {
+    active: React.PropTypes.bool,
 };
 
-Loader = connect(mapStateToProps)(Loader);
 export default Loader

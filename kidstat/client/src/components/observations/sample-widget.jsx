@@ -1,7 +1,7 @@
 import React from 'react';
 import {Col} from 'react-bootstrap';
 
-import SampleObservationForm from './sample-form.jsx';
+import SampleObservationForm from '../../containers/observations/sample-form.js';
 import CategoryAlertContainer
     from '../../containers/observations/sample-observation/category-alert.jsx';
 

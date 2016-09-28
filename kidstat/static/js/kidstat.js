@@ -23698,7 +23698,7 @@
 	    return function (dispatch) {
 
 	        dispatch(requestParameters());
-	        return (0, _api.get)({ url: 'parameters' }).then().then(function (json) {
+	        return (0, _api.get)({ url: 'parameters' }).then(function (json) {
 	            return dispatch(receiveParameters(json));
 	        }).catch(function (error) {
 	            console.log('Error in fetchParameters');

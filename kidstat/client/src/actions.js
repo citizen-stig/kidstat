@@ -1,5 +1,6 @@
 import 'whatwg-fetch';
 import {get, post} from './api.js';
+import {genericErrorsHandler} from './utils.js'
 
 // Parameters
 export const GET_PARAMETERS = 'GET_PARAMETERS';
@@ -15,54 +16,12 @@ export function receiveParameters(json) {
     }
 }
 
-// TODO: how to test this, if it is not exported?
-export function genericErrorsHandler(type, json) {
-    let errors;
-    if ("message" in json) {
-        errors = [json['message']];
-    } else if ("errors" in json) {
-        let jsonErrors = json['errors'];
-        if (jsonErrors.constructor === Array) {
-            errors = jsonErrors;
-        } else if (typeof jsonErrors === 'object') {
-            errors = [];
-            for (let key in jsonErrors) {
-                if (jsonErrors.hasOwnProperty(key)) {
-                    let value = jsonErrors[key];
-                    if (value.constructor === Array) {
-                        for (let i = 0; i < value.length; i++) {
-                            let error = key + ": " + value[i];
-                            errors.push(error)
-                        }
-                    } else {
-                        let error = key + ": " + value;
-                        errors.push(error);
-                    }
-                }
-            }
-        } else {
-            console.log('Unknown format, try it this way');
-            errors = [jsonErrors];
-        }
-    } else {
-        errors = ['Unknown Error'];
-    }
-
-    return {
-        type: type,
-        status: 'error',
-        errors: errors
-    }
-
-}
-
 export function handleParametersErrors(json) {
     return genericErrorsHandler(GET_PARAMETERS, json);
 }
 
 export function fetchParameters() {
     return function (dispatch) {
-
         dispatch(requestParameters());
         return get({url: 'parameters'})
             .then(json =>
